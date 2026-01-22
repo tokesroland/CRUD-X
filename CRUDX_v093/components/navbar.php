@@ -3,14 +3,11 @@
     <nav class="nav">
         <a href="products.php" class="nav-link">Termékek</a>
         <a href="inventory.php" class="nav-link">Áttekintés</a>
-        <a href="admin.php" class="nav-link">Admin</a>
-        <a href="owner.php" class="nav-link">Tulajdonos</a>
-
-        
-
+        <?= $_SESSION['role'] == 'admin' || $_SESSION['role'] == 'owner' ? '<a href="admin.php" class="nav-link">Admin</a>' : '' ?>
+        <?= $_SESSION['role'] == 'owner' ? '<a href="owner.php" class="nav-link">Tulajdonos</a>' : '' ?>
     </nav>
     <div class="user-box">
-        <span class="user-name">Bejelentkezve: demo_user</span>
-        <button class="btn btn-outline" actions="components/logout.php">Kijelentkezés</button>
+        <span class="user-name"><?= $_SESSION['username'] ?></span>
+        <a href="components/logout.php" class="btn btn-outline">Kijelentkezés</a>    
     </div>
 </header>

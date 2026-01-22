@@ -1,5 +1,8 @@
 <?php
+session_start();
 include 'config.php';
+require "./components/auth_check.php";
+authorize(['admin','owner','user']);
 
 /**
  * ---------------------------------------------

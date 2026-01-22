@@ -5,7 +5,7 @@
 
     </nav>
     <div class="user-box">
-        <span class="user-name">Bejelentkezve: demo_user</span>
-        <button class="btn btn-outline" actions="components/logout.php">Kijelentkezés</button>
+        <span class="user-name"><?= $_SESSION['username'] ?></span>
+        <a href="components/logout.php" class="btn btn-outline">Kijelentkezés</a>
     </div>
 </header>

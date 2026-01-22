@@ -1,5 +1,8 @@
 <?php
+session_start();
 require 'config.php';
+require "./components/auth_check.php";
+authorize(['admin','owner','user']);
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Érvénytelen termék azonosító.");

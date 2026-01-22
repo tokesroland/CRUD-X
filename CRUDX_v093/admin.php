@@ -1,5 +1,8 @@
 <?php
+session_start();
 include 'config.php';
+require "./components/auth_check.php";
+authorize(['admin','owner']);
 
 $message = "";
 $msgType = ""; // success | danger
@@ -25,7 +28,7 @@ if (isset($_POST['create_product'])) {
         // Ha nincs cikkszám, generálunk (timestamp alapú)
         $itemNumber = !empty($_POST['item_number']) ? $_POST['item_number'] : time();
         
-        // Ha nincs leírás, alapértelmezett érték (NOT NULL miatt)
+        // Ha nincs leírás, alapértelmezett érték
         $desc = !empty($_POST['description']) ? $_POST['description'] : '-';
 
         $stmt->execute([
@@ -41,6 +44,50 @@ if (isset($_POST['create_product'])) {
     } catch (Exception $e) {
         $message = "Hiba: " . $e->getMessage();
         if ($e->getCode() == 23000) $message = "Hiba: Ez a cikkszám már létezik!";
+        $msgType = "danger";
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| 🆕 TERMÉK MÓDOSÍTÁS (UPDATE)
+|--------------------------------------------------------------------------
+*/
+if (isset($_POST['update_product'])) {
+    try {
+        $id = (int)$_POST['product_id'];
+        
+        // Validáció
+        if (empty($_POST['name']) || empty($_POST['category_id'])) {
+            throw new Exception("A név és a kategória nem lehet üres!");
+        }
+
+        $stmt = $pdo->prepare("
+            UPDATE products 
+            SET name = ?, 
+                item_number = ?, 
+                description = ?, 
+                category_ID = ?, 
+                active = ?, 
+                updated_at = NOW() 
+            WHERE ID = ?
+        ");
+
+        $stmt->execute([
+            $_POST['name'],
+            !empty($_POST['item_number']) ? $_POST['item_number'] : time(),
+            $_POST['description'],
+            $_POST['category_id'],
+            isset($_POST['active']) ? 1 : 0,
+            $id
+        ]);
+
+        $message = "Termék adatai frissítve!";
+        $msgType = "success";
+
+    } catch (Exception $e) {
+        $message = "Hiba a módosításkor: " . $e->getMessage();
+        if ($e->getCode() == 23000) $message = "Hiba: Ez a cikkszám már foglalt!";
         $msgType = "danger";
     }
 }
@@ -187,8 +234,14 @@ if (isset($_POST['csv_submit']) && isset($_FILES['csv_file'])) {
 */
 $categories = $pdo->query("SELECT * FROM categories ORDER BY category_name")->fetchAll(PDO::FETCH_ASSOC);
 $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
-$products   = $pdo->query("SELECT ID, name FROM products WHERE active = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 
+// Csak aktív termékek a lenyíló listákhoz (pl. készlet hozzáadás)
+$activeProducts = $pdo->query("SELECT ID, name FROM products WHERE active = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+
+// MINDEN termék a szerkesztéshez
+$allProducts = $pdo->query("SELECT * FROM products ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+// Készlet lista
 $inventoryList = $pdo->query("
     SELECT i.*, p.name as p_name, w.name as w_name 
     FROM inventory i
@@ -208,7 +261,7 @@ $inventoryList = $pdo->query("
 </head>
 <body>
 
-<?php include './components/navbar_admin.php'; ?>
+<?php include './components/navbar.php'; // Javítva: navbar.php (ha ez a közös navbar) ?>
 
     <main class="container">
 
@@ -264,6 +317,70 @@ $inventoryList = $pdo->query("
             </form>
         </section>
 
+        <section class="card">
+            <details>
+                <summary style="cursor:pointer; font-weight:700; outline:none; color: var(--primary);">
+                    🛠️ Meglévő Termékek Szerkesztése (Kattints a lenyitáshoz)
+                </summary>
+
+                <div style="margin-top: 20px;">
+                    <div class="field" style="margin-bottom: 15px;">
+                        <input type="text" id="productSearchInput" onkeyup="filterProducts()" placeholder="🔍 Keress terméknévre vagy cikkszámra...">
+                    </div>
+
+                    <div class="filters" style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0; font-weight:bold;">
+                        <div class="col-3">Termék Név</div>
+                        <div class="col-2">Cikkszám</div>
+                        <div class="col-2">Kategória</div>
+                        <div class="col-3">Leírás</div>
+                        <div class="col-2" style="text-align:right;">Művelet</div>
+                    </div>
+
+                    <div id="productListContainer">
+                        <?php foreach ($allProducts as $prod): ?>
+                            <form method="POST" class="product-row" style="border-bottom: 1px solid #eee;">
+                                <input type="hidden" name="product_id" value="<?= $prod['ID'] ?>">
+                                
+                                <div class="filters" style="margin-bottom: 0; align-items: center; padding: 8px 14px;">
+                                    
+                                    <div class="col-3 field prod-name">
+                                        <input type="text" name="name" value="<?= htmlspecialchars($prod['name']) ?>" required>
+                                    </div>
+
+                                    <div class="col-2 field prod-item-num">
+                                        <input type="number" name="item_number" value="<?= htmlspecialchars($prod['item_number']) ?>">
+                                    </div>
+
+                                    <div class="col-2 field">
+                                        <select name="category_id">
+                                            <?php foreach($categories as $cat): ?>
+                                                <option value="<?= $cat['ID'] ?>" <?= $cat['ID'] == $prod['category_ID'] ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($cat['category_name']) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-3 field" style="gap: 5px;">
+                                        <input type="text" name="description" value="<?= htmlspecialchars($prod['description']) ?>">
+                                        <label style="font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px;">
+                                            <input type="checkbox" name="active" <?= $prod['active'] == 1 ? 'checked' : '' ?> style="width: auto; margin-right: 5px;"> 
+                                            Aktív
+                                        </label>
+                                    </div>
+
+                                    <div class="col-2 field actions" style="justify-content:flex-end;">
+                                        <button type="submit" name="update_product" class="btn btn-outline btn-small" title="Mentés">💾 Mentés</button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </details>
+        </section>
+
 
         <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
             
@@ -276,7 +393,7 @@ $inventoryList = $pdo->query("
                         <label>Termék</label>
                         <select name="product_id" required>
                             <option value="">Válassz terméket...</option>
-                            <?php foreach($products as $p): ?>
+                            <?php foreach($activeProducts as $p): ?>
                                 <option value="<?= $p['ID'] ?>"><?= htmlspecialchars($p['name']) ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -316,11 +433,6 @@ $inventoryList = $pdo->query("
                     <div class="field actions" style="justify-content: flex-end;">
                         <button type="submit" name="csv_submit" class="btn btn-outline">Feltöltés</button>
                     </div>
-                    <br>
-                    <div class="field actions"  style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-                       <a style="text-decoration: underline!important;" href="path/to/your/template.csv" target="_blank">CSV Sablon Letöltése</a> <em>Letölthető CSV sablon a megfelelő formátumhoz.</em>
-                    </div>
-
                 </form>
             </div>
 
@@ -384,6 +496,7 @@ $inventoryList = $pdo->query("
     </footer>
 
     <script>
+        // 1. Készlet szűrő
         function filterList() {
             let input = document.getElementById('searchInput');
             let filter = input.value.toLowerCase();
@@ -391,7 +504,6 @@ $inventoryList = $pdo->query("
             let rows = container.getElementsByClassName('inventory-row');
 
             for (let i = 0; i < rows.length; i++) {
-                // A .info-text osztályú div tartalmát keressük
                 let infoDiv = rows[i].querySelector('.info-text');
                 if (infoDiv) {
                     let txtValue = infoDiv.textContent || infoDiv.innerText;
@@ -400,6 +512,28 @@ $inventoryList = $pdo->query("
                     } else {
                         rows[i].style.display = "none";
                     }
+                }
+            }
+        }
+
+        // 2. Termék szűrő (ÚJ)
+        function filterProducts() {
+            let input = document.getElementById('productSearchInput');
+            let filter = input.value.toLowerCase();
+            let container = document.getElementById('productListContainer');
+            let rows = container.getElementsByClassName('product-row');
+
+            for (let i = 0; i < rows.length; i++) {
+                // Keresünk névben és cikkszámban
+                let nameField = rows[i].querySelector('.prod-name input').value;
+                let itemNumField = rows[i].querySelector('.prod-item-num input').value;
+                
+                let textToSearch = nameField + " " + itemNumField;
+
+                if (textToSearch.toLowerCase().indexOf(filter) > -1) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
                 }
             }
         }

@@ -1,3 +1,13 @@
+<?php 
+    session_start();
+    include './config.php';
+    require "./components/auth_check.php";
+    authorize(['admin','owner','user']);
+
+    include './components/navbar.php'; 
+?>
+
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -7,8 +17,6 @@
     <link rel="stylesheet" href="./style/style.css">
 </head>
 <body>
-
-<?php include './components/navbar.php'; ?>
 
 <main class="container">
 

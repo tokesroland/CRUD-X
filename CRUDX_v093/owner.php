@@ -1,8 +1,8 @@
 <?php
+session_start();
 include 'config.php';
-
-// Jogosultság ellenőrzése
-// requireRole(['owner']); 
+require "./components/auth_check.php";
+authorize(['owner']);
 
 $message = "";
 

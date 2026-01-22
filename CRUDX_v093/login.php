@@ -20,19 +20,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row && password_verify($pass, $row['password'])) {
-
             if ($row['active'] == 0) {
                 $error = "A fiók inaktív. Fordulj az adminisztrátorhoz!";
             } else {
                 // Sikeres login
-                $_SESSION['user_id'] = $row['id'];
+                $_SESSION['user_id'] = $row['ID'];
                 $_SESSION['username'] = $row['username'];
                 $_SESSION['role'] = $row['role'];
 
-                // last_login frissítése
-                $pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = ?")->execute([$row['id']]);
+                // login_at frissítése
+                $pdo->prepare("UPDATE users SET login_at = NOW() WHERE ID = ?")->execute([$row['ID']]);
 
-                header("Location: products.php");
+                header("Location: index.php");
                 exit;
             }
 
@@ -126,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
-    <form action="" method="POST">
+    <form action="#" method="POST">
 
         <div class="login-field">
             <label for="username">Felhasználónév</label>
@@ -138,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="password" name="password" id="password" placeholder="••••••••">
         </div>
 
-        <button class="btn" style="width: 100%; margin-top: 0.5rem;">Bejelentkezés</button>
+        <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">Bejelentkezés</button>
     </form>
 
 </div>
