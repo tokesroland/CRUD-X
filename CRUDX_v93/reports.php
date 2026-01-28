@@ -148,6 +148,8 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
 
 </main>
 
+<?php include './components/footer.php'; ?>
+
 <script>
     // Plugin regisztrálása
     Chart.register(ChartDataLabels);

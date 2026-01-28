@@ -115,9 +115,7 @@ if (!file_exists($imagePath)) {
 
 </main>
 
-<footer class="footer">
-    CRUD-X © 2025
-</footer>
+<?php include './components/footer.php'; ?>
 
 </body>
 </html>

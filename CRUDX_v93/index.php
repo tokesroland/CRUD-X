@@ -247,9 +247,7 @@
     </div>
 </main>
 
-<footer class="footer">
-    CRUD-X Raktárkezelő &copy; <?= date('Y') ?>
-</footer>
+<?php include './components/footer.php'; ?>
 
 <script>
     // Tab kezelő funkció

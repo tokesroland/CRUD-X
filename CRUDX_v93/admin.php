@@ -495,9 +495,7 @@ $inventoryList = $pdo->query("
 
     </main>
 
-    <footer class="footer">
-        CRUD-X Raktárkezelő &copy; <?= date('Y') ?>
-    </footer>
+    <?php include './components/footer.php'; ?>
 
     <script>
         // 1. Készlet szűrő

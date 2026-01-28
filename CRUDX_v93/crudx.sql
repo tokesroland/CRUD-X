@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2026. Jan 22. 20:45
+-- Létrehozás ideje: 2026. Jan 28. 14:29
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -82,8 +82,8 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (2, 41, 22, 41, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (4, 41, 24, 7, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (5, 42, 21, 54, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(6, 42, 22, 18, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(7, 42, 23, 133, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
+(6, 42, 22, 29, 2, '2026-01-21 10:56:53', '2026-01-28 14:11:08'),
+(7, 42, 23, 122, 6, '2026-01-21 10:56:53', '2026-01-28 14:11:08'),
 (8, 42, 24, 66, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (9, 43, 21, 27, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (10, 43, 22, 51, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
@@ -122,8 +122,8 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (47, 52, 23, 7, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (48, 52, 24, 73, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (49, 53, 21, 116, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(50, 53, 22, 42, 100, '2026-01-21 10:56:53', '2026-01-21 13:27:09'),
-(51, 53, 23, 97, 5, '2026-01-21 10:56:53', '2026-01-21 11:37:06'),
+(50, 53, 22, 52, 100, '2026-01-21 10:56:53', '2026-01-28 14:11:08'),
+(51, 53, 23, 87, 5, '2026-01-21 10:56:53', '2026-01-28 14:11:08'),
 (52, 53, 24, 129, 7, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (53, 54, 21, 95, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (54, 54, 22, 58, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
@@ -156,11 +156,11 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (81, 51, 23, 200, 40, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (82, 41, 21, 120, 10, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (83, 42, 21, 50, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(84, 42, 22, 30, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
+(84, 42, 22, 41, 5, '2026-01-21 10:56:53', '2026-01-28 14:11:08'),
 (85, 43, 23, 0, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (86, 41, 21, 120, 10, '2026-01-21 10:57:06', '2026-01-21 10:57:06'),
 (87, 42, 21, 50, 5, '2026-01-21 10:57:06', '2026-01-21 10:57:06'),
-(88, 42, 22, 30, 5, '2026-01-21 10:57:06', '2026-01-21 10:57:06'),
+(88, 42, 22, 41, 5, '2026-01-21 10:57:06', '2026-01-28 14:11:08'),
 (89, 43, 23, 0, 2, '2026-01-21 10:57:06', '2026-01-21 10:57:06'),
 (90, 45, 23, 100, 10, '2026-01-21 11:04:38', '2026-01-22 20:06:34'),
 (91, 64, 21, 120, NULL, '2026-01-21 11:58:12', NULL),
@@ -234,24 +234,29 @@ CREATE TABLE `transports` (
   `date` datetime NOT NULL DEFAULT current_timestamp(),
   `user_ID` int(11) NOT NULL,
   `description` text NOT NULL,
-  `arriveIn` date DEFAULT NULL
+  `arriveIn` date DEFAULT NULL,
+  `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `transports`
 --
 
-INSERT INTO `transports` (`ID`, `batch_id`, `product_ID`, `warehouse_ID`, `type`, `date`, `user_ID`, `description`, `arriveIn`) VALUES
-(1, 'TR-1769108616-95A6', 60, 21, 'export', '2026-01-22 20:03:36', 12, 'Kiszállítás cél: Raktár #24. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23'),
-(2, 'TR-1769108616-95A6', 60, 24, 'import', '2026-01-22 20:03:36', 12, 'Beérkezés forrás: Raktár #21. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23'),
-(3, 'TR-1769108616-95A6', 48, 21, 'export', '2026-01-22 20:03:36', 12, 'Kiszállítás cél: Raktár #24. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23'),
-(4, 'TR-1769108616-95A6', 48, 24, 'import', '2026-01-22 20:03:36', 12, 'Beérkezés forrás: Raktár #21. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23'),
-(5, 'TR-1769108794-88FE', 59, 23, 'export', '2026-01-22 20:06:34', 12, 'Kiszállítás cél: Raktár #26. (Nagy János - SJF-834)', '2026-01-24'),
-(6, 'TR-1769108794-88FE', 59, 26, 'import', '2026-01-22 20:06:34', 12, 'Beérkezés forrás: Raktár #23. (Nagy János - SJF-834)', '2026-01-24'),
-(7, 'TR-1769108794-88FE', 45, 23, 'export', '2026-01-22 20:06:34', 12, 'Kiszállítás cél: Raktár #26. (Nagy János - SJF-834)', '2026-01-24'),
-(8, 'TR-1769108794-88FE', 45, 26, 'import', '2026-01-22 20:06:34', 12, 'Beérkezés forrás: Raktár #23. (Nagy János - SJF-834)', '2026-01-24'),
-(9, 'TR-1769108932-2160', 58, 24, 'export', '2026-01-22 20:08:52', 12, 'Kiszállítás cél: Raktár #27. (Ford transit Rendszám: ZZA-211 B épület)', '2222-02-22'),
-(10, 'TR-1769108932-2160', 58, 27, 'import', '2026-01-22 20:08:52', 12, 'Beérkezés forrás: Raktár #24. (Ford transit Rendszám: ZZA-211 B épület)', '2222-02-22');
+INSERT INTO `transports` (`ID`, `batch_id`, `product_ID`, `warehouse_ID`, `type`, `date`, `user_ID`, `description`, `arriveIn`, `quantity`) VALUES
+(1, 'TR-1769108616-95A6', 60, 21, 'export', '2026-01-22 20:03:36', 12, 'Kiszállítás cél: Raktár #24. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23', 0),
+(2, 'TR-1769108616-95A6', 60, 24, 'import', '2026-01-22 20:03:36', 12, 'Beérkezés forrás: Raktár #21. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23', 0),
+(3, 'TR-1769108616-95A6', 48, 21, 'export', '2026-01-22 20:03:36', 12, 'Kiszállítás cél: Raktár #24. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23', 0),
+(4, 'TR-1769108616-95A6', 48, 24, 'import', '2026-01-22 20:03:36', 12, 'Beérkezés forrás: Raktár #21. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23', 0),
+(5, 'TR-1769108794-88FE', 59, 23, 'export', '2026-01-22 20:06:34', 12, 'Kiszállítás cél: Raktár #26. (Nagy János - SJF-834)', '2026-01-24', 0),
+(6, 'TR-1769108794-88FE', 59, 26, 'import', '2026-01-22 20:06:34', 12, 'Beérkezés forrás: Raktár #23. (Nagy János - SJF-834)', '2026-01-24', 0),
+(7, 'TR-1769108794-88FE', 45, 23, 'export', '2026-01-22 20:06:34', 12, 'Kiszállítás cél: Raktár #26. (Nagy János - SJF-834)', '2026-01-24', 0),
+(8, 'TR-1769108794-88FE', 45, 26, 'import', '2026-01-22 20:06:34', 12, 'Beérkezés forrás: Raktár #23. (Nagy János - SJF-834)', '2026-01-24', 0),
+(9, 'TR-1769108932-2160', 58, 24, 'export', '2026-01-22 20:08:52', 12, 'Kiszállítás cél: Raktár #27. (Ford transit Rendszám: ZZA-211 B épület)', '2222-02-22', 0),
+(10, 'TR-1769108932-2160', 58, 27, 'import', '2026-01-22 20:08:52', 12, 'Beérkezés forrás: Raktár #24. (Ford transit Rendszám: ZZA-211 B épület)', '2222-02-22', 0),
+(11, 'TR-1769605868-8DD4', 53, 23, 'export', '2026-01-28 14:11:08', 12, 'Kiszállítás cél: Raktár #22. (XAW-241)', '2026-01-28', 10),
+(12, 'TR-1769605868-8DD4', 53, 22, 'import', '2026-01-28 14:11:08', 12, 'Beérkezés forrás: Raktár #23. (XAW-241)', '2026-01-28', 10),
+(13, 'TR-1769605868-8DD4', 42, 23, 'export', '2026-01-28 14:11:08', 12, 'Kiszállítás cél: Raktár #22. (XAW-241)', '2026-01-28', 11),
+(14, 'TR-1769605868-8DD4', 42, 22, 'import', '2026-01-28 14:11:08', 12, 'Beérkezés forrás: Raktár #23. (XAW-241)', '2026-01-28', 11);
 
 -- --------------------------------------------------------
 
@@ -274,9 +279,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `created_at`, `login_at`) VALUES
-(5, 'rol', 1, '$2y$10$j9qb4sLStP9kTu8J9gporue3Qp.YWYK5.0.sHVKcBhzBAJC8EFwZa', 'admin', '2026-01-21 15:02:35', '2026-01-22 13:43:04'),
-(11, '1', 1, '$2y$10$/2axDqJKNMX9DCt5uSJTleD3PY0s2BP2DU6eMMzKonXDKThXirzHK', 'user', '2026-01-21 15:08:42', '2026-01-22 20:22:32'),
-(12, 'Tőkés Roland', 1, '$2y$10$1LLVsSxLFWUnChal0TUg1OsDZi3uhjv3d0H1YYjrdBih2S5OYHPjy', 'owner', '2026-01-22 13:40:39', '2026-01-22 20:23:10');
+(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', '2026-01-21 15:02:35', '2026-01-28 14:14:33'),
+(11, '1', 0, '$2y$10$YcjVjbxum.kRWHYKRLuIC.RV9.rZnq88.TTNh7u.JhMjstG.l0zY.', 'user', '2026-01-21 15:08:42', '2026-01-22 20:22:32'),
+(12, 'Tőkés Roland', 1, '$2y$10$1LLVsSxLFWUnChal0TUg1OsDZi3uhjv3d0H1YYjrdBih2S5OYHPjy', 'owner', '2026-01-22 13:40:39', '2026-01-28 14:13:49');
 
 -- --------------------------------------------------------
 
@@ -289,24 +294,26 @@ CREATE TABLE `warehouses` (
   `name` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
   `max_quantity` int(20) NOT NULL,
-  `type` enum('warehouse','store') NOT NULL
+  `type` enum('warehouse','store') NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `warehouses`
 --
 
-INSERT INTO `warehouses` (`ID`, `name`, `address`, `max_quantity`, `type`) VALUES
-(21, 'Központi Raktár', 'Budapest, Fő utca 12.', 20000, 'warehouse'),
-(22, 'Északi Logisztikai Központ', 'Győr, Ipari park 5.', 50000, 'warehouse'),
-(23, 'Déli Regionális Raktár', 'Pécs, Logisztikai út 8.', 50000, 'warehouse'),
-(24, 'Keleti Elosztó', 'Debrecen, Külső-Böszörményi út 44.', 100000, 'warehouse'),
-(25, 'Nyugati Raktárbázis', 'Szombathely, Bevásárló köz 2.', 54000, 'warehouse'),
-(26, 'Mini Depó 1', 'Székesfehérvár, Seregélyesi út 19.', 40000, 'warehouse'),
-(27, 'Mini Depó 2', 'Kecskemét, Vágóhíd utca 7.', 5000, 'warehouse'),
-(28, 'High-Tech Raktár', 'Budapest, Üllői út 215.', 5660, 'warehouse'),
-(29, 'Készletközpont 1', 'Miskolc, Szentpéteri kapu 103.', 60000, 'warehouse'),
-(30, 'Készletközpont 2', 'Szeged, Dorozsmai út 33.', 40000, 'warehouse');
+INSERT INTO `warehouses` (`ID`, `name`, `address`, `max_quantity`, `type`, `active`) VALUES
+(21, 'Központi Raktár', 'Budapest, Fő utca 12.', 20000, 'warehouse', 1),
+(22, 'Északi Logisztikai Központ', 'Győr, Ipari park 5.', 50000, 'warehouse', 1),
+(23, 'Déli Regionális Raktár', 'Pécs, Logisztikai út 8.', 50000, 'warehouse', 1),
+(24, 'Keleti Elosztó', 'Debrecen, Külső-Böszörményi út 44.', 100000, 'warehouse', 1),
+(25, 'Nyugati Raktárbázis', 'Szombathely, Bevásárló köz 2.', 54000, 'warehouse', 1),
+(26, 'Mini Depó 1', 'Székesfehérvár, Seregélyesi út 19.', 40000, 'warehouse', 1),
+(27, 'Mini Depó 2', 'Kecskemét, Vágóhíd utca 7.', 5000, 'warehouse', 1),
+(28, 'High-Tech Raktár', 'Budapest, Üllői út 215.', 5660, 'warehouse', 1),
+(29, 'Készletközpont 1', 'Miskolc, Szentpéteri kapu 103.', 60000, 'warehouse', 1),
+(30, 'Készletközpont 2', 'Szeged, Dorozsmai út 33.', 40000, 'warehouse', 1),
+(31, 'Keleti CRUD Üzlet', '1214 Mars u. 16.', 6800, 'store', 1);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -383,7 +390,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT a táblához `transports`
 --
 ALTER TABLE `transports`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT a táblához `users`
@@ -395,7 +402,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT a táblához `warehouses`
 --
 ALTER TABLE `warehouses`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- Megkötések a kiírt táblákhoz

@@ -2,10 +2,11 @@
 session_start();
 include 'config.php';
 require "./components/auth_check.php";
-authorize(['admin', 'owner']); // Csak admin és tulajdonos szállíthat
-$pageTitle = "Szállítások";
+authorize(['admin', 'owner']); // Csak admin és tulajdonos indíthat szállítást
+
+$pageTitle = "Szállítás";
 $activePage = "transports.php";
-include './components/navbar.php';
+include './components/navbar.php'; 
 
 $message = "";
 $msgType = "";
@@ -19,20 +20,19 @@ function generateBatchId() {
 // 1. KOSÁR MŰVELETEK (SESSION KEZELÉS)
 // --------------------------------------------------------
 
-// Kosár inicializálása, ha még nincs
 if (!isset($_SESSION['transport_cart'])) {
     $_SESSION['transport_cart'] = [
-        'source_wh' => null,  // Honnan
-        'items' => []         // Termékek listája
+        'source_wh' => null, 
+        'items' => []        
     ];
 }
 
-// 1.A - Forrás raktár kiválasztása (Lockoljuk a kosarat ehhez a raktárhoz)
+// 1.A - Forrás raktár kiválasztása
 if (isset($_POST['set_source'])) {
     if (empty($_SESSION['transport_cart']['items'])) {
         $_SESSION['transport_cart']['source_wh'] = (int)$_POST['source_wh_id'];
     } else {
-        $message = "A forrás raktár nem módosítható, amíg van termék a listában! Előbb ürítsd a listát.";
+        $message = "A forrás raktár nem módosítható, amíg van termék a listában!";
         $msgType = "danger";
     }
 }
@@ -41,15 +41,13 @@ if (isset($_POST['set_source'])) {
 if (isset($_POST['add_item'])) {
     $prodId = (int)$_POST['product_id'];
     $qty = (int)$_POST['quantity'];
-    $prodName = $_POST['product_name']; // Rejtett mezőből jön a név, hogy ne kelljen lekérdezni újra
+    $prodName = $_POST['product_name']; 
 
-    // Validáció: Van-e elég készlet?
     $stmt = $pdo->prepare("SELECT quantity FROM inventory WHERE product_ID = ? AND warehouse_ID = ?");
     $stmt->execute([$prodId, $_SESSION['transport_cart']['source_wh']]);
     $stock = $stmt->fetchColumn();
 
     if ($stock >= $qty && $qty > 0) {
-        // Hozzáadás (vagy növelés ha már benne van)
         if (isset($_SESSION['transport_cart']['items'][$prodId])) {
             $_SESSION['transport_cart']['items'][$prodId]['qty'] += $qty;
         } else {
@@ -58,9 +56,8 @@ if (isset($_POST['add_item'])) {
                 'qty' => $qty
             ];
         }
-        // Ellenőrizzük újra, nem léptük-e túl a keretet összesítve
         if ($_SESSION['transport_cart']['items'][$prodId]['qty'] > $stock) {
-            $_SESSION['transport_cart']['items'][$prodId]['qty'] = $stock; // Maxoljuk a készletre
+            $_SESSION['transport_cart']['items'][$prodId]['qty'] = $stock; 
             $message = "A mennyiséget a maximális készletre korlátoztuk.";
             $msgType = "warning";
         }
@@ -74,11 +71,11 @@ if (isset($_POST['add_item'])) {
 if (isset($_GET['remove_item'])) {
     $remId = (int)$_GET['remove_item'];
     unset($_SESSION['transport_cart']['items'][$remId]);
-    header("Location: transports.php"); // Tiszta URL újratöltés
+    header("Location: transports.php"); 
     exit;
 }
 
-// 1.D - Kosár ürítése (Újra lehet forrást választani)
+// 1.D - Kosár ürítése
 if (isset($_POST['clear_cart'])) {
     $_SESSION['transport_cart'] = ['source_wh' => null, 'items' => []];
     header("Location: transports.php");
@@ -86,14 +83,14 @@ if (isset($_POST['clear_cart'])) {
 }
 
 // --------------------------------------------------------
-// 2. TRANZAKCIÓ VÉGLEGESÍTÉSE (MENTÉS AZ ADATBÁZISBA)
+// 2. TRANZAKCIÓ VÉGLEGESÍTÉSE ÉS NAPLÓZÁS
 // --------------------------------------------------------
 if (isset($_POST['finalize_transport'])) {
     if (empty($_SESSION['transport_cart']['items'])) {
         $message = "A lista üres!";
         $msgType = "danger";
     } elseif (empty($_POST['target_wh_id']) || $_POST['target_wh_id'] == $_SESSION['transport_cart']['source_wh']) {
-        $message = "Érvénytelen célraktár! (Nem lehet ugyanaz, mint a forrás)";
+        $message = "Érvénytelen célraktár!";
         $msgType = "danger";
     } else {
         try {
@@ -104,9 +101,8 @@ if (isset($_POST['finalize_transport'])) {
             $description = $_POST['description'] ?? 'Átszállítás';
             $arriveDate = !empty($_POST['arrive_date']) ? $_POST['arrive_date'] : null;
             
-            // 5. PONT: Batch ID generálás
             $batchId = generateBatchId(); 
-            $userId = $_SESSION['user_id']; // Naplózás: Ki csinálta?
+            $userId = $_SESSION['user_id']; 
 
             foreach ($_SESSION['transport_cart']['items'] as $pId => $item) {
                 $qty = $item['qty'];
@@ -115,8 +111,7 @@ if (isset($_POST['finalize_transport'])) {
                 $stmtSub = $pdo->prepare("UPDATE inventory SET quantity = quantity - ?, updated_at = NOW() WHERE product_ID = ? AND warehouse_ID = ?");
                 $stmtSub->execute([$qty, $pId, $sourceWh]);
 
-                // 2. Cél növelése (vagy létrehozása)
-                // Megnézzük, van-e már ilyen termék a célraktárban
+                // 2. Cél növelése
                 $stmtCheck = $pdo->prepare("SELECT ID FROM inventory WHERE product_ID = ? AND warehouse_ID = ?");
                 $stmtCheck->execute([$pId, $targetWh]);
                 $exists = $stmtCheck->fetch();
@@ -129,44 +124,38 @@ if (isset($_POST['finalize_transport'])) {
                     $stmtIns->execute([$pId, $targetWh, $qty]);
                 }
 
-                // 3. Naplózás a transports táblába (EXPORT oldal)
+                // 3. Naplózás (EXPORT) - quantity oszloppal!
                 $logExport = $pdo->prepare("
-                    INSERT INTO transports (batch_id, product_ID, warehouse_ID, type, date, user_ID, description, arriveIn) 
-                    VALUES (?, ?, ?, 'export', NOW(), ?, ?, ?)
+                    INSERT INTO transports (batch_id, product_ID, warehouse_ID, type, quantity, date, user_ID, description, arriveIn) 
+                    VALUES (?, ?, ?, 'export', ?, NOW(), ?, ?, ?)
                 ");
                 $descExport = "Kiszállítás cél: Raktár #$targetWh. ($description)";
-                $logExport->execute([$batchId, $pId, $sourceWh, $userId, $descExport, $arriveDate]);
+                $logExport->execute([$batchId, $pId, $sourceWh, $qty, $userId, $descExport, $arriveDate]);
 
-                // 4. Naplózás a transports táblába (IMPORT oldal)
+                // 4. Naplózás (IMPORT) - quantity oszloppal!
                 $logImport = $pdo->prepare("
-                    INSERT INTO transports (batch_id, product_ID, warehouse_ID, type, date, user_ID, description, arriveIn) 
-                    VALUES (?, ?, ?, 'import', NOW(), ?, ?, ?)
+                    INSERT INTO transports (batch_id, product_ID, warehouse_ID, type, quantity, date, user_ID, description, arriveIn) 
+                    VALUES (?, ?, ?, 'import', ?, NOW(), ?, ?, ?)
                 ");
                 $descImport = "Beérkezés forrás: Raktár #$sourceWh. ($description)";
-                $logImport->execute([$batchId, $pId, $targetWh, $userId, $descImport, $arriveDate]);
+                $logImport->execute([$batchId, $pId, $targetWh, $qty, $userId, $descImport, $arriveDate]);
             }
 
             $pdo->commit();
-            
-            // Siker esetén kosár ürítése
             $_SESSION['transport_cart'] = ['source_wh' => null, 'items' => []];
             $message = "A szállítás sikeresen rögzítve! Azonosító: $batchId";
             $msgType = "success";
 
         } catch (Exception $e) {
             $pdo->rollBack();
-            $message = "Hiba a tranzakció során: " . $e->getMessage();
+            $message = "Hiba: " . $e->getMessage();
             $msgType = "danger";
         }
     }
 }
 
-// --------------------------------------------------------
-// ADATOK LEKÉRÉSE A MEGJELENÍTÉSHEZ
-// --------------------------------------------------------
 $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 
-// Ha van kiválasztva forrás, lekérjük az ottani készletet a választóhoz
 $sourceInventory = [];
 if ($_SESSION['transport_cart']['source_wh']) {
     $stmtSrc = $pdo->prepare("
@@ -191,9 +180,8 @@ if ($_SESSION['transport_cart']['source_wh']) {
 <body>
 
 <main class="container">
-
     <div class="card-header">
-        <h2>🚚 Készlet Átszállítás (Admin)</h2>
+        <h2>🚚 Készlet Átszállítás</h2>
     </div>
 
     <?php if ($message): ?>
@@ -209,7 +197,6 @@ if ($_SESSION['transport_cart']['source_wh']) {
         <h3>1. Honnan indul az áru?</h3>
         <?php if ($_SESSION['transport_cart']['source_wh']): ?>
             <?php 
-                // Keressük meg a nevet a listából
                 $sourceName = "Ismeretlen";
                 foreach($warehouses as $w) { if($w['ID'] == $_SESSION['transport_cart']['source_wh']) $sourceName = $w['name']; }
             ?>
@@ -218,11 +205,8 @@ if ($_SESSION['transport_cart']['source_wh']) {
                     <strong>Kiválasztott forrás:</strong> <br> 
                     <span style="font-size:1.2em; color:#0284c7;"><?= htmlspecialchars($sourceName) ?></span>
                 </div>
-                
                 <form method="POST">
-                    <button type="submit" name="clear_cart" class="btn btn-outline danger" onclick="return confirm('Biztosan törlöd a teljes listát és új raktárat választasz?')">
-                        Módosítás / Ürítés
-                    </button>
+                    <button type="submit" name="clear_cart" class="btn btn-outline danger" onclick="return confirm('Biztosan üríted a listát?')">Módosítás / Ürítés</button>
                 </form>
             </div>
         <?php else: ?>
@@ -243,134 +227,94 @@ if ($_SESSION['transport_cart']['source_wh']) {
 
     <?php if ($_SESSION['transport_cart']['source_wh']): ?>
     <div class="management-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-        
         <section class="card">
             <h3>2. Termékek hozzáadása</h3>
             <form method="POST">
                 <div class="field" style="margin-bottom:15px;">
-                    <label>Válassz terméket (csak ami készleten van):</label>
+                    <label>Válassz terméket:</label>
                     <select name="product_id" id="productSelect" required onchange="updateMaxQty()">
                         <option value="" data-qty="0">-- Válassz --</option>
                         <?php foreach($sourceInventory as $prod): ?>
                             <option value="<?= $prod['ID'] ?>" data-qty="<?= $prod['quantity'] ?>" data-name="<?= htmlspecialchars($prod['name']) ?>">
-                                <?= htmlspecialchars($prod['name']) ?> (Cikkszám: <?= $prod['item_number'] ?>) - Készleten: <?= $prod['quantity'] ?> db
+                                <?= htmlspecialchars($prod['name']) ?> - Készleten: <?= $prod['quantity'] ?> db
                             </option>
                         <?php endforeach; ?>
                     </select>
                     <input type="hidden" name="product_name" id="productNameHidden">
                 </div>
-
                 <div class="field" style="margin-bottom:15px;">
                     <label>Mennyiség:</label>
-                    <input type="number" name="quantity" id="qtyInput" min="1" max="1" required placeholder="0">
-                    <small style="color:#666;" id="maxQtyHint">Válassz terméket a készlet megtekintéséhez.</small>
+                    <input type="number" name="quantity" id="qtyInput" min="1" required>
+                    <small id="maxQtyHint">Válassz terméket...</small>
                 </div>
-
-                <button type="submit" name="add_item" class="btn btn-outline" style="width:100%;">+ Hozzáadás a szállítmányhoz</button>
+                <button type="submit" name="add_item" class="btn btn-outline" style="width:100%;">+ Hozzáadás</button>
             </form>
         </section>
 
-        <section class="card" style="border: 2px solid var(--primary);">
-            <div style="background:var(--primary); color:white; padding:10px; margin:-1.5rem -1.5rem 1rem -1.5rem; border-radius: 10px 10px 0 0;">
-                <h3 style="margin:0;">3. Szállítmány tartalma</h3>
-            </div>
-
+        <section class="card">
+            <h3 style="margin-bottom:15px;">3. Szállítmány tartalma</h3>
             <?php if (empty($_SESSION['transport_cart']['items'])): ?>
-                <div style="text-align:center; padding:20px; color:#aaa;">
-                    Még nincs termék a listában.
-                </div>
+                <p style="text-align:center; color:#aaa;">A lista üres.</p>
             <?php else: ?>
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Termék</th>
-                            <th>Mennyiség</th>
-                            <th></th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Termék</th><th>Mennyiség</th><th></th></tr></thead>
                     <tbody>
                         <?php foreach($_SESSION['transport_cart']['items'] as $pid => $item): ?>
                             <tr>
                                 <td><?= htmlspecialchars($item['name']) ?></td>
-                                <td style="font-weight:bold; font-size:1.1em;"><?= $item['qty'] ?> db</td>
-                                <td style="text-align:right;">
-                                    <a href="transports.php?remove_item=<?= $pid ?>" style="color:red;">&times; Törlés</a>
-                                </td>
+                                <td><?= $item['qty'] ?> db</td>
+                                <td><a href="transports.php?remove_item=<?= $pid ?>" style="color:red;">Törlés</a></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php endif; ?>
         </section>
-
     </div>
 
     <?php if (!empty($_SESSION['transport_cart']['items'])): ?>
-        <section class="card" style="margin-top:20px; background:#f8fafc;">
-            <h3>4. Hova és hogyan? (Véglegesítés)</h3>
+        <section class="card" style="margin-top:20px;">
+            <h3>4. Véglegesítés</h3>
             <form method="POST">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
                     <div class="field">
-                        <label>Célállomás (Hova érkezik):</label>
+                        <label>Célállomás:</label>
                         <select name="target_wh_id" required>
-                            <option value="">-- Válassz célraktárat --</option>
+                            <option value="">-- Válassz --</option>
                             <?php foreach($warehouses as $w): ?>
                                 <?php if($w['ID'] != $_SESSION['transport_cart']['source_wh']): ?>
-                                    <option value="<?= $w['ID'] ?>"><?= htmlspecialchars($w['name']) ?> (<?= $w['type'] ?>)</option>
+                                    <option value="<?= $w['ID'] ?>"><?= htmlspecialchars($w['name']) ?></option>
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    
-                    <div class="field">
-                        <label>Várható érkezés (Opcionális):</label>
-                        <input type="date" name="arrive_date" min="<?= date('Y-m-d') ?>">
-                    </div>
-
+                    <div class="field"><label>Várható érkezés:</label><input type="date" name="arrive_date"></div>
                     <div class="field col-12" style="grid-column: span 2;">
-                        <label>Megjegyzés / Jármű rendszám / Szállító:</label>
-                        <input type="text" name="description" placeholder="Pl. Ford Transit ABC-123, Sofőr: Nagy János..." required>
+                        <label>Megjegyzés:</label>
+                        <input type="text" name="description" required>
                     </div>
                 </div>
-
-                <hr style="margin:20px 0; border:0; border-top:1px solid #ddd;">
-
-                <div style="text-align:right;">
-                    <button type="submit" name="finalize_transport" class="btn" style="padding:12px 24px; font-size:1.1em;">
-                        🚀 Szállítás Indítása & Készletmozgatás
-                    </button>
+                <div style="text-align:right; margin-top:20px;">
+                    <button type="submit" name="finalize_transport" class="btn">🚀 Szállítás Indítása</button>
                 </div>
             </form>
         </section>
     <?php endif; ?>
-
     <?php endif; ?>
-
 </main>
 
+<?php include './components/footer.php'; ?>
+
 <script>
-    // Kis JS segédlet, hogy a mennyiség ne lehessen több, mint a készlet
     function updateMaxQty() {
         const select = document.getElementById('productSelect');
-        const selectedOption = select.options[select.selectedIndex];
-        const maxQty = selectedOption.getAttribute('data-qty');
-        const prodName = selectedOption.getAttribute('data-name');
-        const qtyInput = document.getElementById('qtyInput');
+        const opt = select.options[select.selectedIndex];
+        const max = opt.getAttribute('data-qty');
+        const qtyInp = document.getElementById('qtyInput');
         const hint = document.getElementById('maxQtyHint');
-        const hiddenName = document.getElementById('productNameHidden');
-
-        if (maxQty) {
-            qtyInput.max = maxQty;
-            qtyInput.value = 1;
-            hint.textContent = "Elérhető készlet: " + maxQty + " db";
-            hiddenName.value = prodName;
-        } else {
-            qtyInput.removeAttribute('max');
-            hint.textContent = "Válassz terméket...";
-            hiddenName.value = "";
-        }
+        document.getElementById('productNameHidden').value = opt.getAttribute('data-name');
+        if (max) { qtyInp.max = max; qtyInp.value = 1; hint.textContent = "Max: " + max + " db"; }
     }
 </script>
-
 </body>
 </html>

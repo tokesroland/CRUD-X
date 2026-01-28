@@ -22,16 +22,23 @@ $warehouses = $pdo->query("SELECT ID, name FROM warehouses ORDER BY name ASC")->
 
 /**
  * ----------------------------
- * Terméklista lekérdezés (szűrhető, aggregált készlettel)
+ * Mennyiségi mező meghatározása a szűréshez
+ * ----------------------------
+ */
+// Ha van raktár azonosító, akkor csak az adott raktár SUM(quantity)-jét nézzük, egyébként a globálisat.
+if ($warehouse_ID > 0) {
+    $qtySqlSnippet = "SUM(CASE WHEN i.warehouse_ID = :warehouse_ID THEN i.quantity ELSE 0 END)";
+} else {
+    $qtySqlSnippet = "COALESCE(SUM(i.quantity), 0)";
+}
+
+/**
+ * ----------------------------
+ * Terméklista lekérdezés
  * ----------------------------
  */
 $params = [];
-$where = [];
-
-$sqlSelectExtra = "NULL AS wh_qty";
 if ($warehouse_ID > 0) {
-    // kiválasztott raktár készlete termékenként
-    $sqlSelectExtra = "SUM(CASE WHEN i.warehouse_ID = :warehouse_ID THEN i.quantity ELSE 0 END) AS wh_qty";
     $params[':warehouse_ID'] = $warehouse_ID;
 }
 
@@ -43,22 +50,22 @@ $sql = "
         p.description,
         p.active,
         c.category_name,
-        COALESCE(SUM(i.quantity), 0) AS total_qty,
-        $sqlSelectExtra
+        COALESCE(SUM(i.quantity), 0) AS global_total_qty,
+        $qtySqlSnippet AS display_qty
     FROM products p
     LEFT JOIN categories c ON c.ID = p.category_ID
     LEFT JOIN inventory i ON i.product_ID = p.ID
 ";
 
-/** WHERE feltételek (nem aggregáltak) */
+$where = [];
 if ($category_ID > 0) {
     $where[] = "p.category_ID = :category_ID";
     $params[':category_ID'] = $category_ID;
 }
 if ($item_number !== '') {
-    // item_number int a táblában, ezért egyezésre szűrünk
-    $where[] = "p.item_number = :item_number";
-    $params[':item_number'] = (int)$item_number;
+    // Stringként kezeljük, hogy a kötőjeles cikkszámok is működjenek
+    $where[] = "p.item_number LIKE :item_number";
+    $params[':item_number'] = "%{$item_number}%";
 }
 if ($name !== '') {
     $where[] = "p.name LIKE :name";
@@ -79,32 +86,29 @@ if (!empty($where)) {
 
 $sql .= " GROUP BY p.ID";
 
-/** HAVING feltételek (aggregáltak: készlet, mennyiség) */
+/** HAVING feltételek (Készlet szűrése a display_qty alapján) */
 $having = [];
 
 if ($stock === 'in') {
-    $having[] = "COALESCE(SUM(i.quantity), 0) > 0";
+    $having[] = "$qtySqlSnippet > 0";
 } elseif ($stock === 'out') {
-    $having[] = "COALESCE(SUM(i.quantity), 0) = 0";
+    $having[] = "$qtySqlSnippet = 0";
 }
 
-// Mennyiség szűrés: ha van warehouse_ID, akkor wh_qty alapján, különben total_qty alapján
-$qtyField = ($warehouse_ID > 0) ? "SUM(CASE WHEN i.warehouse_ID = :warehouse_ID THEN i.quantity ELSE 0 END)" : "COALESCE(SUM(i.quantity), 0)";
-
 if ($qty_min !== null) {
-    $having[] = "$qtyField >= :qty_min";
+    $having[] = "$qtySqlSnippet >= :qty_min";
     $params[':qty_min'] = $qty_min;
 }
 if ($qty_max !== null) {
-    $having[] = "$qtyField <= :qty_max";
+    $having[] = "$qtySqlSnippet <= :qty_max";
     $params[':qty_max'] = $qty_max;
 }
 
-// Ha raktár kiválasztva: opcionálisan csak azokat mutassuk, ahol abban a raktárban >0
-// (ha ezt nem kéred, töröld ezt a blokkot)
-if ($warehouse_ID > 0 && $stock === 'in') {
-    // ha kifejezetten "készleten" szűrsz és raktárt választottál, akkor abban a raktárban legyen készlet
-    $having[] = "SUM(CASE WHEN i.warehouse_ID = :warehouse_ID THEN i.quantity ELSE 0 END) > 0";
+// Fontos: Ha kiválasztottunk egy raktárt, de nem állítottunk be "nincs készleten" szűrőt,
+// akkor alapértelmezésben csak azokat mutassuk, amik ott vannak (ha ez az elvárás).
+// Ha minden terméket látni akarsz a 0-s értékkel is a raktár kiválasztásakor, ezt hagyd ki.
+if ($warehouse_ID > 0 && $stock === '') {
+    // $having[] = "$qtySqlSnippet > 0"; // Opcionális: csak a raktárban létező termékek
 }
 
 if (!empty($having)) {
@@ -119,14 +123,12 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /**
  * ----------------------------
- * Készlet részletek lekérése csak a listázott termékekhez (popuphoz)
+ * Készlet részletek a popuphoz
  * ----------------------------
  */
 $warehousesByProduct = [];
-
 if (!empty($products)) {
     $productIds = array_map(fn($p) => (int)$p['ID'], $products);
-
     $placeholders = implode(',', array_fill(0, count($productIds), '?'));
     $sqlInv = "
         SELECT i.product_ID, i.quantity, w.name AS warehouse_name

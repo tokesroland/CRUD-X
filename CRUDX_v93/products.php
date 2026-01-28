@@ -8,8 +8,6 @@ include 'components/filter.php';
 $activePage = "products.php";
 $pageTitle = "Termékek";
 include './components/navbar.php';
-
-
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -18,9 +16,6 @@ include './components/navbar.php';
     <title>CRUD-X – Termékek</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style/style.css?v=2.0">
-
-    <style>
-    </style>
 </head>
 
 <body>
@@ -32,7 +27,6 @@ include './components/navbar.php';
             <h2>📦 Terméklista</h2>
         </div>
 
-        <!-- SZŰRŐK -->
         <form method="get" class="filters">
             <div class="field col-3">
                 <label>Kategória</label>
@@ -48,7 +42,7 @@ include './components/navbar.php';
 
             <div class="field col-2">
                 <label>Cikkszám</label>
-                <input type="number" name="item_number" value="<?= htmlspecialchars($item_number) ?>" placeholder="pl. 100001">
+                <input type="text" name="item_number" value="<?= htmlspecialchars($item_number) ?>" placeholder="pl. ABC-123">
             </div>
 
             <div class="field col-3">
@@ -93,12 +87,12 @@ include './components/navbar.php';
 
             <div class="field col-2">
                 <label>Mennyiség min</label>
-                <input type="number" name="qty_min" value="<?= $qty_min !== null ? (int)$qty_min : '' ?>" placeholder="pl. 10">
+                <input type="number" name="qty_min" value="<?= $qty_min !== null ? (int)$qty_min : '' ?>" placeholder="0">
             </div>
 
             <div class="field col-2">
                 <label>Mennyiség max</label>
-                <input type="number" name="qty_max" value="<?= $qty_max !== null ? (int)$qty_max : '' ?>" placeholder="pl. 200">
+                <input type="number" name="qty_max" value="<?= $qty_max !== null ? (int)$qty_max : '' ?>" placeholder="9999">
             </div>
 
             <div class="actions col-3">
@@ -107,7 +101,7 @@ include './components/navbar.php';
             </div>
 
             <div class="col-12" style="opacity:.75;font-size:12px;">
-                Tipp: ha kiválasztasz egy raktárat, a min/max mennyiség arra a raktárra szűr. Ha nincs raktár kiválasztva, az összes raktár összegére szűr.
+                Tipp: ha kiválasztasz egy raktárat, a lista és a mennyiségek csak arra a raktárra vonatkoznak.
             </div>
         </form>
 
@@ -128,7 +122,8 @@ include './components/navbar.php';
                 <?php foreach ($products as $prod): ?>
                     <?php
                         $id = (int)$prod['ID'];
-                        $totalQty = (int)$prod['total_qty'];
+                        $displayQty = (int)$prod['display_qty']; // A szűrt mennyiség (raktár vagy globális)
+                        $globalTotal = (int)$prod['global_total_qty']; // Mindig a teljes készlet
                         $warehousesForProd = $warehousesByProduct[$id] ?? [];
                     ?>
                     <tr class="<?= (int)$prod['active'] === 1 ? '' : 'inactive-row' ?>">
@@ -138,25 +133,27 @@ include './components/navbar.php';
                         <td><?= htmlspecialchars($prod['category_name'] ?? 'Nincs kategória') ?></td>
 
                         <td>
-                            <?php if ($totalQty > 0): ?>
+                            <?php if ($displayQty > 0): ?>
                                 <div class="stock-wrapper">
                                     <button type="button" class="badge badge-success stock-btn" onclick="toggleStockPopup(<?= $id ?>, event)">
-                                        Készleten (<?= $totalQty ?> db)
+                                        Készleten (<?= $displayQty ?> db)
                                     </button>
 
                                     <div id="stock-popup-<?= $id ?>" class="popup-card">
-                                        <h3>Raktárkészlet</h3>
+                                        <h3>Raktárkészlet (Részletes)</h3>
                                         <?php foreach ($warehousesForProd as $wh): ?>
                                             <div class="row">
                                                 <strong><?= htmlspecialchars($wh['warehouse']) ?></strong>
                                                 <span><?= (int)$wh['quantity'] ?> db</span>
                                             </div>
                                         <?php endforeach; ?>
-                                        <div class="muted">Összesen: <?= $totalQty ?> db</div>
+                                        <div class="muted">Összesen (minden raktárban): <?= $globalTotal ?> db</div>
                                     </div>
                                 </div>
+                            <?php elseif ($warehouse_ID > 0 && $displayQty == 0): ?>
+                                <span class="badge badge-muted">Ebben a raktárban nincs</span>
                             <?php else: ?>
-                                <span class="badge badge-muted">Nincs készlet</span>
+                                <span class="badge badge-muted">Nincs készleten</span>
                             <?php endif; ?>
                         </td>
 
@@ -186,25 +183,18 @@ include './components/navbar.php';
 
 </main>
 
-<footer class="footer">
-        CRUD-X Raktárkezelő &copy; <?= date('Y') ?>
-</footer>
+<?php include './components/footer.php'; ?>
 
 <script>
 function toggleStockPopup(productId, event) {
     event.stopPropagation();
-
     const popup = document.getElementById('stock-popup-' + productId);
-
-    // zárjuk be a többit
     document.querySelectorAll('.popup-card').forEach(el => {
         if (el !== popup) el.style.display = 'none';
     });
-
     popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
 }
 
-// bárhová kattintasz -> bezár
 document.addEventListener('click', function() {
     document.querySelectorAll('.popup-card').forEach(el => el.style.display = 'none');
 });

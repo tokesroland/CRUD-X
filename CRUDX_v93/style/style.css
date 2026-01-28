@@ -75,7 +75,7 @@ body {
     font-size: 0.95rem;
     padding: 0.3rem 0.7rem;
     border-radius: 999px;
-    transition: background 0.15s, color 0.15s;
+    transition: background 0.5s, color 0.15s;
 }
 .nav-link.active {
     color: #cbd5f5;
@@ -84,7 +84,7 @@ body {
     font-size: 0.95rem;
     padding: 0.3rem 0.7rem;
     border-radius: 999px;
-    transition: background 0.15s, color 0.15s;
+    transition: background 0.5s, color 0.15s;
 }
 
 
@@ -322,6 +322,7 @@ body {
 .badge-success {
     background: rgba(22, 163, 74, 0.1);
     color: var(--success);
+    cursor: pointer;
 }
 
 .badge-muted {
