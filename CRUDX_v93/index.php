@@ -4,6 +4,9 @@
     require "./components/auth_check.php";
     authorize(['admin','owner','user']);
 
+    // include './components/navbar.php'; 
+    $pageTitle = "Dashboard";
+    $activePage = "index.php";
     include './components/navbar.php'; 
 
     /* -------------------------------------------------------------------------- */

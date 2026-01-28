@@ -4,6 +4,11 @@ include 'config.php';
 require "./components/auth_check.php";
 authorize(['admin','owner','user']);
 
+
+$pageTitle = "Inventory";
+$activePage = "inventory.php";
+include './components/navbar.php';
+
 /**
  * ---------------------------------------------
  * Dropdown: raktárak
@@ -195,7 +200,6 @@ try {
 
 <body>
 
-<?php include './components/navbar.php'; ?>
 
 <main class="container">
 

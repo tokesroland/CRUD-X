@@ -3,6 +3,9 @@ session_start();
 include 'config.php';
 require "./components/auth_check.php";
 authorize(['admin', 'owner']); // Csak admin és tulajdonos szállíthat
+$pageTitle = "Szállítások";
+$activePage = "transports.php";
+include './components/navbar.php';
 
 $message = "";
 $msgType = "";
@@ -186,8 +189,6 @@ if ($_SESSION['transport_cart']['source_wh']) {
     <link rel="stylesheet" href="./style/style.css">
 </head>
 <body>
-
-<?php include './components/navbar.php'; ?>
 
 <main class="container">
 

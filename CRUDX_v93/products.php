@@ -5,6 +5,11 @@ require "./components/auth_check.php";
 authorize(['admin','owner','user']);
 include 'components/filter.php';
 
+$activePage = "products.php";
+$pageTitle = "Termékek";
+include './components/navbar.php';
+
+
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -14,14 +19,11 @@ include 'components/filter.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style/style.css?v=2.0">
 
-   
     <style>
     </style>
 </head>
 
 <body>
-
-<?php include './components/navbar.php'; ?>
 
 <main class="container">
 

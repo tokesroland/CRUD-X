@@ -4,6 +4,11 @@ include 'config.php';
 require "./components/auth_check.php";
 authorize(['admin','owner']);
 
+$pageTitle = "Kezelés";
+$activePage = "admin.php";
+include './components/navbar.php';
+
+
 $message = "";
 $msgType = ""; // success | danger
 
@@ -261,7 +266,6 @@ $inventoryList = $pdo->query("
 </head>
 <body>
 
-<?php include './components/navbar.php'; ?>
 
     <main class="container">
 

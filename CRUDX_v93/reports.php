@@ -3,6 +3,11 @@ session_start();
 require 'config.php';
 require "./components/auth_check.php";
 authorize(['admin','owner']);
+$pageTitle = "Jelentések";
+$activePage = "reports.php";
+include './components/navbar.php';
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -84,8 +89,6 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
     </style>
 </head>
 <body>
-
-<?php include './components/navbar.php'; ?> 
 
 <main class="container">
 

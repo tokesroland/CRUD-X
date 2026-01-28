@@ -1,22 +1,31 @@
+<?php
+
+if(!isset($pageTitle)){
+    $pageTitle = "cím";
+}
+if(!isset($activePage)){
+    $activePage = "";
+}
+?>
 <header class="topbar">
     <div class="logo">
         <a style="text-decoration: none; color:white;" href="index.php">CRUD-X</a>
     </div>
     
     <nav class="nav">
-        <a href="index.php" class="nav-link">Dashboard</a>
-        <a href="products.php" class="nav-link">Termékek</a>
-        <a href="inventory.php" class="nav-link">Raktárkészlet</a>
+        <a class="nav-link <?= $activePage == "index.php" ? 'active': '' ?>" href="index.php">Dashboard</a>
+        <a class="nav-link <?= $activePage == "products.php" ? 'active': '' ?>" href="products.php">Termékek</a>
+        <a class="nav-link <?= $activePage == "inventory.php" ? 'active': '' ?>" href="inventory.php">Raktárkészlet</a>
 
         <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'owner'): ?>
-            <a href="reports.php" class="nav-link">Jelentések</a>
-            <a href="admin.php" class="nav-link">Kezelés</a>
-            <a href="transports.php" class="nav-link">Szállítások</a>
+            <a class="nav-link <?= $activePage == "reports.php" ? 'active': '' ?>" href="reports.php">Jelentések</a>
+            <a class="nav-link <?= $activePage == "admin.php" ? 'active': '' ?>" href="admin.php">Kezelés</a>
+            <a class="nav-link <?= $activePage == "transports.php" ? 'active': '' ?>" href="transports.php">Szállítások</a>
 
         <?php endif; ?>
 
         <?php if ($_SESSION['role'] === 'owner'): ?>
-            <a href="owner.php" class="nav-link">Rendszer</a>
+            <a href="owner.php" class="nav-link <?= $activePage == "owner.php" ? 'active': '' ?>">Rendszer</a>
         <?php endif; ?>
     </nav>
 

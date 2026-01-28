@@ -4,6 +4,11 @@ include 'config.php';
 require "./components/auth_check.php";
 authorize(['owner']);
 
+$pageTitle = "Rendszer";
+$activePage = "owner.php";
+include './components/navbar.php'; 
+
+
 $message = "";
 
 /* |--------------------------------------------------------------------------
@@ -97,7 +102,6 @@ $logs = $pdo->query("SELECT t.*, u.username, p.name as product_name, w.name as w
 </head>
 <body>
 
-<?php include './components/navbar.php'; ?>
 
 <main class="container">
     <h1 style="margin: 20px 0;">Tulajdonosi Vezérlőpult</h1>
