@@ -49,66 +49,78 @@ if (!file_exists($imagePath)) {
 </head>
 <body>
 
-<header class="topbar">
-    <div class="logo">
-        <a href="products.php" style="color:white;text-decoration:none;">⬅ Vissza a termékekhez</a>
-    </div>
-</header>
+<?php
+$activePage = "products.php"; // Hogy a navbarban a Termékek maradjon aktív
+include './components/navbar.php';
+?>
 
 <main class="container">
 
 <section class="card">
     <div class="card-header">
         <h2><img class="icon" src="./img/products_box.png"> <?= htmlspecialchars($product['name']) ?></h2>
+        <a href="products.php" class="btn btn-outline btn-small">Vissza a listához</a>
     </div>
 
-    <div style="display:flex;gap:24px;flex-wrap:wrap;">
-        <div>
-            <img src="<?= $imagePath ?>" style="max-width:280px;border-radius:8px;">
+    <div style="display:flex; gap:32px; flex-wrap:wrap; margin-bottom: 20px;">
+        <div style="flex: 0 0 280px;">
+            <img src="<?= $imagePath ?>" style="width:100%; border-radius:12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
         </div>
 
-        <div>
-            <p><strong>ID:</strong> <?= $product['ID'] ?></p>
-            <p><strong>Cikkszám:</strong> <?= htmlspecialchars($product['item_number']) ?></p>
-            <p><strong>Kategória:</strong> <?= htmlspecialchars($product['category_name'] ?? '—') ?></p>
-            <p><strong>Státusz:</strong>
-                <?= $product['active']
-                    ? '<span class="badge badge-success">Aktív</span>'
-                    : '<span class="badge badge-muted">Inaktív</span>' ?>
-            </p>
-            <p><strong>Létrehozva:</strong> <?= $product['created_at'] ?></p>
-            <p><strong>Módosítva:</strong> <?= $product['updated_at'] ?></p>
+        <div style="flex: 1; min-width: 300px;">
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; align-items: center;">
+                <span class="muted">Azonosító:</span> <strong>#<?= $product['ID'] ?></strong>
+                
+                <span class="muted">Cikkszám:</span> <strong><?= htmlspecialchars($product['item_number']) ?></strong>
+                
+                <span class="muted">Kategória:</span> <strong><?= htmlspecialchars($product['category_name'] ?? '—') ?></strong>
+                
+                <span class="muted">Státusz:</span> 
+                <div>
+                    <?= $product['active']
+                        ? '<span class="badge badge-success">Aktív</span>'
+                        : '<span class="badge badge-muted">Inaktív</span>' ?>
+                </div>
+
+                <span class="muted">Rögzítve:</span> <small><?= $product['created_at'] ?></small>
+                
+                <span class="muted">Utolsó mozgás:</span> <small><?= $product['updated_at'] ?? 'Nincs adat' ?></small>
+            </div>
         </div>
     </div>
 
     <hr>
 
     <h3><img class="icon" src="./img/document_23966.png"> Leírás</h3>
-    <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
+    <div style="padding: 10px 0; line-height: 1.6; color: var(--text);">
+        <?= $product['description'] ? nl2br(htmlspecialchars($product['description'])) : '<em class="muted">Nincs megadott leírás.</em>' ?>
+    </div>
 
     <hr>
 
-    <h3><img class="icon" src="./img/products_box.png"> Raktárkészlet</h3>
+    <h3><img class="icon" src="./img/products_box.png"> Jelenlegi készletek</h3>
 
     <?php if (!empty($inventory)): ?>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Raktár</th>
-                    <th>Mennyiség</th>
+                    <th>Raktár / Üzlet</th>
+                    <th style="text-align: right;">Mennyiség</th>
                 </tr>
             </thead>
             <tbody>
             <?php foreach ($inventory as $row): ?>
                 <tr>
-                    <td><?= htmlspecialchars($row['warehouse']) ?></td>
-                    <td><?= (int)$row['quantity'] ?> db</td>
+                    <td><strong><?= htmlspecialchars($row['warehouse']) ?></strong></td>
+                    <td style="text-align: right; font-family: monospace; font-weight: bold;"><?= number_format($row['quantity'], 0, '.', ' ') ?> db</td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
     <?php else: ?>
-        <p>Nincs készlet.</p>
+        <div style="padding: 20px; text-align: center; background: #f8fafc; border-radius: 8px; color: #64748b;">
+            Jelenleg egyetlen raktárban sem található készlet ebből a termékből.
+        </div>
     <?php endif; ?>
 
 </section>

@@ -159,31 +159,36 @@
 
     <div class="dashboard-layout">
         
-        <section class="card">
-            <div class="card-header">
-                <h2><img class="icon" src="./img/1485477213-statistics_78572.png"> Telítettség</h2>
-                <div class="tab-buttons">
-                    <button class="tab-btn active" onclick="showTab('warehouses', this)">Raktárak</button>
-                    <button class="tab-btn" onclick="showTab('stores', this)">Üzletek</button>
-                </div>
-            </div>
-            <div class="scrollable-stats" id="warehouses-tab">
-                <?php renderCapacityList($warehouses_list); ?>
-            </div>
-            <div class="scrollable-stats" id="stores-tab" style="display: none;">
-                <?php renderCapacityList($stores_list); ?>
-            </div>
-        </section>
+        <?php 
+            $userRole = $_SESSION['role'] ?? ($_SESSION['user']['role'] ?? null);
+            if (in_array($userRole, ['admin','owner'])):
+        ?>
+                <section class="card">
+                    <div class="card-header">
+                        <h2><img class="icon" src="./img/1485477213-statistics_78572.png"> Telítettség</h2>
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" onclick="showTab('warehouses', this)">Raktárak</button>
+                            <button class="tab-btn" onclick="showTab('stores', this)">Üzletek</button>
+                        </div>
+                    </div>
+                    <div class="scrollable-stats" id="warehouses-tab">
+                        <?php renderCapacityList($warehouses_list); ?>
+                    </div>
+                    <div class="scrollable-stats" id="stores-tab" style="display: none;">
+                        <?php renderCapacityList($stores_list); ?>
+                    </div>
+                </section>
 
-        <section class="card">
-            <div class="card-header"><h2><img class="icon" src="./img/lightning_icon_187922.png"> Gyorsműveletek</h2></div>
-            <div class="action-grid">
-                <a href="admin.php" class="action-btn"><span><img class="icon" src="./img/create_new_plus_add_icon_232794.png"></span> Új termék</a>
-                <a href="transports.php" class="action-btn"><span><img class="icon" src="./img/truck_23929.png"></span> Átszállítás</a>
-                <a href="inventory.php" class="action-btn"><span><img class="icon" src="./img/products_box.png"></span> Készlet</a>
-                <a href="reports.php" class="action-btn"><span><img class="icon" src="./img/1485477213-statistics_78572.png"></span> Riportok</a>
-            </div>
-        </section>
+                <section class="card">
+                    <div class="card-header"><h2><img class="icon" src="./img/lightning_icon_187922.png"> Gyorsműveletek</h2></div>
+                    <div class="action-grid">
+                        <a href="admin.php" class="action-btn"><span><img class="icon" src="./img/create_new_plus_add_icon_232794.png"></span> Új termék</a>
+                        <a href="transports.php" class="action-btn"><span><img class="icon" src="./img/truck_23929.png"></span> Átszállítás</a>
+                        <a href="inventory.php" class="action-btn"><span><img class="icon" src="./img/products_box.png"></span> Készlet</a>
+                        <a href="reports.php" class="action-btn"><span><img class="icon" src="./img/1485477213-statistics_78572.png"></span> Riportok</a>
+                    </div>
+                </section>
+        <?php endif; ?>
 
         <section class="card full-width">
             <div class="card-header"><h2><img class="icon" src="./img/1485477075-calendar_78587.png"> Ma érkező áruk</h2></div>

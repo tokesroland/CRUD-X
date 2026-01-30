@@ -7,9 +7,9 @@ if(!isset($activePage)){
     $activePage = "";
 }
 ?>
-<header class="topbar">
+<header style="user-select: none;" class="topbar">
     <div class="logo">
-        <a style="text-decoration: none; color:white;" href="index.php">CRUD-X</a>
+        <a style="text-decoration: none; color:white; user-select: none;" href="index.php">CRUD-X</a>
     </div>
     
     <nav class="nav">

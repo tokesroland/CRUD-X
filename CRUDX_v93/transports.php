@@ -288,7 +288,13 @@ if ($_SESSION['transport_cart']['source_wh']) {
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="field"><label>Várható érkezés:</label><input type="date" name="arrive_date"></div>
+                    <div class="field">
+                        <label>Várható érkezés:</label>
+                        <input type="date" name="arrive_date" id="arriveDate"
+                               onkeydown="return false" onpaste="return false" ondrop="return false"
+                               aria-label="Várható érkezés (csak dátum kiválasztása)">
+                    </div>
+                    </div>
                     <div class="field col-12" style="grid-column: span 2;">
                         <label>Megjegyzés:</label>
                         <input type="text" name="description" required>
@@ -305,16 +311,7 @@ if ($_SESSION['transport_cart']['source_wh']) {
 
 <?php include './components/footer.php'; ?>
 
-<script>
-    function updateMaxQty() {
-        const select = document.getElementById('productSelect');
-        const opt = select.options[select.selectedIndex];
-        const max = opt.getAttribute('data-qty');
-        const qtyInp = document.getElementById('qtyInput');
-        const hint = document.getElementById('maxQtyHint');
-        document.getElementById('productNameHidden').value = opt.getAttribute('data-name');
-        if (max) { qtyInp.max = max; qtyInp.value = 1; hint.textContent = "Max: " + max + " db"; }
-    }
+<script src="./script/script.js"></script>
 </script>
 </body>
 </html>

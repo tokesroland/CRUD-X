@@ -175,9 +175,43 @@ include './components/navbar.php';
                     </tr>
                 <?php endif; ?>
                 </tbody>
-
             </table>
         </div>
+
+        <?php if ($totalPages > 1): ?>
+        <div style="padding: 20px; display: flex; justify-content: center; gap: 5px;">
+            <?php 
+                // Segédfüggvény az URL generáláshoz, megtartva a szűrőket
+                function getPageUrl($pageNum) {
+                    $params = $_GET;
+                    $params['page'] = $pageNum;
+                    return '?' . http_build_query($params);
+                }
+            ?>
+
+            <?php if ($page > 1): ?>
+                <a href="<?= getPageUrl($page - 1) ?>" class="btn btn-small btn-outline">&laquo; Előző</a>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <?php if ($i == 1 || $i == $totalPages || ($i >= $page - 2 && $i <= $page + 2)): ?>
+                    <a href="<?= getPageUrl($i) ?>" class="btn btn-small <?= $i === $page ? '' : 'btn-outline' ?>" 
+                       style="<?= $i === $page ? 'background: var(--primary); color: white; border-color: var(--primary);' : '' ?>">
+                        <?= $i ?>
+                    </a>
+                <?php elseif ($i == $page - 3 || $i == $page + 3): ?>
+                    <span style="padding: 5px;">...</span>
+                <?php endif; ?>
+            <?php endfor; ?>
+
+            <?php if ($page < $totalPages): ?>
+                <a href="<?= getPageUrl($page + 1) ?>" class="btn btn-small btn-outline">Következő &raquo;</a>
+            <?php endif; ?>
+        </div>
+        <div style="text-align: center; margin-bottom: 20px; font-size: 0.8rem; color: #666;">
+            Összes találat: <?= $totalRows ?> db (<?= $totalPages ?> oldal)
+        </div>
+        <?php endif; ?>
 
     </section>
 

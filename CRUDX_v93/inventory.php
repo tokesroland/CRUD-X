@@ -266,10 +266,6 @@ try {
                         <?php endif; ?>
                     </tbody>
                 </table>
-
-                <div class="hint">
-                    Tipp: innen egy “Pótrendelés indítása” gomb később egy import transport előkészítő űrlapot is nyithat.
-                </div>
             </div>
         </section>
 
@@ -304,9 +300,6 @@ try {
                 </form>
 
                 <?php if ($shipRows === null): ?>
-                    <div class="badge badge-muted" style="display:inline-block;margin-bottom:10px;">
-                        A transports táblában nincs még arriveIn oszlop. Futtasd le az ALTER TABLE-t.
-                    </div>
                     <div class="hint">Hiba: <?= htmlspecialchars($shipError ?? '') ?></div>
                 <?php else: ?>
                     <table class="mini-table">
@@ -335,10 +328,6 @@ try {
                             <?php endif; ?>
                         </tbody>
                     </table>
-
-                    <div class="hint">
-                        A lista a transports táblából jön: type='import' és arriveIn alapján.
-                    </div>
                 <?php endif; ?>
             </div>
         </section>

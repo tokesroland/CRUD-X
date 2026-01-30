@@ -6,11 +6,16 @@ $category_ID  = isset($_GET['category_ID']) ? (int)$_GET['category_ID'] : 0;
 $item_number  = isset($_GET['item_number']) ? trim($_GET['item_number']) : '';
 $name         = isset($_GET['name']) ? trim($_GET['name']) : '';
 $description  = isset($_GET['description']) ? trim($_GET['description']) : '';
-$active       = isset($_GET['active']) ? trim($_GET['active']) : ''; // '' | '1' | '0'
-$stock        = isset($_GET['stock']) ? trim($_GET['stock']) : '';   // '' | 'in' | 'out'
+$active       = isset($_GET['active']) ? trim($_GET['active']) : ''; 
+$stock        = isset($_GET['stock']) ? trim($_GET['stock']) : '';   
 $warehouse_ID = isset($_GET['warehouse_ID']) ? (int)$_GET['warehouse_ID'] : 0;
 $qty_min      = isset($_GET['qty_min']) && $_GET['qty_min'] !== '' ? (int)$_GET['qty_min'] : null;
 $qty_max      = isset($_GET['qty_max']) && $_GET['qty_max'] !== '' ? (int)$_GET['qty_max'] : null;
+
+// PAGINATION PARAMÉTEREK
+$page  = isset($_GET['page']) && (int)$_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$limit = 100; // Rekord per oldal
+$offset = ($page - 1) * $limit;
 
 /**
  * ----------------------------
@@ -25,7 +30,6 @@ $warehouses = $pdo->query("SELECT ID, name FROM warehouses ORDER BY name ASC")->
  * Mennyiségi mező meghatározása a szűréshez
  * ----------------------------
  */
-// Ha van raktár azonosító, akkor csak az adott raktár SUM(quantity)-jét nézzük, egyébként a globálisat.
 if ($warehouse_ID > 0) {
     $qtySqlSnippet = "SUM(CASE WHEN i.warehouse_ID = :warehouse_ID THEN i.quantity ELSE 0 END)";
 } else {
@@ -34,7 +38,7 @@ if ($warehouse_ID > 0) {
 
 /**
  * ----------------------------
- * Terméklista lekérdezés
+ * SQL Lekérdezés felépítése
  * ----------------------------
  */
 $params = [];
@@ -42,7 +46,8 @@ if ($warehouse_ID > 0) {
     $params[':warehouse_ID'] = $warehouse_ID;
 }
 
-$sql = "
+// Alap SELECT
+$sqlBase = "
     SELECT
         p.ID,
         p.name,
@@ -57,13 +62,13 @@ $sql = "
     LEFT JOIN inventory i ON i.product_ID = p.ID
 ";
 
+// WHERE építése
 $where = [];
 if ($category_ID > 0) {
     $where[] = "p.category_ID = :category_ID";
     $params[':category_ID'] = $category_ID;
 }
 if ($item_number !== '') {
-    // Stringként kezeljük, hogy a kötőjeles cikkszámok is működjenek
     $where[] = "p.item_number LIKE :item_number";
     $params[':item_number'] = "%{$item_number}%";
 }
@@ -81,20 +86,18 @@ if ($active === '1' || $active === '0') {
 }
 
 if (!empty($where)) {
-    $sql .= " WHERE " . implode(" AND ", $where);
+    $sqlBase .= " WHERE " . implode(" AND ", $where);
 }
 
-$sql .= " GROUP BY p.ID";
+$sqlBase .= " GROUP BY p.ID";
 
-/** HAVING feltételek (Készlet szűrése a display_qty alapján) */
+// HAVING építése
 $having = [];
-
 if ($stock === 'in') {
     $having[] = "$qtySqlSnippet > 0";
 } elseif ($stock === 'out') {
     $having[] = "$qtySqlSnippet = 0";
 }
-
 if ($qty_min !== null) {
     $having[] = "$qtySqlSnippet >= :qty_min";
     $params[':qty_min'] = $qty_min;
@@ -104,32 +107,43 @@ if ($qty_max !== null) {
     $params[':qty_max'] = $qty_max;
 }
 
-// Fontos: Ha kiválasztottunk egy raktárt, de nem állítottunk be "nincs készleten" szűrőt,
-// akkor alapértelmezésben csak azokat mutassuk, amik ott vannak (ha ez az elvárás).
-// Ha minden terméket látni akarsz a 0-s értékkel is a raktár kiválasztásakor, ezt hagyd ki.
-if ($warehouse_ID > 0 && $stock === '') {
-    // $having[] = "$qtySqlSnippet > 0"; // Opcionális: csak a raktárban létező termékek
-}
-
 if (!empty($having)) {
-    $sql .= " HAVING " . implode(" AND ", $having);
+    $sqlBase .= " HAVING " . implode(" AND ", $having);
 }
 
-$sql .= " ORDER BY p.name ASC";
+/**
+ * ----------------------------
+ * 1. TALÁLATOK MEGSZÁMLÁLÁSA (PAGINATIONHOZ)
+ * ----------------------------
+ * Mivel GROUP BY és HAVING van, be kell csomagolni egy subquery-be a számláláshoz
+ */
+$countSql = "SELECT COUNT(*) FROM ($sqlBase) AS subquery";
+$stmtCount = $pdo->prepare($countSql);
+$stmtCount->execute($params);
+$totalRows = $stmtCount->fetchColumn();
+$totalPages = ceil($totalRows / $limit);
 
-$stmt = $pdo->prepare($sql);
+/**
+ * ----------------------------
+ * 2. VÉGLEGES ADATLEKÉRÉS (LIMITTEL)
+ * ----------------------------
+ */
+$sqlFinal = $sqlBase . " ORDER BY p.name ASC LIMIT $limit OFFSET $offset";
+
+$stmt = $pdo->prepare($sqlFinal);
 $stmt->execute($params);
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /**
  * ----------------------------
- * Készlet részletek a popuphoz
+ * Készlet részletek (Popuphoz) - Csak a lekérdezett 100 termékre
  * ----------------------------
  */
 $warehousesByProduct = [];
 if (!empty($products)) {
     $productIds = array_map(fn($p) => (int)$p['ID'], $products);
     $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+    
     $sqlInv = "
         SELECT i.product_ID, i.quantity, w.name AS warehouse_name
         FROM inventory i
