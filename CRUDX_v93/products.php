@@ -24,7 +24,7 @@ include './components/navbar.php';
 
     <section class="card">
         <div class="card-header">
-            <h2>📦 Terméklista</h2>
+            <h2><img class="icon" src="./img/products_box.png">Terméklista</h2>
         </div>
 
         <form method="get" class="filters">

@@ -280,7 +280,7 @@ $inventoryList = $pdo->query("
 
         <section class="card">
             <div class="card-header">
-                <h2>🧩 Új Termék Létrehozása</h2>
+                <h2><img class="icon" src="./img/create_new_plus_add_icon_232794.png"> Új Termék Létrehozása</h2>
             </div>
             
             <form method="POST">
@@ -324,7 +324,7 @@ $inventoryList = $pdo->query("
         <section class="card">
             <details>
                 <summary style="cursor:pointer; font-weight:700; outline:none;">
-                    🛠️ Meglévő Termékek Szerkesztése (Kattints a lenyitáshoz)
+                    <img class="icon" src="./img/create_117333.png"> Meglévő Termékek Szerkesztése (Kattints a lenyitáshoz)
                 </summary>
 
                 <div style="margin-top: 20px;">
@@ -390,7 +390,7 @@ $inventoryList = $pdo->query("
             
             <div class="card">
                 <div class="card-header">
-                    <h2>📦 Új Készlet Hozzárendelés</h2>
+                    <h2><img class="icon" src="./img/create_new_add_plus_icon_219839.png">  Új Készlet Hozzárendelés</h2>
                 </div>
                 <form method="POST">
                     <div class="field" style="margin-bottom:12px;">
@@ -423,7 +423,7 @@ $inventoryList = $pdo->query("
 
             <div class="card">
                 <div class="card-header">
-                    <h2>📄 Tömeges Import (CSV)</h2>
+                    <h2><img class="icon" src="./img/document_23966.png">  Tömeges Import (CSV)</h2>
                 </div>
                 <form method="POST" enctype="multipart/form-data">
                     <div class="field" style="margin-bottom:12px;">
@@ -446,7 +446,7 @@ $inventoryList = $pdo->query("
         <section class="card">
             <details>
                 <summary style="cursor:pointer; font-weight:700; outline:none;">
-                    ✏️ Készlet Kezelés és Módosítás (Kattints a lenyitáshoz)
+                    <img class="icon" src="./img/create_117333.png"> Készlet Kezelés és Módosítás (Kattints a lenyitáshoz)
                 </summary>
 
                 <div style="margin-top: 20px;">

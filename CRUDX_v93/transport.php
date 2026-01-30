@@ -48,7 +48,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 <main class="container">
     <section class="card">
         <div class="card-header">
-            <h2>🚚 Szállítmány: <?= htmlspecialchars($batchId) ?></h2>
+            <h2><img class="icon" src="./img/truck_23929.png"> Szállítmány: <?= htmlspecialchars($batchId) ?></h2>
             <a href="owner.php" class="btn btn-outline">Vissza a naplóhoz</a>
         </div>
 
@@ -62,7 +62,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
 
-        <h3>📦 Mozgatott tételek</h3>
+        <h2><img class="icon" src="./img/product_icon_238584.png"> Mozgatott tételek</h2><br>
         <table class="data-table">
             <thead>
                 <tr>

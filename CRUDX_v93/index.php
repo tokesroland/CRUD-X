@@ -161,7 +161,7 @@
         
         <section class="card">
             <div class="card-header">
-                <h2>📊 Telítettség</h2>
+                <h2><img class="icon" src="./img/1485477213-statistics_78572.png"> Telítettség</h2>
                 <div class="tab-buttons">
                     <button class="tab-btn active" onclick="showTab('warehouses', this)">Raktárak</button>
                     <button class="tab-btn" onclick="showTab('stores', this)">Üzletek</button>
@@ -176,17 +176,17 @@
         </section>
 
         <section class="card">
-            <div class="card-header"><h2>⚡ Gyorsműveletek</h2></div>
+            <div class="card-header"><h2><img class="icon" src="./img/lightning_icon_187922.png"> Gyorsműveletek</h2></div>
             <div class="action-grid">
-                <a href="admin.php" class="action-btn"><span>➕</span> Új termék</a>
-                <a href="transports.php" class="action-btn"><span>🚚</span> Átszállítás</a>
-                <a href="inventory.php" class="action-btn"><span>📦</span> Készlet</a>
-                <a href="reports.php" class="action-btn"><span>📈</span> Riportok</a>
+                <a href="admin.php" class="action-btn"><span><img class="icon" src="./img/create_new_plus_add_icon_232794.png"></span> Új termék</a>
+                <a href="transports.php" class="action-btn"><span><img class="icon" src="./img/truck_23929.png"></span> Átszállítás</a>
+                <a href="inventory.php" class="action-btn"><span><img class="icon" src="./img/products_box.png"></span> Készlet</a>
+                <a href="reports.php" class="action-btn"><span><img class="icon" src="./img/1485477213-statistics_78572.png"></span> Riportok</a>
             </div>
         </section>
 
         <section class="card full-width">
-            <div class="card-header"><h2>📅 Ma érkező áruk</h2></div>
+            <div class="card-header"><h2><img class="icon" src="./img/1485477075-calendar_78587.png"> Ma érkező áruk</h2></div>
             <?php if (empty($todayArrivals)): ?>
                 <p style="text-align:center; padding: 20px; color: #94a3b8;">Mára nincs ütemezett beérkezés.</p>
             <?php else: ?>
@@ -214,7 +214,7 @@
         </section>
 
         <section class="card">
-            <div class="card-header"><h2>🕒 Utolsó mozgások</h2></div>
+            <div class="card-header"><h2><img class="icon" src="./img/clock_80424.png"> Utolsó mozgások</h2></div>
             <div style="margin-top: 10px;">
                 <?php foreach($recentActivity as $act): ?>
                     <div class="timeline-item">
@@ -233,7 +233,7 @@
         </section>
 
         <section class="card">
-            <div class="card-header"><h2>🔥 Legaktívabb (30 nap)</h2></div>
+            <div class="card-header"><h2><img class="icon" src="./img/document_23966.png"> Legaktívabb (30 nap)</h2></div>
             <div style="margin-top: 10px;">
                 <?php foreach($topMovers as $mover): ?>
                     <div style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">

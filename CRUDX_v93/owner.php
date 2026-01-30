@@ -211,7 +211,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
     <div class="management-grid">
         <div class="forms-stack">
             <section class="card">
-                <div style="padding: 20px; border-bottom: 1px solid #eee;"><h2>➕ Új felhasználó</h2></div>
+                <div style="padding: 20px; border-bottom: 1px solid #eee;"><h2><img class="icon" src="./img/create-group-button_icon-icons.com_72792.png">  Új felhasználó</h2></div>
                 <div style="padding: 20px;">
                     <form method="POST">
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Felhasználónév</label>
@@ -230,7 +230,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
             </section>
 
             <section class="card">
-                <div style="padding: 20px; border-bottom: 1px solid #eee;"><h2>🏢 Új raktár / üzlet</h2></div>
+                <div style="padding: 20px; border-bottom: 1px solid #eee;"><h2><img class="icon" src="./img/warehouse_icon_180427.png"> Új raktár / üzlet</h2></div>
                 <div style="padding: 20px;">
                     <form method="POST">
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Név</label>
@@ -253,7 +253,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
         <div class="lists-stack">
             <section class="card">
                 <div class="card-header-toggle" onclick="toggleSection('userContent', this)">
-                    <h2>👥 Felhasználók kezelése</h2>
+                    <h2><img class="icon" src="./img/users_icon_197608.png"> Felhasználók kezelése</h2>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div id="userContent">
@@ -298,7 +298,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
 
             <section class="card">
                 <div class="card-header-toggle" onclick="toggleSection('warehouseContent', this)">
-                    <h2>🏢 Raktárak és Üzletek kezelése</h2>
+                    <h2><img class="icon" src="./img/create_117333.png"> Raktárak és Üzletek kezelése</h2>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div id="warehouseContent" class="is-hidden">
@@ -344,7 +344,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
 
             <section class="card">
                 <div class="card-header-toggle" onclick="toggleSection('logContent', this)">
-                    <h2>📜 Készletmozgási Napló</h2>
+                    <h2><img class="icon" src="./img/logging_cloud_icon_215864.png"> Készletmozgási Napló</h2>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div id="logContent">

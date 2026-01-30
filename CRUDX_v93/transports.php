@@ -181,7 +181,7 @@ if ($_SESSION['transport_cart']['source_wh']) {
 
 <main class="container">
     <div class="card-header">
-        <h2>🚚 Készlet Átszállítás</h2>
+        <h2><img class="icon" src="./img/truck_23929.png">  Készlet Átszállítás</h2>
     </div>
 
     <?php if ($message): ?>
@@ -295,7 +295,7 @@ if ($_SESSION['transport_cart']['source_wh']) {
                     </div>
                 </div>
                 <div style="text-align:right; margin-top:20px;">
-                    <button type="submit" name="finalize_transport" class="btn">🚀 Szállítás Indítása</button>
+                    <button type="submit" name="finalize_transport" class="btn">Szállítás Indítása</button>
                 </div>
             </form>
         </section>

@@ -59,7 +59,7 @@ if (!file_exists($imagePath)) {
 
 <section class="card">
     <div class="card-header">
-        <h2>📦 <?= htmlspecialchars($product['name']) ?></h2>
+        <h2><img class="icon" src="./img/products_box.png"> <?= htmlspecialchars($product['name']) ?></h2>
     </div>
 
     <div style="display:flex;gap:24px;flex-wrap:wrap;">
@@ -83,12 +83,12 @@ if (!file_exists($imagePath)) {
 
     <hr>
 
-    <h3>📝 Leírás</h3>
+    <h3><img class="icon" src="./img/document_23966.png"> Leírás</h3>
     <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
 
     <hr>
 
-    <h3>🏬 Raktárkészlet</h3>
+    <h3><img class="icon" src="./img/products_box.png"> Raktárkészlet</h3>
 
     <?php if (!empty($inventory)): ?>
         <table class="data-table">

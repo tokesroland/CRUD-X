@@ -585,3 +585,61 @@ body {
 .product-link:hover::after {
     opacity: 1;
 }
+
+/* Icon */
+.card-header .icon {
+    width: 22px !important; /* Az !important kényszeríti a méretet, ha más nem válik be */
+    height: 22px !important;
+    object-fit: contain; /* Hogy ne torzuljon a kép */
+}
+
+.card-header h2 {
+    display: flex;             
+    align-items: center;       
+    gap: 12px;                 
+    margin: 0;                 
+}
+
+div h2 .icon{
+    display: flex;            
+    align-items: center;       
+    gap: 12px;   
+    margin: 0;                 
+}
+
+
+summary .icon {
+    width: 18px !important;
+    height: 18px !important;
+    object-fit: contain;
+}
+summary h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
+/* Minden .card-on belüli h2 legyen flexbox */
+.card h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
+
+/* Minden .card-on belüli ikon méretezése */
+.card .icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+h3 .icon {
+    width: 20px !important;
+    height: 20px !important;
+    object-fit: contain;
+}
+h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

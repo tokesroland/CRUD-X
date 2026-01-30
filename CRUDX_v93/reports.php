@@ -109,7 +109,7 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
     </div>
 
     <section class="card">
-        <div class="card-header"><h2>🏭 Raktár Kapacitás Kihasználtság</h2></div>
+        <div class="card-header"><h2><img class="icon" src="./img/1485477213-statistics_78572.png"> Raktár Kapacitás Kihasználtság</h2></div>
         <div class="filter-group">
             <div class="filter-scroll-container">
                 <?php foreach ($warehouseStats as $index => $w): ?>
@@ -124,7 +124,7 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
     </section>
 
     <section class="card">
-        <div class="card-header"><h2>📦 Készlet vs. Minimum Szint</h2></div>
+        <div class="card-header"><h2><img class="icon" src="./img/product_icon_238584.png"> Készlet vs. Minimum Szint</h2></div>
         <div class="filter-group">
             <div class="filter-scroll-container">
                 <div class="toggle-chip active stock-wh-filter" data-id="all" onclick="selectStockWarehouse(this)">Összes raktár</div>
@@ -142,8 +142,8 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
     </section>
 
     <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
-        <section class="card"><div class="card-header"><h2>📁 Kategória megoszlás</h2></div><div class="chart-container"><canvas id="categoryChart"></canvas></div></section>
-        <section class="card"><div class="card-header"><h2>⚙️ Termék státuszok</h2></div><div class="chart-container"><canvas id="statusChart"></canvas></div></section>
+        <section class="card"><div class="card-header"><h2><img class="icon" src="./img/category_icon_241610.png"> Kategória megoszlás</h2></div><div class="chart-container"><canvas id="categoryChart"></canvas></div></section>
+        <section class="card"><div class="card-header"><h2><img class="icon" src="./img/status_icon_241869.png"> Termék státuszok</h2></div><div class="chart-container"><canvas id="statusChart"></canvas></div></section>
     </div>
 
 </main>

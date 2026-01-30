@@ -208,7 +208,7 @@ try {
         <!-- 1. kártya: Alacsony készlet -->
         <section class="card col-6">
             <div class="card-header">
-                <h2>⚠️ Alacsony készlet</h2>
+                <h2><img class="icon" src="./img/danger_icon_243248.png">Alacsony készlet</h2>
             </div>
 
             <div class="card-body">
@@ -276,7 +276,7 @@ try {
         <!-- 2. kártya: Kiszállítás alatt / Beérkezés várható -->
         <section class="card col-6">
             <div class="card-header">
-                <h2>🚚 Kiszállítás alatt (beérkezés várható)</h2>
+                <h2><img class="icon" src="./img/truck_23929.png"> Kiszállítás alatt (beérkezés várható)</h2>
             </div>
 
             <div class="card-body">
