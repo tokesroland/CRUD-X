@@ -4,18 +4,20 @@ session_start();
 include "config.php";
 $error = "";
 
-// ---------------------------------------------
-// Bejelentkezés feldolgozása
-// ---------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $user = $_POST['username'] ?? '';
     $pass = $_POST['password'] ?? '';
 
     if ($user === "" || $pass === "") {
         $error = "Kérlek tölts ki minden mezőt!";
     } else {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :u LIMIT 1");
+        // Módosított lekérdezés: JOIN-oljuk a raktár nevét is
+        $stmt = $pdo->prepare("
+            SELECT u.*, w.name as warehouse_name 
+            FROM users u 
+            LEFT JOIN warehouses w ON u.warehouse_id = w.ID 
+            WHERE u.username = :u LIMIT 1
+        ");
         $stmt->execute(['u' => $user]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -23,18 +25,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($row['active'] == 0) {
                 $error = "A fiók inaktív. Fordulj az adminisztrátorhoz!";
             } else {
-                // Sikeres login
                 $_SESSION['user_id'] = $row['ID'];
                 $_SESSION['username'] = $row['username'];
                 $_SESSION['role'] = $row['role'];
+                // Új session adatok
+                $_SESSION['warehouse_id'] = $row['warehouse_id'];
+                $_SESSION['warehouse_name'] = $row['warehouse_name'] ?? 'Minden egység';
 
-                // login_at frissítése
                 $pdo->prepare("UPDATE users SET login_at = NOW() WHERE ID = ?")->execute([$row['ID']]);
 
                 header("Location: index.php");
                 exit;
             }
-
         } else {
             $error = "Hibás felhasználónév vagy jelszó!";
         }

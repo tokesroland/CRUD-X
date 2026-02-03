@@ -30,6 +30,7 @@ if(!isset($activePage)){
     </nav>
 
     <div class="user-box">
+            <span style="font-size: 0.7rem; opacity: 0.8;">(<?= $_SESSION['warehouse_name'] ?>)</span>    
         <div class="user-info" style="display: flex; flex-direction: column; text-align: right; margin-right: 15px;">
             <span class="user-name" style="font-weight: bold;"><?= htmlspecialchars($_SESSION['username']) ?></span>
             <span class="user-role" style="font-size: 0.75rem; opacity: 0.8; text-transform: uppercase;">

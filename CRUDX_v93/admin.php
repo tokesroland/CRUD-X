@@ -394,7 +394,7 @@ $inventoryList = $pdo->query("
                     </div>
                     <div class="field" style="margin-bottom:12px;">
                         <label>Mennyiség</label>
-                        <input type="number" name="quantity" required placeholder="0">
+                        <input type="number" name="quantity" min="0" required placeholder="0">
                     </div>
                     <div class="field actions" style="justify-content: flex-end;">
                         <button type="submit" name="create_inventory" class="btn btn-small">Hozzáadás</button>

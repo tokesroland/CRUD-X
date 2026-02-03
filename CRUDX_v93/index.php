@@ -13,10 +13,25 @@
     /* 1. ADATLEKÉRÉSEK A STATISZTIKÁKHOZ                                         */
     /* -------------------------------------------------------------------------- */
     
+    // Felhasználói adatok a sessionből (login.php-ban beállítva)
+    $userWhId = $_SESSION['warehouse_id'] ?? null;
+    $userRole = $_SESSION['role'] ?? 'user';
+    
+    // Ellenőrizzük, hogy korlátozott-e a nézet (nem admin és nem owner)
+    $isRestricted = !in_array($userRole, ['admin', 'owner']);
+
     // Felső kártyák adatai
     $totalProdCount = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
     $warehouseCount = $pdo->query("SELECT COUNT(*) FROM warehouses")->fetchColumn();
-    $lowStockCount = $pdo->query("SELECT COUNT(*) FROM inventory WHERE quantity <= min_quantity")->fetchColumn();
+    
+    // Alacsony készlet: Szűrés, ha van raktár hozzárendelve és nem admin
+    if ($isRestricted && $userWhId) {
+        $stmtLow = $pdo->prepare("SELECT COUNT(*) FROM inventory WHERE quantity <= min_quantity AND warehouse_ID = ?");
+        $stmtLow->execute([$userWhId]);
+        $lowStockCount = $stmtLow->fetchColumn();
+    } else {
+        $lowStockCount = $pdo->query("SELECT COUNT(*) FROM inventory WHERE quantity <= min_quantity")->fetchColumn();
+    }
 
     // 2. MODUL: Raktárak és Üzletek telítettsége (Típus szerint lekérdezve)
     $capacities = $pdo->query("
@@ -34,15 +49,24 @@
         else { $warehouses_list[] = $cap; }
     }
 
-    // 1. MODUL: Mai érkezések
-    $todayArrivals = $pdo->query("
-        SELECT t.*, p.name as p_name, w.name as w_name
+    // 1. MODUL: Mai érkezések (SZŰRTEN és GROUPOLVA BATCH SZERINT)
+    // Most már lekérjük az érkezési dátumot is (MAX(t.arriveIn))
+    $sqlArrivals = "
+        SELECT t.batch_id, MAX(w.name) as w_name, MAX(t.arriveIn) as arrive_date
         FROM transports t
-        JOIN products p ON t.product_ID = p.ID
         JOIN warehouses w ON t.warehouse_ID = w.ID
         WHERE t.type = 'import' AND t.arriveIn = CURDATE()
-        ORDER BY t.ID DESC
-    ")->fetchAll(PDO::FETCH_ASSOC);
+    ";
+
+    // Ha korlátozott nézet, csak a saját raktár érkezéseit mutassuk
+    if ($isRestricted && $userWhId) {
+        $sqlArrivals .= " AND t.warehouse_ID = " . (int)$userWhId;
+    }
+
+    // Csoportosítjuk batch ID szerint
+    $sqlArrivals .= " GROUP BY t.batch_id ORDER BY t.ID DESC";
+    
+    $todayArrivals = $pdo->query($sqlArrivals)->fetchAll(PDO::FETCH_ASSOC);
 
     // 3. MODUL: Legutóbbi 5 mozgás
     $recentActivity = $pdo->query("
@@ -132,6 +156,16 @@
         .timeline-item { padding: 10px 0; border-left: 2px solid var(--border); padding-left: 15px; position: relative; margin-left: 10px; }
         .timeline-item::before { content: ""; position: absolute; left: -7px; top: 15px; width: 12px; height: 12px; background: white; border: 2px solid var(--primary); border-radius: 50%; }
         
+        /* Batch ID nyíl effekt (ugyanaz, mint owner.php-n) */
+        .batch-id-cell { position: relative; cursor: pointer; transition: background 0.2s; }
+        .batch-id-cell:hover { background: #f1f5f9 !important; }
+        .batch-id-cell a { text-decoration: none; color: #2563eb; font-family: monospace; font-weight: bold; }
+        .batch-id-cell::after { 
+            content: '→'; position: absolute; right: 15px; top: 50%; 
+            transform: translateY(-50%); opacity: 0; transition: all 0.2s; color: #2563eb; 
+        }
+        .batch-id-cell:hover::after { opacity: 1; right: 8px; }
+
         @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
     </style>
 </head>
@@ -153,7 +187,9 @@
         <div class="card stat-card <?= $lowStockCount > 0 ? 'critical' : '' ?>">
             <div class="stat-label">Alacsony készlet</div>
             <div class="stat-value"><?= $lowStockCount ?></div>
-            <div class="stat-sub">Azonnali utánpótlás kell</div>
+            <div class="stat-sub">
+                <?= ($isRestricted && $userWhId) ? 'Saját egységben' : 'Azonnali utánpótlás kell' ?>
+            </div>
         </div>
     </section>
 
@@ -191,26 +227,34 @@
         <?php endif; ?>
 
         <section class="card full-width">
-            <div class="card-header"><h2><img class="icon" src="./img/1485477075-calendar_78587.png"> Ma érkező áruk</h2></div>
+            <div class="card-header">
+                <h2>
+                    <img class="icon" src="./img/1485477075-calendar_78587.png"> 
+                    Ma érkező áruk 
+                    <?php if($isRestricted && $userWhId): ?>
+                        <small style="font-weight:normal; font-size:0.7em; color:#666;">(Csak saját)</small>
+                    <?php endif; ?>
+                </h2>
+            </div>
             <?php if (empty($todayArrivals)): ?>
                 <p style="text-align:center; padding: 20px; color: #94a3b8;">Mára nincs ütemezett beérkezés.</p>
             <?php else: ?>
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Batch ID</th>
-                            <th>Termék</th>
+                            <th style="width: 40%;">Batch ID</th>
+                            <th>Érkezés dátuma</th>
                             <th>Célállomás</th>
-                            <th>Megjegyzés</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach($todayArrivals as $arr): ?>
                             <tr>
-                                <td><code style="background:#f1f5f9;padding:3px 6px;border-radius:4px;">#<?= $arr['batch_id'] ?></code></td>
-                                <td><strong><?= htmlspecialchars($arr['p_name']) ?></strong></td>
+                                <td class="batch-id-cell" onclick="location.href='transport.php?batch=<?= $arr['batch_id'] ?>'">
+                                    <a href="transport.php?batch=<?= $arr['batch_id'] ?>"><?= htmlspecialchars($arr['batch_id']) ?></a>
+                                </td>
+                                <td><?= htmlspecialchars($arr['arrive_date']) ?></td>
                                 <td><?= htmlspecialchars($arr['w_name']) ?></td>
-                                <td><?= htmlspecialchars($arr['description']) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

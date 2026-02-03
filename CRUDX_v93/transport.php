@@ -2,7 +2,7 @@
 session_start();
 require 'config.php';
 require "./components/auth_check.php";
-authorize(['admin', 'owner']);
+authorize(['admin', 'owner', 'user']);
 
 if (!isset($_GET['batch'])) {
     die("Érvénytelen szállítási azonosító.");
@@ -49,7 +49,9 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     <section class="card">
         <div class="card-header">
             <h2><img class="icon" src="./img/truck_23929.png"> Szállítmány: <?= htmlspecialchars($batchId) ?></h2>
-            <a href="owner.php" class="btn btn-outline">Vissza a naplóhoz</a>
+            <a href="<?= $_SESSION['role'] === 'user' ? 'index.php' : 'owner.php' ?>" class="btn btn-outline">
+                <?= $_SESSION['role'] === 'admin' || $_SESSION['role'] === 'owner' ? 'Vissza a naplóhoz' : 'Vissza a főoldalra' ?>
+            </a>
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px;">

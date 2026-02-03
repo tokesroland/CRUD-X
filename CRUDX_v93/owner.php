@@ -10,6 +10,9 @@ include './components/navbar.php';
 
 $message = "";
 
+// Raktárak betöltése a legördülő listákhoz (Csak aktívak)
+$warehouses_for_select = $pdo->query("SELECT * FROM warehouses WHERE active = 1 ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+
 /* |--------------------------------------------------------------------------
 | 1. LOGIKA: ÚJ FELHASZNÁLÓ LÉTREHOZÁSA
 |-------------------------------------------------------------------------- */
@@ -17,19 +20,22 @@ if (isset($_POST['add_user'])) {
     $username = trim($_POST['username'] ?? '');
     $password_raw = $_POST['password'] ?? '';
     $role = $_POST['role'] ?? 'user';
+    // Raktár ID (ha üres stringet küld a select, akkor NULL legyen)
+    $wh_id = !empty($_POST['warehouse_id']) ? $_POST['warehouse_id'] : null;
     $now = date('Y-m-d H:i:s');
 
     if (!empty($username) && !empty($password_raw)) {
         $password_hash = password_hash($password_raw, PASSWORD_DEFAULT);
         try {
-            $stmt = $pdo->prepare("INSERT INTO users (username, password, role, active, created_at, login_at) VALUES (?, ?, ?, 1, ?, ?)");
-            $stmt->execute([$username, $password_hash, $role, $now, $now]);
+            // INSERT, beleértve a warehouse_id-t is
+            $stmt = $pdo->prepare("INSERT INTO users (username, password, role, warehouse_id, active, created_at, login_at) VALUES (?, ?, ?, ?, 1, ?, ?)");
+            $stmt->execute([$username, $password_hash, $role, $wh_id, $now, $now]);
             $message = "Sikeresen létrehozva: $username";
         } catch (PDOException $e) {
             $message = "Hiba: " . ($e->getCode() == 23000 ? "A felhasználónév már foglalt!" : $e->getMessage());
         }
     } else {
-        $message = "Hiba: Minden mezőt ki kell tölteni!";
+        $message = "Hiba: Minden kötelező mezőt ki kell tölteni!";
     }
 }
 
@@ -40,16 +46,17 @@ if (isset($_POST['update_user'])) {
     $id = $_POST['user_id'];
     $username = trim($_POST['username']);
     $role = $_POST['role'];
+    $wh_id = !empty($_POST['warehouse_id']) ? $_POST['warehouse_id'] : null;
     $active = isset($_POST['active']) ? 1 : 0;
     
     try {
         if (!empty($_POST['new_password'])) {
             $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, role = ?, password = ?, active = ? WHERE ID = ?");
-            $stmt->execute([$username, $role, $password, $active, $id]);
+            $stmt = $pdo->prepare("UPDATE users SET username = ?, role = ?, warehouse_id = ?, password = ?, active = ? WHERE ID = ?");
+            $stmt->execute([$username, $role, $wh_id, $password, $active, $id]);
         } else {
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, role = ?, active = ? WHERE ID = ?");
-            $stmt->execute([$username, $role, $active, $id]);
+            $stmt = $pdo->prepare("UPDATE users SET username = ?, role = ?, warehouse_id = ?, active = ? WHERE ID = ?");
+            $stmt->execute([$username, $role, $wh_id, $active, $id]);
         }
         $message = "Adatok frissítve!";
     } catch (PDOException $e) {
@@ -173,7 +180,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
         .btn-primary-blue { background: #0f172a; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 600; }
         .btn-save-sm { background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
 
-        /* Batch ID nyíl effekt (Products.php stílus) */
+        /* Batch ID nyíl effekt */
         .batch-id-cell { position: relative; cursor: pointer; transition: background 0.2s; }
         .batch-id-cell:hover { background: #f1f5f9 !important; }
         .batch-id-cell a { text-decoration: none; color: #2563eb; font-family: monospace; font-weight: bold; }
@@ -216,14 +223,27 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                     <form method="POST">
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Felhasználónév</label>
                         <input type="text" name="username" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Jelszó</label>
                         <input type="password" name="password" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Szerepkör</label>
-                        <select name="role" style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:6px;">
+                        <select name="role" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                             <option value="user">User</option>
                             <option value="admin">Admin</option>
                             <option value="owner">Owner</option>
                         </select>
+
+                        <label style="display:block; margin-bottom:5px; font-weight:600;">Hozzárendelt Raktár/Üzlet</label>
+                        <select name="warehouse_id" style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:6px;">
+                            <option value="">-- Nincs (Mindenhez hozzáfér / Admin) --</option>
+                            <?php foreach($warehouses_for_select as $wh): ?>
+                                <option value="<?= $wh['ID'] ?>">
+                                    <?= htmlspecialchars($wh['name']) ?> (<?= $wh['type'] == 'store' ? 'Üzlet' : 'Raktár' ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
                         <button type="submit" name="add_user" class="btn-primary-blue">Létrehozás</button>
                     </form>
                 </div>
@@ -252,11 +272,11 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
 
         <div class="lists-stack">
             <section class="card">
-                <div class="card-header-toggle" onclick="toggleSection('userContent', this)">
+                <div class="card-header-toggle collapsed" onclick="toggleSection('userContent', this)">
                     <h2><img class="icon" src="./img/users_icon_197608.png"> Felhasználók kezelése</h2>
                     <span class="toggle-icon">▼</span>
                 </div>
-                <div id="userContent">
+                <div id="userContent" class="is-hidden">
                     <div class="search-container">
                         <input type="text" id="userSearch" class="search-input" placeholder="Keresés névre..." onkeyup="filterUsers()">
                     </div>
@@ -266,6 +286,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                                 <tr>
                                     <th>Név</th>
                                     <th>Jog</th>
+                                    <th>Raktár</th>
                                     <th>Jelszó</th>
                                     <th>Aktív</th>
                                     <th></th>
@@ -284,6 +305,16 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                                                 <option value="owner" <?= $u['role'] == 'owner' ? 'selected' : '' ?>>Owner</option>
                                             </select>
                                         </td>
+                                        <td>
+                                            <select name="warehouse_id" style="padding:5px; border-radius:4px; border:1px solid #ddd; max-width: 150px;">
+                                                <option value="">-- Nincs --</option>
+                                                <?php foreach($warehouses_for_select as $wh): ?>
+                                                    <option value="<?= $wh['ID'] ?>" <?= isset($u['warehouse_id']) && $u['warehouse_id'] == $wh['ID'] ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($wh['name']) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </td>
                                         <td><input type="password" name="new_password" placeholder="Új jelszó..." style="width:100px; padding:5px; border-radius:4px; border:1px solid #ddd;"></td>
                                         <td style="text-align:center;"><input type="checkbox" name="active" <?= $u['active'] ? 'checked' : '' ?>></td>
                                         <td><button type="submit" name="update_user" class="btn-save-sm">Mentés</button></td>
@@ -295,11 +326,11 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                     </div>
                 </div>
             </section>
-
+            
             <section class="card">
-                <div class="card-header-toggle" onclick="toggleSection('warehouseContent', this)">
+                <div class="card-header-toggle collapsed" onclick="toggleSection('warehouseContent', this)">
                     <h2><img class="icon" src="./img/create_117333.png"> Raktárak és Üzletek kezelése</h2>
-                    <span class="toggle-icon">▼</span>
+                    <span style="margin-left: 1rem;" class="toggle-icon">▼</span>
                 </div>
                 <div id="warehouseContent" class="is-hidden">
                     <div class="search-container">
@@ -343,11 +374,11 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
             </section>
 
             <section class="card">
-                <div class="card-header-toggle" onclick="toggleSection('logContent', this)">
+                <div class="card-header-toggle collapsed" onclick="toggleSection('logContent', this)">
                     <h2><img class="icon" src="./img/logging_cloud_icon_215864.png"> Készletmozgási Napló</h2>
                     <span class="toggle-icon">▼</span>
                 </div>
-                <div id="logContent">
+                <div id="logContent" class="is-hidden">
                     <form method="GET" class="filter-bar">
                         <div class="filter-item">
                             <label>Batch ID</label>
@@ -412,8 +443,16 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
 <script>
 function toggleSection(id, header) {
     const content = document.getElementById(id);
+    
+    // Toggle class
     content.classList.toggle('is-hidden');
     header.classList.toggle('collapsed');
+
+    // Win 11 "Snap" hatás
+    header.parentElement.style.transform = 'scale(0.995)';
+    setTimeout(() => {
+        header.parentElement.style.transform = 'scale(1)';
+    }, 100);
 }
 
 function filterUsers() {

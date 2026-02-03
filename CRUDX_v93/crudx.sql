@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2026. Jan 28. 14:29
+-- Létrehozás ideje: 2026. Feb 03. 11:06
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -56,7 +56,8 @@ INSERT INTO `categories` (`ID`, `category_name`) VALUES
 (17, 'Okosotthon eszközök'),
 (18, 'Biztonságtechnika'),
 (19, 'Ergonómiai kiegészítők'),
-(20, 'Egyéb elektronikai termékek');
+(20, 'Egyéb elektronikai termékek'),
+(21, 'Laptop/PC');
 
 -- --------------------------------------------------------
 
@@ -114,11 +115,11 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (39, 50, 23, 53, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (40, 50, 24, 12, 1, '2026-01-21 10:56:53', '2026-01-21 12:01:26'),
 (41, 51, 21, 33, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(42, 51, 22, 85, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
+(42, 51, 22, 84, 4, '2026-01-21 10:56:53', '2026-02-03 10:24:48'),
 (43, 51, 23, 147, 8, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (44, 51, 24, 45, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (45, 52, 21, 50, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(46, 52, 22, 132, 7, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
+(46, 52, 22, 122, 7, '2026-01-21 10:56:53', '2026-02-03 10:24:48'),
 (47, 52, 23, 7, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (48, 52, 24, 73, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
 (49, 53, 21, 116, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
@@ -170,7 +171,11 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (95, 43, 25, 100, NULL, '2026-01-21 12:15:02', NULL),
 (96, 59, 26, 1, NULL, '2026-01-22 20:06:34', NULL),
 (97, 45, 26, 100, NULL, '2026-01-22 20:06:34', NULL),
-(98, 58, 27, 10, NULL, '2026-01-22 20:08:52', NULL);
+(98, 58, 27, 10, NULL, '2026-01-22 20:08:52', NULL),
+(99, 52, 31, 10, NULL, '2026-02-03 10:24:48', NULL),
+(100, 51, 31, 1, NULL, '2026-02-03 10:24:48', NULL),
+(101, 52, 28, -2333, NULL, '2026-02-03 10:59:23', NULL),
+(102, 65, 28, 10, NULL, '2026-02-03 10:59:59', '2026-02-03 11:00:09');
 
 -- --------------------------------------------------------
 
@@ -217,7 +222,10 @@ INSERT INTO `products` (`ID`, `name`, `item_number`, `description`, `category_ID
 (64, 'Trapista sajt', 1768993094, 'CSV Importált', 1, 1, '2026-01-21 11:58:12', '2026-01-22 20:24:21'),
 (65, '42', 1768993095, 'CSV Importált', 1, 1, '2026-01-21 11:58:12', '2026-01-21 11:58:12'),
 (66, '43', 1768993097, 'CSV Importált', 1, 1, '2026-01-21 11:58:12', '2026-01-21 11:58:12'),
-(67, 'Várj egy kicsit', 2147483647, 'Várj, generálok egyetttt, na mit irjak meg ide, NA,  na jojo jolesz, termek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahhaahah néázd add ide az egeret', 12, 1, '2026-01-22 20:36:39', '2026-01-22 20:36:39');
+(67, 'Várj egy kicsit', 2147483647, 'Várj, generálok egyetttt, na mit irjak meg ide, NA,  na jojo jolesz, termek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahhaahah néázd add ide az egeret', 12, 1, '2026-01-22 20:36:39', '2026-01-22 20:36:39'),
+(68, 'ASUS Vivobook 12A', 345346664, 'Várj, generálok egyetttt, na mit irjak meg ide, NA, aaana jojo jolesz, termek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret', 21, 1, '2026-02-03 10:22:59', '2026-02-03 10:22:59'),
+(69, 'ASUS Vivobook 3 A', 1770112659, 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio corporis eaque eveniet, quam sed ab vero expedita, odit, doloremque voluptatum aliquid nobis quo ratione aperiam incidunt animi quae! Facere, obcaecati.', 21, 1, '2026-02-03 10:57:39', '2026-02-03 10:57:39'),
+(70, 'ASUS Vivobook 3 A', 1770112708, 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio corporis eaque eveniet, quam sed ab vero expedita, odit, doloremque voluptatum aliquid nobis quo ratione aperiam incidunt animi quae! Facere, obcaecati.', 21, 1, '2026-02-03 10:58:28', '2026-02-03 10:58:28');
 
 -- --------------------------------------------------------
 
@@ -256,7 +264,11 @@ INSERT INTO `transports` (`ID`, `batch_id`, `product_ID`, `warehouse_ID`, `type`
 (11, 'TR-1769605868-8DD4', 53, 23, 'export', '2026-01-28 14:11:08', 12, 'Kiszállítás cél: Raktár #22. (XAW-241)', '2026-01-28', 10),
 (12, 'TR-1769605868-8DD4', 53, 22, 'import', '2026-01-28 14:11:08', 12, 'Beérkezés forrás: Raktár #23. (XAW-241)', '2026-01-28', 10),
 (13, 'TR-1769605868-8DD4', 42, 23, 'export', '2026-01-28 14:11:08', 12, 'Kiszállítás cél: Raktár #22. (XAW-241)', '2026-01-28', 11),
-(14, 'TR-1769605868-8DD4', 42, 22, 'import', '2026-01-28 14:11:08', 12, 'Beérkezés forrás: Raktár #23. (XAW-241)', '2026-01-28', 11);
+(14, 'TR-1769605868-8DD4', 42, 22, 'import', '2026-01-28 14:11:08', 12, 'Beérkezés forrás: Raktár #23. (XAW-241)', '2026-01-28', 11),
+(15, 'TR-1770110688-36AC', 52, 22, 'export', '2026-02-03 10:24:48', 5, 'Kiszállítás cél: Raktár #31. (Várj, generálok egyetttt, na mit irjak meg ide, NA, na jojo jolesz, termasdadsasaaasdsaadsasdswerqw3ertweterwtrezgsgfsek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-03', 10),
+(16, 'TR-1770110688-36AC', 52, 31, 'import', '2026-02-03 10:24:48', 5, 'Beérkezés forrás: Raktár #22. (Várj, generálok egyetttt, na mit irjak meg ide, NA, na jojo jolesz, termasdadsasaaasdsaadsasdswerqw3ertweterwtrezgsgfsek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-03', 10),
+(17, 'TR-1770110688-36AC', 51, 22, 'export', '2026-02-03 10:24:48', 5, 'Kiszállítás cél: Raktár #31. (Várj, generálok egyetttt, na mit irjak meg ide, NA, na jojo jolesz, termasdadsasaaasdsaadsasdswerqw3ertweterwtrezgsgfsek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-03', 1),
+(18, 'TR-1770110688-36AC', 51, 31, 'import', '2026-02-03 10:24:48', 5, 'Beérkezés forrás: Raktár #22. (Várj, generálok egyetttt, na mit irjak meg ide, NA, na jojo jolesz, termasdadsasaaasdsaadsasdswerqw3ertweterwtrezgsgfsek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-03', 1);
 
 -- --------------------------------------------------------
 
@@ -270,6 +282,7 @@ CREATE TABLE `users` (
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `password` varchar(255) NOT NULL,
   `role` enum('user','admin','owner') NOT NULL,
+  `warehouse_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `login_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -278,10 +291,11 @@ CREATE TABLE `users` (
 -- A tábla adatainak kiíratása `users`
 --
 
-INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `created_at`, `login_at`) VALUES
-(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', '2026-01-21 15:02:35', '2026-01-28 14:14:33'),
-(11, '1', 0, '$2y$10$YcjVjbxum.kRWHYKRLuIC.RV9.rZnq88.TTNh7u.JhMjstG.l0zY.', 'user', '2026-01-21 15:08:42', '2026-01-22 20:22:32'),
-(12, 'Tőkés Roland', 1, '$2y$10$1LLVsSxLFWUnChal0TUg1OsDZi3uhjv3d0H1YYjrdBih2S5OYHPjy', 'owner', '2026-01-22 13:40:39', '2026-01-28 14:13:49');
+INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `warehouse_id`, `created_at`, `login_at`) VALUES
+(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', NULL, '2026-01-21 15:02:35', '2026-02-03 10:33:59'),
+(11, '1', 0, '$2y$10$YcjVjbxum.kRWHYKRLuIC.RV9.rZnq88.TTNh7u.JhMjstG.l0zY.', 'user', NULL, '2026-01-21 15:08:42', '2026-01-22 20:22:32'),
+(12, 'Tőkés Roland', 1, '$2y$10$1LLVsSxLFWUnChal0TUg1OsDZi3uhjv3d0H1YYjrdBih2S5OYHPjy', 'owner', NULL, '2026-01-22 13:40:39', '2026-01-29 09:09:30'),
+(13, 'Minta Pista', 1, '$2y$10$1rmsB3APkv/kEgnEzUlYBuYWvhlLHKDy85KIW79soE82aaZ5lYY5q', 'user', 31, '2026-02-03 10:09:14', '2026-02-03 10:24:59');
 
 -- --------------------------------------------------------
 
@@ -356,7 +370,8 @@ ALTER TABLE `transports`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`ID`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD KEY `fk_user_warehouse` (`warehouse_id`);
 
 --
 -- A tábla indexei `warehouses`
@@ -372,31 +387,31 @@ ALTER TABLE `warehouses`
 -- AUTO_INCREMENT a táblához `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT a táblához `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT a táblához `products`
 --
 ALTER TABLE `products`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT a táblához `transports`
 --
 ALTER TABLE `transports`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT a táblához `users`
 --
 ALTER TABLE `users`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT a táblához `warehouses`
@@ -428,6 +443,12 @@ ALTER TABLE `transports`
   ADD CONSTRAINT `fk_transports_warehouse` FOREIGN KEY (`warehouse_ID`) REFERENCES `warehouses` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `transports_ibfk_1` FOREIGN KEY (`product_ID`) REFERENCES `products` (`ID`),
   ADD CONSTRAINT `transports_ibfk_2` FOREIGN KEY (`user_ID`) REFERENCES `users` (`ID`);
+
+--
+-- Megkötések a táblához `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_user_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`ID`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
