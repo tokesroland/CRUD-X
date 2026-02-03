@@ -49,8 +49,8 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     <section class="card">
         <div class="card-header">
             <h2><img class="icon" src="./img/truck_23929.png"> Szállítmány: <?= htmlspecialchars($batchId) ?></h2>
-            <a href="<?= $_SESSION['role'] === 'user' ? 'index.php' : 'owner.php' ?>" class="btn btn-outline">
-                <?= $_SESSION['role'] === 'admin' || $_SESSION['role'] === 'owner' ? 'Vissza a naplóhoz' : 'Vissza a főoldalra' ?>
+            <a href="<?= $_SESSION['role'] === 'user' || $_SESSION['role'] === 'admin' ? 'index.php' : 'owner.php' ?>" class="btn btn-outline">
+                <?= $_SESSION['role'] === 'owner' ? 'Vissza a naplóhoz' : 'Vissza a főoldalra' ?>
             </a>
         </div>
 

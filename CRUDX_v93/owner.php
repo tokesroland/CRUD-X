@@ -222,10 +222,10 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                 <div style="padding: 20px;">
                     <form method="POST">
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Felhasználónév</label>
-                        <input type="text" name="username" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        <input type="text" max="30" name="username" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                         
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Jelszó</label>
-                        <input type="password" name="password" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        <input type="password" max="30" name="password" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                         
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Szerepkör</label>
                         <select name="role" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
@@ -254,16 +254,16 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                 <div style="padding: 20px;">
                     <form method="POST">
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Név</label>
-                        <input type="text" name="w_name" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        <input type="text" max="255" name="w_name" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Típus</label>
                         <select name="w_type" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                             <option value="warehouse">Raktár</option>
                             <option value="store">Üzlet</option>
                         </select>
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Cím</label>
-                        <input type="text" name="w_address" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        <input type="text" max="255" name="w_address" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Max kapacitás (db)</label>
-                        <input type="number" name="w_max_q" required style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:6px;">
+                        <input type="number" min="0" name="w_max_q" required style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:6px;">
                         <button type="submit" name="add_warehouse" class="btn-primary-blue">Rögzítés</button>
                     </form>
                 </div>

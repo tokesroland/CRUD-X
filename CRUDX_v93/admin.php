@@ -8,22 +8,58 @@ $pageTitle = "Kezelés";
 $activePage = "admin.php";
 include './components/navbar.php';
 
-$message = "";
+$message = ""; // Üzenet megjelenítéshez
 $msgType = ""; // success | danger
 
 /*
 |--------------------------------------------------------------------------
-| 1️⃣ ÚJ TERMÉK LÉTREHOZÁSA
+| 1️⃣ ÚJ TERMÉK LÉTREHOZÁSA (Precíziós Validációval)
 |--------------------------------------------------------------------------
 */
 if (isset($_POST['create_product'])) {
     try {
         $categoryID = $_POST['category_id'];
+        $name = trim($_POST['name']);
+        // Ha üres, generálunk egyet, egyébként a beírtat használjuk
+        $itemNumber = !empty($_POST['item_number']) ? trim($_POST['item_number']) : (string)time();
+        $desc = !empty($_POST['description']) ? $_POST['description'] : '-';
 
-        // HA ÚJ KATEGÓRIÁT ADTAK MEG
+        // --- 1. ALAP VALIDÁCIÓK ---
+        if (mb_strlen($name) > 100) {
+            throw new Exception("Hiba: A termék neve nem lehet hosszabb 100 karakternél!");
+        }
+        if (mb_strlen($itemNumber) > 100) {
+            throw new Exception("Hiba: A cikkszám nem lehet hosszabb 100 karakternél!");
+        }
+        if (strpos($itemNumber, '-') === 0) {
+            throw new Exception("Hiba: A cikkszám nem lehet negatív szám!");
+        }
+        if (empty($name) || empty($categoryID) || $categoryID === "NEW") {
+            throw new Exception("Név és Kategória kötelező!");
+        }
+
+        // --- 2. DUPLIKÁCIÓ ELLENŐRZÉS (PONTOS HIBAÜZENETÉRT) ---
+        // Név ellenőrzése
+        $stmtCheckName = $pdo->prepare("SELECT ID FROM products WHERE name = ?");
+        $stmtCheckName->execute([$name]);
+        if ($stmtCheckName->fetch()) {
+            throw new Exception("Hiba: Ezzel a névvel már létezik termék az adatbázisban!");
+        }
+
+        // Cikkszám ellenőrzése
+        $stmtCheckItem = $pdo->prepare("SELECT ID FROM products WHERE item_number = ?");
+        $stmtCheckItem->execute([$itemNumber]);
+        if ($stmtCheckItem->fetch()) {
+            throw new Exception("Hiba: Ez a cikkszám már foglalt egy másik terméknél!");
+        }
+
+        // --- 3. ÚJ KATEGÓRIA KEZELÉS ---
         if ($categoryID === "NEW" && !empty($_POST['new_category_name'])) {
             $newCatName = trim($_POST['new_category_name']);
-            // Ellenőrizzük, létezik-e már
+            if (mb_strlen($newCatName) > 50) { 
+                throw new Exception("Hiba: A kategória neve túl hosszú!");
+            }
+            
             $checkCat = $pdo->prepare("SELECT ID FROM categories WHERE category_name = ?");
             $checkCat->execute([$newCatName]);
             $existingCatId = $checkCat->fetchColumn();
@@ -37,21 +73,15 @@ if (isset($_POST['create_product'])) {
             }
         }
 
-        if (empty($_POST['name']) || empty($categoryID) || $categoryID === "NEW") {
-            throw new Exception("Név és Kategória kötelező!");
-        }
-
+        // --- 4. MENTÉS ---
         $stmt = $pdo->prepare("
             INSERT INTO products 
             (name, item_number, description, category_ID, active) 
             VALUES (?, ?, ?, ?, ?)
         ");
 
-        $itemNumber = !empty($_POST['item_number']) ? $_POST['item_number'] : time();
-        $desc = !empty($_POST['description']) ? $_POST['description'] : '-';
-
         $stmt->execute([
-            $_POST['name'],
+            $name,
             $itemNumber,
             $desc,
             $categoryID,
@@ -60,25 +90,22 @@ if (isset($_POST['create_product'])) {
 
         $message = "Termék sikeresen létrehozva!";
         $msgType = "success";
+
     } catch (Exception $e) {
-        $message = "Hiba: " . $e->getMessage();
-        if ($e->getCode() == 23000) $message = "Hiba: Ez a cikkszám már létezik!";
+        $message = $e->getMessage();
         $msgType = "danger";
     }
 }
 
 /*
 |--------------------------------------------------------------------------
-| 🆕 TERMÉK MÓDOSÍTÁS (UPDATE)
+| 🆕 TERMÉK TÖMEGES MÓDOSÍTÁS (Precíziós Validációval)
 |--------------------------------------------------------------------------
 */
-if (isset($_POST['update_product'])) {
+if (isset($_POST['update_products_bulk']) && isset($_POST['products'])) {
+    $pdo->beginTransaction();
     try {
-        $id = (int)$_POST['product_id'];
-        if (empty($_POST['name']) || empty($_POST['category_id'])) {
-            throw new Exception("A név és a kategória nem lehet üres!");
-        }
-
+        $count = 0;
         $stmt = $pdo->prepare("
             UPDATE products 
             SET name = ?, 
@@ -90,27 +117,67 @@ if (isset($_POST['update_product'])) {
             WHERE ID = ?
         ");
 
-        $stmt->execute([
-            $_POST['name'],
-            !empty($_POST['item_number']) ? $_POST['item_number'] : time(),
-            $_POST['description'],
-            $_POST['category_id'],
-            isset($_POST['active']) ? 1 : 0,
-            $id
-        ]);
+        // Előkészített lekérdezések a duplikáció kereséshez (saját magát kizárva)
+        $checkNameUpd = $pdo->prepare("SELECT ID FROM products WHERE name = ? AND ID != ?");
+        $checkNumUpd  = $pdo->prepare("SELECT ID FROM products WHERE item_number = ? AND ID != ?");
 
-        $message = "Termék adatai frissítve!";
+        foreach ($_POST['products'] as $id => $data) {
+            $id = (int)$id;
+            $name = trim($data['name']);
+            $itemNum = trim($data['item_number']);
+
+            // --- PHP VALIDÁCIÓ ---
+            if (empty($name) || empty($data['category_id'])) {
+                throw new Exception("Minden terméknél kötelező a név és a kategória! (ID: $id)");
+            }
+            if (mb_strlen($name) > 100) {
+                throw new Exception("Hiba (ID: $id): A név max 100 karakter lehet!");
+            }
+            if (mb_strlen($itemNum) > 100) {
+                throw new Exception("Hiba (ID: $id): A cikkszám max 100 karakter lehet!");
+            }
+            if (strpos($itemNum, '-') === 0) {
+                throw new Exception("Hiba (ID: $id): A cikkszám nem lehet negatív!");
+            }
+
+            // --- DUPLIKÁCIÓ ELLENŐRZÉS (Saját magát kivéve) ---
+            $checkNameUpd->execute([$name, $id]);
+            if ($checkNameUpd->fetch()) {
+                throw new Exception("Hiba (ID: $id): A '$name' név már foglalt egy másik terméknél!");
+            }
+
+            if (!empty($itemNum)) {
+                $checkNumUpd->execute([$itemNum, $id]);
+                if ($checkNumUpd->fetch()) {
+                    throw new Exception("Hiba (ID: $id): A '$itemNum' cikkszám már foglalt egy másik terméknél!");
+                }
+            }
+
+            $stmt->execute([
+                $name,
+                !empty($itemNum) ? $itemNum : (string)time(),
+                $data['description'],
+                $data['category_id'],
+                isset($data['active']) ? 1 : 0,
+                $id
+            ]);
+            $count++;
+        }
+
+        $pdo->commit();
+        $message = "$count termék adatai sikeresen frissítve!";
         $msgType = "success";
+
     } catch (Exception $e) {
-        $message = "Hiba a módosításkor: " . $e->getMessage();
-        if ($e->getCode() == 23000) $message = "Hiba: Ez a cikkszám már foglalt!";
+        $pdo->rollBack();
+        $message = $e->getMessage();
         $msgType = "danger";
     }
 }
 
 /*
 |--------------------------------------------------------------------------
-| 2️⃣ ÚJ KÉSZLET HOZZÁRENDELÉS
+| 2️⃣ ÚJ KÉSZLET HOZZÁRENDELÉS (Szigorú Backend Validációval)
 |--------------------------------------------------------------------------
 */
 if (isset($_POST['create_inventory'])) {
@@ -118,6 +185,14 @@ if (isset($_POST['create_inventory'])) {
         $productId   = (int)$_POST['product_id'];
         $warehouseId = (int)$_POST['warehouse_id'];
         $quantity    = (int)$_POST['quantity'];
+
+        // --- PHP VALIDÁCIÓ: MENNYISÉG ---
+        if ($quantity < 0) {
+            throw new Exception("Hiba: A mennyiség nem lehet negatív!");
+        }
+        if ($quantity > 9999) {
+            throw new Exception("Hiba: A maximális bevihető mennyiség 9999 db!");
+        }
 
         $stmt = $pdo->prepare("SELECT ID FROM inventory WHERE product_ID = ? AND warehouse_ID = ?");
         $stmt->execute([$productId, $warehouseId]);
@@ -142,33 +217,61 @@ if (isset($_POST['create_inventory'])) {
 
 /*
 |--------------------------------------------------------------------------
-| 3️⃣ KÉSZLET MÓDOSÍTÁS
+| 3️⃣ KÉSZLET TÖMEGES MÓDOSÍTÁS (Szigorú Backend Validációval)
 |--------------------------------------------------------------------------
 */
-if (isset($_POST['update_inventory'])) {
+if (isset($_POST['update_inventory_bulk']) && isset($_POST['inventory'])) {
+    $pdo->beginTransaction();
     try {
-        $inventoryId = (int)$_POST['inventory_id'];
-        $quantity    = (int)$_POST['quantity'];
-        $minQty      = $_POST['min_quantity'] !== "" ? (int)$_POST['min_quantity'] : null;
-
+        $count = 0;
         $stmt = $pdo->prepare("
             UPDATE inventory 
             SET quantity = ?, min_quantity = ?, updated_at = NOW() 
             WHERE ID = ?
         ");
-        $stmt->execute([$quantity, $minQty, $inventoryId]);
 
-        $message = "Készlet frissítve.";
+        foreach ($_POST['inventory'] as $invId => $data) {
+            $invId = (int)$invId;
+            $quantity = (int)$data['quantity'];
+            $minQty = ($data['min_quantity'] !== "") ? (int)$data['min_quantity'] : null;
+
+            // --- PHP VALIDÁCIÓ ---
+            // 1. Mennyiség ellenőrzése
+            if ($quantity < 0) {
+                throw new Exception("Hiba (ID: $invId): A mennyiség nem lehet negatív!");
+            }
+            if ($quantity > 9999) {
+                throw new Exception("Hiba (ID: $invId): A mennyiség nem lehet több mint 9999!");
+            }
+
+            // 2. Min. mennyiség ellenőrzése
+            if ($minQty !== null) {
+                if ($minQty < 0) {
+                    throw new Exception("Hiba (ID: $invId): A min. mennyiség nem lehet negatív!");
+                }
+                if ($minQty > 9999) {
+                    throw new Exception("Hiba (ID: $invId): A min. mennyiség nem lehet több mint 9999!");
+                }
+            }
+
+            $stmt->execute([$quantity, $minQty, $invId]);
+            $count++;
+        }
+
+        $pdo->commit();
+        $message = "$count készlet tétel frissítve.";
         $msgType = "success";
+
     } catch (Exception $e) {
-        $message = "Hiba a mentéskor.";
+        $pdo->rollBack();
+        $message = $e->getMessage();
         $msgType = "danger";
     }
 }
 
 /*
 |--------------------------------------------------------------------------
-| 4️⃣ CSV IMPORT (JAVÍTOTT LOGIKA)
+| 4️⃣ CSV IMPORT (Szigorú Backend Validációval)
 |--------------------------------------------------------------------------
 */
 if (isset($_POST['csv_submit']) && isset($_FILES['csv_file'])) {
@@ -187,12 +290,22 @@ if (isset($_POST['csv_submit']) && isset($_FILES['csv_file'])) {
                 $row++;
                 if ($row === 1) continue; // Fejléc skip
 
-                // CSV Oszlopok: Név (0), RaktárID (1), Mennyiség (2)
                 $productName = trim($data[0] ?? '');
                 $warehouseId = (int)($data[1] ?? 0);
                 $quantity    = (int)($data[2] ?? 0);
 
                 if ($productName === "") continue;
+
+                // --- PHP VALIDÁCIÓ CSV SOROKRA ---
+                if (mb_strlen($productName) > 100) {
+                    throw new Exception("Hiba a $row. sorban: A terméknév túl hosszú (max 100 karakter).");
+                }
+                if ($quantity < 0) {
+                    throw new Exception("Hiba a $row. sorban: A mennyiség nem lehet negatív ($quantity).");
+                }
+                if ($quantity > 9999) {
+                    throw new Exception("Hiba a $row. sorban: A mennyiség túl sok ($quantity). Max 9999.");
+                }
 
                 // 1. Termék keresés / Létrehozás
                 $stmt = $pdo->prepare("SELECT ID FROM products WHERE name = ?");
@@ -200,14 +313,13 @@ if (isset($_POST['csv_submit']) && isset($_FILES['csv_file'])) {
                 $pId = $stmt->fetchColumn();
 
                 if (!$pId) {
-                    // JAVÍTÁS: Pontosan 4 paraméter az execute-ban a 4 kérdőjelhez
                     $stmt = $pdo->prepare("
                         INSERT INTO products (name, item_number, description, category_ID, active)
                         VALUES (?, ?, ?, ?, 1)
                     ");
                     $stmt->execute([
                         $productName, 
-                        time() + $row, 
+                        (string)(time() + $row), 
                         'CSV Importált termék', 
                         $defaultCat
                     ]);
@@ -282,12 +394,12 @@ $inventoryList = $pdo->query("
             <form method="POST">
                 <div class="filters">
                     <div class="field col-4">
-                        <label>Termék neve *</label>
-                        <input type="text" name="name" required placeholder="Pl. USB Kábel">
+                        <label>Termék neve * (Max 100)</label>
+                        <input type="text" name="name" required placeholder="Pl. USB Kábel" maxlength="100">
                     </div>
                     <div class="field col-4">
-                        <label>Cikkszám</label>
-                        <input type="text" name="item_number" placeholder="Hagy üresen generáláshoz">
+                        <label>Cikkszám (Max 100)</label>
+                        <input type="text" name="item_number" placeholder="Hagy üresen generáláshoz" maxlength="100">
                     </div>
                     <div class="field col-4">
                         <label>Kategória *</label>
@@ -328,44 +440,49 @@ $inventoryList = $pdo->query("
                     <div class="field" style="margin-bottom: 15px;">
                         <input type="text" id="productSearchInput" onkeyup="filterProducts()" placeholder="🔍 Keress terméknévre vagy cikkszámra...">
                     </div>
-                    <div class="filters" style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0; font-weight:bold; padding:10px;">
-                        <div class="col-3">Termék Név</div>
-                        <div class="col-2">Cikkszám</div>
-                        <div class="col-2">Kategória</div>
-                        <div class="col-3">Leírás</div>
-                        <div class="col-2" style="text-align:right;">Művelet</div>
-                    </div>
-                    <div id="productListContainer">
-                        <?php foreach ($allProducts as $prod): ?>
-                            <form method="POST" class="product-row" style="border-bottom: 1px solid #eee;">
-                                <input type="hidden" name="product_id" value="<?= $prod['ID'] ?>">
-                                <div class="filters" style="margin-bottom: 0; align-items: center; padding: 8px 14px;">
-                                    <div class="col-3 field prod-name">
-                                        <input type="text" name="name" value="<?= htmlspecialchars($prod['name']) ?>" required>
-                                    </div>
-                                    <div class="col-2 field prod-item-num">
-                                        <input type="text" name="item_number" value="<?= htmlspecialchars($prod['item_number']) ?>">
-                                    </div>
-                                    <div class="col-2 field">
-                                        <select name="category_id">
-                                            <?php foreach($categories as $cat): ?>
-                                                <option value="<?= $cat['ID'] ?>" <?= $cat['ID'] == $prod['category_ID'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['category_name']) ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class="col-3 field">
-                                        <input type="text" name="description" value="<?= htmlspecialchars($prod['description']) ?>">
-                                        <label style="font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px;">
-                                            <input type="checkbox" name="active" <?= $prod['active'] == 1 ? 'checked' : '' ?> style="width: auto; margin-right: 5px;"> Aktív
-                                        </label>
-                                    </div>
-                                    <div class="col-2 field actions" style="justify-content:flex-end;">
-                                        <button type="submit" name="update_product" class="btn btn-outline btn-small">💾 Mentés</button>
+                    
+                    <form method="POST">
+                        <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+                            <button type="submit" name="update_products_bulk" class="btn">💾 Összes módosítás mentése</button>
+                        </div>
+
+                        <div class="filters" style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0; font-weight:bold; padding:10px;">
+                            <div class="col-3">Termék Név</div>
+                            <div class="col-2">Cikkszám</div>
+                            <div class="col-2">Kategória</div>
+                            <div class="col-3">Leírás</div>
+                            <div class="col-2" style="text-align:right;">Státusz</div>
+                        </div>
+                        <div id="productListContainer">
+                            <?php foreach ($allProducts as $prod): ?>
+                                <div class="product-row" style="border-bottom: 1px solid #eee;">
+                                    <div class="filters" style="margin-bottom: 0; align-items: center; padding: 8px 14px;">
+                                        <div class="col-3 field prod-name">
+                                            <input type="text" name="products[<?= $prod['ID'] ?>][name]" value="<?= htmlspecialchars($prod['name']) ?>" required maxlength="100">
+                                        </div>
+                                        <div class="col-2 field prod-item-num">
+                                            <input type="text" name="products[<?= $prod['ID'] ?>][item_number]" value="<?= htmlspecialchars($prod['item_number']) ?>" maxlength="100">
+                                        </div>
+                                        <div class="col-2 field">
+                                            <select name="products[<?= $prod['ID'] ?>][category_id]">
+                                                <?php foreach($categories as $cat): ?>
+                                                    <option value="<?= $cat['ID'] ?>" <?= $cat['ID'] == $prod['category_ID'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['category_name']) ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-3 field">
+                                            <input type="text" name="products[<?= $prod['ID'] ?>][description]" value="<?= htmlspecialchars($prod['description']) ?>">
+                                        </div>
+                                        <div class="col-2 field" style="display:flex; justify-content:flex-end;">
+                                            <label style="font-size: 0.75rem; display: flex; align-items: center; margin-top: 4px;">
+                                                <input type="checkbox" name="products[<?= $prod['ID'] ?>][active]" <?= $prod['active'] == 1 ? 'checked' : '' ?> style="width: auto; margin-right: 5px;"> Aktív
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
-                        <?php endforeach; ?>
-                    </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </form>
                 </div>
             </details>
         </section>
@@ -393,8 +510,8 @@ $inventoryList = $pdo->query("
                         </select>
                     </div>
                     <div class="field" style="margin-bottom:12px;">
-                        <label>Mennyiség</label>
-                        <input type="number" name="quantity" min="0" required placeholder="0">
+                        <label>Mennyiség (0-9999)</label>
+                        <input type="number" name="quantity" required placeholder="0" min="0" max="9999">
                     </div>
                     <div class="field actions" style="justify-content: flex-end;">
                         <button type="submit" name="create_inventory" class="btn btn-small">Hozzáadás</button>
@@ -428,34 +545,36 @@ $inventoryList = $pdo->query("
                     <div class="field" style="margin-bottom: 15px;">
                         <input type="text" id="searchInput" onkeyup="filterList()" placeholder="🔍 Keresés terméknévre vagy raktárra...">
                     </div>
-                    <div class="filters" style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0; font-weight:bold; padding:10px;">
-                        <div class="col-4">Termék & Raktár</div>
-                        <div class="col-3">Jelenlegi DB</div>
-                        <div class="col-3">Min. Limit</div>
-                        <div class="col-2" style="text-align:right;">Művelet</div>
-                    </div>
-                    <div id="inventoryListContainer">
-                        <?php foreach ($inventoryList as $inv): ?>
-                            <form method="POST" class="inventory-row">
-                                <input type="hidden" name="inventory_id" value="<?= $inv['ID'] ?>">
-                                <div class="filters" style="margin-bottom: 8px; align-items: center; padding: 5px 10px;">
-                                    <div class="col-4 field info-text">
-                                        <div style="font-weight:600;"><?= htmlspecialchars($inv['p_name']) ?></div>
-                                        <div style="font-size:0.8rem; color: var(--text-muted);"><?= htmlspecialchars($inv['w_name']) ?></div>
-                                    </div>
-                                    <div class="col-3 field">
-                                        <input type="number" name="quantity" value="<?= $inv['quantity'] ?>" required>
-                                    </div>
-                                    <div class="col-3 field">
-                                        <input type="number" name="min_quantity" value="<?= $inv['min_quantity'] ?>" placeholder="Min">
-                                    </div>
-                                    <div class="col-2 field actions" style="justify-content:flex-end;">
-                                        <button type="submit" name="update_inventory" class="btn btn-outline btn-small">Mentés</button>
+                    
+                    <form method="POST">
+                        <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+                            <button type="submit" name="update_inventory_bulk" class="btn">💾 Összes módosítás mentése</button>
+                        </div>
+
+                        <div class="filters" style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0; font-weight:bold; padding:10px;">
+                            <div class="col-4">Termék & Raktár</div>
+                            <div class="col-4">Jelenlegi DB (Max 9999)</div>
+                            <div class="col-4">Min. Limit (Max 9999)</div>
+                        </div>
+                        <div id="inventoryListContainer">
+                            <?php foreach ($inventoryList as $inv): ?>
+                                <div class="inventory-row">
+                                    <div class="filters" style="margin-bottom: 8px; align-items: center; padding: 5px 10px;">
+                                        <div class="col-4 field info-text">
+                                            <div style="font-weight:600;"><?= htmlspecialchars($inv['p_name']) ?></div>
+                                            <div style="font-size:0.8rem; color: var(--text-muted);"><?= htmlspecialchars($inv['w_name']) ?></div>
+                                        </div>
+                                        <div class="col-4 field">
+                                            <input type="number" name="inventory[<?= $inv['ID'] ?>][quantity]" value="<?= $inv['quantity'] ?>" min="0" max="9999" required>
+                                        </div>
+                                        <div class="col-4 field">
+                                            <input type="number" name="inventory[<?= $inv['ID'] ?>][min_quantity]" value="<?= $inv['min_quantity'] ?>" min="0" max="9999" placeholder="Min">
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
-                        <?php endforeach; ?>
-                    </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </form>
                 </div>
             </details>
         </section>

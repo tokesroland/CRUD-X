@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2026. Jan 21. 13:57
+-- Létrehozás ideje: 2026. Feb 03. 21:53
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -56,7 +56,8 @@ INSERT INTO `categories` (`ID`, `category_name`) VALUES
 (17, 'Okosotthon eszközök'),
 (18, 'Biztonságtechnika'),
 (19, 'Ergonómiai kiegészítők'),
-(20, 'Egyéb elektronikai termékek');
+(20, 'Egyéb elektronikai termékek'),
+(21, 'Laptop/PC');
 
 -- --------------------------------------------------------
 
@@ -79,95 +80,104 @@ CREATE TABLE `inventory` (
 --
 
 INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_quantity`, `created_at`, `updated_at`) VALUES
-(2, 41, 22, 41, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(4, 41, 24, 7, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(5, 42, 21, 54, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(6, 42, 22, 18, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(7, 42, 23, 133, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(8, 42, 24, 66, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(9, 43, 21, 27, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(10, 43, 22, 51, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(11, 43, 23, 12, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(12, 43, 24, 34, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(13, 44, 21, 99, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(14, 44, 22, 48, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(15, 44, 23, 70, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(16, 44, 24, 5, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(21, 46, 21, 68, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(22, 46, 22, 142, 7, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(23, 46, 23, 33, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(24, 46, 24, 15, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(25, 47, 21, 56, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(26, 47, 22, 0, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(27, 47, 23, 73, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(28, 47, 24, 128, 7, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(29, 48, 21, 38, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(30, 48, 22, 96, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(31, 48, 23, 112, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(32, 48, 24, 24, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(33, 49, 21, 147, 8, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(34, 49, 22, 62, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(35, 49, 23, 19, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(36, 49, 24, 87, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(37, 50, 21, 74, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(38, 50, 22, 121, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(39, 50, 23, 53, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(40, 50, 24, 12, 1, '2026-01-21 10:56:53', '2026-01-21 12:01:26'),
-(41, 51, 21, 33, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(42, 51, 22, 85, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(43, 51, 23, 147, 8, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(44, 51, 24, 45, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(45, 52, 21, 50, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(46, 52, 22, 132, 7, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(47, 52, 23, 7, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(48, 52, 24, 73, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(49, 53, 21, 116, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(50, 53, 22, 42, 100, '2026-01-21 10:56:53', '2026-01-21 13:27:09'),
-(51, 53, 23, 97, 5, '2026-01-21 10:56:53', '2026-01-21 11:37:06'),
-(52, 53, 24, 129, 7, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(53, 54, 21, 95, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(54, 54, 22, 58, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(55, 54, 23, 12, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(56, 54, 24, 101, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(57, 55, 21, 149, 9, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(58, 55, 22, 77, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(59, 55, 23, 30, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(60, 55, 24, 18, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(61, 56, 21, 66, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(62, 56, 22, 108, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(63, 56, 23, 120, 7, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(64, 56, 24, 49, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(65, 57, 21, 24, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(66, 57, 22, 93, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(67, 57, 23, 14, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(68, 57, 24, 135, 7, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(69, 58, 21, 83, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(70, 58, 22, 68, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(71, 58, 23, 130, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(72, 58, 24, 20, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(73, 59, 21, 52, 3, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(74, 59, 22, 145, 8, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(75, 59, 23, 47, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(76, 59, 24, 10, 1, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(77, 60, 21, 91, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(78, 60, 22, 39, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(79, 60, 23, 75, 4, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(80, 60, 24, 118, 6, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(81, 51, 23, 200, 40, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(82, 41, 21, 120, 10, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(83, 42, 21, 50, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(84, 42, 22, 30, 5, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(85, 43, 23, 0, 2, '2026-01-21 10:56:53', '2026-01-21 10:56:53'),
-(86, 41, 21, 120, 10, '2026-01-21 10:57:06', '2026-01-21 10:57:06'),
-(87, 42, 21, 50, 5, '2026-01-21 10:57:06', '2026-01-21 10:57:06'),
-(88, 42, 22, 30, 5, '2026-01-21 10:57:06', '2026-01-21 10:57:06'),
-(89, 43, 23, 0, 2, '2026-01-21 10:57:06', '2026-01-21 10:57:06'),
-(90, 45, 23, 200, 10, '2026-01-21 11:04:38', NULL),
-(91, 64, 21, 120, NULL, '2026-01-21 11:58:12', NULL),
-(92, 65, 21, 50, NULL, '2026-01-21 11:58:12', NULL),
-(93, 65, 22, 30, NULL, '2026-01-21 11:58:12', NULL),
-(94, 66, 23, 0, NULL, '2026-01-21 11:58:12', NULL),
-(95, 43, 25, 100, NULL, '2026-01-21 12:15:02', NULL);
+(2, 41, 22, 41, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(4, 41, 24, 7, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(5, 42, 21, 54, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(6, 42, 22, 29, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(7, 42, 23, 122, 6, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(8, 42, 24, 66, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(9, 43, 21, 27, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(10, 43, 22, 51, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(11, 43, 23, 12, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(12, 43, 24, 34, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(13, 44, 21, 99, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(14, 44, 22, 48, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(15, 44, 23, 70, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(16, 44, 24, 5, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(21, 46, 21, 68, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(22, 46, 22, 142, 7, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(23, 46, 23, 33, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(24, 46, 24, 15, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(25, 47, 21, 56, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(26, 47, 22, 0, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(27, 47, 23, 73, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(28, 47, 24, 128, 7, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(29, 48, 21, 28, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(30, 48, 22, 96, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(31, 48, 23, 112, 6, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(32, 48, 24, 34, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(33, 49, 21, 147, 8, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(34, 49, 22, 62, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(35, 49, 23, 19, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(36, 49, 24, 87, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(37, 50, 21, 74, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(38, 50, 22, 121, 6, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(39, 50, 23, 53, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(40, 50, 24, 12, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(41, 51, 21, 33, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(42, 51, 22, 84, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(43, 51, 23, 147, 8, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(44, 51, 24, 45, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(45, 52, 21, 50, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(46, 52, 22, 122, 7, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(47, 52, 23, 7, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(48, 52, 24, 73, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(49, 53, 21, 116, 6, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(50, 53, 22, 52, 100, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(51, 53, 23, 87, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(52, 53, 24, 129, 7, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(53, 54, 21, 95, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(54, 54, 22, 58, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(55, 54, 23, 12, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(56, 54, 24, 101, 6, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(57, 55, 21, 149, 9, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(58, 55, 22, 77, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(59, 55, 23, 30, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(60, 55, 24, 18, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(61, 56, 21, 66, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(62, 56, 22, 108, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(63, 56, 23, 120, 7, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(64, 56, 24, 49, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(65, 57, 21, 24, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(66, 57, 22, 93, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(67, 57, 23, 14, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(68, 57, 24, 135, 7, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(69, 58, 21, 83, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(70, 58, 22, 68, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(71, 58, 23, 130, 6, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(72, 58, 24, 10, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(73, 59, 21, 52, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(74, 59, 22, 145, 8, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(75, 59, 23, 46, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(76, 59, 24, 10, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(77, 60, 21, 71, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(78, 60, 22, 39, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(79, 60, 23, 75, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(80, 60, 24, 138, 6, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(81, 51, 23, 200, 40, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(82, 41, 21, 120, 10, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(83, 42, 21, 50, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(84, 42, 22, 41, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(85, 43, 23, 0, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(86, 41, 21, 120, 10, '2026-01-21 10:57:06', '2026-02-03 21:01:14'),
+(87, 42, 21, 50, 5, '2026-01-21 10:57:06', '2026-02-03 21:01:14'),
+(88, 42, 22, 41, 5, '2026-01-21 10:57:06', '2026-02-03 21:01:14'),
+(89, 43, 23, 10, 2, '2026-01-21 10:57:06', '2026-02-03 21:01:14'),
+(90, 45, 23, 100, 10, '2026-01-21 11:04:38', '2026-02-03 21:01:14'),
+(91, 64, 21, 120, NULL, '2026-01-21 11:58:12', '2026-02-03 21:01:14'),
+(92, 65, 21, 50, NULL, '2026-01-21 11:58:12', '2026-02-03 21:01:14'),
+(93, 65, 22, 30, NULL, '2026-01-21 11:58:12', '2026-02-03 21:01:14'),
+(94, 66, 23, 10, 100, '2026-01-21 11:58:12', '2026-02-03 21:01:14'),
+(95, 43, 25, 100, NULL, '2026-01-21 12:15:02', '2026-02-03 21:01:14'),
+(96, 59, 26, 1, NULL, '2026-01-22 20:06:34', '2026-02-03 21:01:14'),
+(97, 45, 26, 100, NULL, '2026-01-22 20:06:34', '2026-02-03 21:01:14'),
+(98, 58, 27, 10, NULL, '2026-01-22 20:08:52', '2026-02-03 21:01:14'),
+(99, 52, 31, 10, NULL, '2026-02-03 10:24:48', '2026-02-03 21:01:14'),
+(100, 51, 31, 1, NULL, '2026-02-03 10:24:48', '2026-02-03 21:01:14'),
+(101, 52, 28, 20, NULL, '2026-02-03 10:59:23', '2026-02-03 21:01:14'),
+(102, 65, 28, 10, NULL, '2026-02-03 10:59:59', '2026-02-03 21:01:14'),
+(103, 74, 31, 88, NULL, '2026-02-03 20:22:34', '2026-02-03 21:08:39'),
+(104, 74, 27, 12, NULL, '2026-02-03 21:08:39', NULL);
 
 -- --------------------------------------------------------
 
@@ -177,8 +187,8 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 
 CREATE TABLE `products` (
   `ID` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `item_number` int(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `item_number` varchar(100) NOT NULL,
   `description` text NOT NULL,
   `category_ID` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL,
@@ -191,29 +201,35 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`ID`, `name`, `item_number`, `description`, `category_ID`, `active`, `created_at`, `updated_at`) VALUES
-(41, 'USB-C Kábel 1m', 100001, 'Gyors töltésre alkalmas USB-C kábel.', 1, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(42, 'Laptop Hátizsák 15.6\"', 100002, 'Vízlepergető bevonattal, több rekesszel.', 2, 0, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(43, 'Bluetooth Egér', 100003, 'Vezeték nélküli, 1600 DPI érzékenységgel.', 1, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(44, 'Mechanikus Billentyűzet', 100004, 'Kék switch, RGB világítás.', 1, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(45, 'iPhone 14 Tok', 100005, 'Szilikon védőtok fekete színben.', 3, 0, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(46, 'Notebook Állvány', 100006, 'Állítható magasságú alumínium állvány.', 2, 0, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(47, 'HDMI Kábel 2m', 100007, '4K felbontás támogatás, aranyozott csatlakozó.', 1, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(48, 'USB Pendrive 64GB', 100008, 'Gyors adatátvitel, kulcstartóra rögzíthető.', 1, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(49, 'Gaming Headset', 100009, '7.1 virtuális hangzás, zajszűrő mikrofonnal.', 4, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(50, 'Webkamera Full HD', 100010, '1080p felbontás, autofókusz funkció.', 4, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(51, 'Prémium Egérpad', 100011, 'Csúszásmentes felület gamer használatra.', 4, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(52, 'Type-C Töltőfej 30W', 100012, 'Gyors töltés támogatás USB Power Delivery-vel.', 1, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(53, 'Asztali Ventillátor USB', 100013, 'Csendes működés, 3 sebességfokozat.', 5, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(54, 'Okosóra Szíj 22mm', 100014, 'Szilikon szíj különböző órákhoz.', 3, 0, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(55, 'Powerbank 20 000mAh', 100015, 'Gyors töltés, LED töltöttség kijelző.', 1, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(56, 'Bluetooth Hangszóró', 100016, 'Vízálló IPX5 minősítés, erős basszus.', 5, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(57, 'Kijelzőtisztító Spray', 100017, 'Antisztatikus tisztítószer mikroszálas kendővel.', 3, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(58, 'USB-C Docking Station', 100018, 'HDMI, USB3, LAN és SD kártya olvasóval.', 2, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(59, 'Vezeték nélküli Töltő', 100019, '10W gyorstöltés Qi szabvány szerint.', 1, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(60, 'Fotós Állvány Mini', 100020, 'Kompakt tripod, 360° fejjel.', 5, 1, '2025-12-05 18:38:27', '2025-12-05 18:38:27'),
-(64, '41', 1768993094, 'CSV Importált', 1, 1, '2026-01-21 11:58:12', '2026-01-21 11:58:12'),
-(65, '42', 1768993095, 'CSV Importált', 1, 1, '2026-01-21 11:58:12', '2026-01-21 11:58:12'),
-(66, '43', 1768993097, 'CSV Importált', 1, 1, '2026-01-21 11:58:12', '2026-01-21 11:58:12');
+(41, 'USB-C Kábel 1m', '100001', 'Gyors töltésre alkalmas USB-C kábel.', 1, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(42, 'Laptop Hátizsák 15.6\"', '100002', 'Vízlepergető bevonattal, több rekesszel.', 2, 0, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(43, 'Logitech Bluetooth Egér', '100003', 'Vezeték nélküli, 1600 DPI érzékenységgel.', 1, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(44, 'Mechanikus Billentyűzet', '100004', 'Kék switch, RGB világítás.', 1, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(45, 'iPhone 15 Tok', '100005', 'Szilikon védőtok fekete színben.', 3, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(46, 'Notebook Állvány', '100006', 'Állítható magasságú alumínium állvány.', 2, 0, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(47, 'HDMI Kábel 2m', '100007', '4K felbontás támogatás, aranyozott csatlakozó.', 1, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(48, 'USB Pendrive 64GB', '100008', 'Gyors adatátvitel, kulcstartóra rögzíthető.', 1, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(49, 'Gaming Headset', '100009', '7.1 virtuális hangzás, zajszűrő mikrofonnal.', 4, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(50, 'Webkamera Full HD', '100010', '1080p felbontás, autofókusz funkció.', 4, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(51, 'Prémium Egérpad', '100011', 'Csúszásmentes felület gamer használatra.', 4, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(52, 'Type-C Töltőfej 30W', '100012', 'Gyors töltés támogatás USB Power Delivery-vel.', 1, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(53, 'Asztali Ventillátor USB', '100013', 'Csendes működés, 3 sebességfokozat.', 5, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(54, 'Okosóra Szíj 22mm', '100014', 'Szilikon szíj különböző órákhoz.', 3, 0, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(55, 'Powerbank 20 000mAh', '100015', 'Gyors töltés, LED töltöttség kijelző.', 1, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(56, 'Bluetooth Hangszóró', '100016', 'Vízálló IPX5 minősítés, erős basszus.', 5, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(57, 'Kijelzőtisztító Spray', '100017', 'Antisztatikus tisztítószer mikroszálas kendővel.', 3, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(58, 'USB-C Docking Station', '100018', 'HDMI, USB3, LAN és SD kártya olvasóval.', 2, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(59, 'Vezeték nélküli Töltő', '100019', '10W gyorstöltés Qi szabvány szerint.', 1, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(60, 'Fotós Állvány Mini', '100020', 'Kompakt tripod, 360° fejjel.', 5, 1, '2025-12-05 18:38:27', '2026-02-03 20:52:44'),
+(64, 'Trapista sajt', '1768993094', 'CSV Importált', 1, 1, '2026-01-21 11:58:12', '2026-02-03 20:52:44'),
+(65, 'Iphone 10 Töltő', '1768993095', 'CSV Importált', 1, 1, '2026-01-21 11:58:12', '2026-02-03 20:52:44'),
+(66, '43', '1768993097', 'CSV Importált', 1, 0, '2026-01-21 11:58:12', '2026-02-03 20:52:44'),
+(67, 'Várj egy kicsit', '2147483647', 'Várj, generálok egyetttt, na mit irjak meg ide, NA,  na jojo jolesz, termek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahhaahah néázd add ide az egeret', 12, 1, '2026-01-22 20:36:39', '2026-02-03 20:52:44'),
+(68, 'ASUS Vivobook AX', '345346664', 'Várj, generálok egyetttt, na mit irjak meg ide, NA, aaana jojo jolesz, termek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret', 21, 0, '2026-02-03 10:22:59', '2026-02-03 20:52:44'),
+(70, 'ASUS Vivobook 3 A', '177011271', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio corporis eaque eveniet, quam sed ab vero expedita, odit, doloremque voluptatum aliquid nobis quo ratione aperiam incidunt animi quae! Facere, obcaecati.', 21, 1, '2026-02-03 10:58:28', '2026-02-03 20:52:44'),
+(74, 'Hikvision DS-2CD5526G0-IZHS(2.8-12mm)(B) FULLHD Ultra plus oliva olaj', '1770146457', 'Fejhallgató Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum earum cupiditate repudiandae illo eum corporis consequuntur facere similique, quos explicabo voluptates, quisquam error exercitationem. Quisquam libero excepturi voluptatum architecto? Voluptates.', 20, 1, '2026-02-03 20:20:57', '2026-02-03 20:52:44'),
+(81, '3e24ewf', '2342342', '23423424', 19, 1, '2026-02-03 20:39:13', '2026-02-03 20:52:44'),
+(82, 'RokesToland bodypillow', '1531434343', 'Gamer', 7, 1, '2026-02-03 20:39:27', '2026-02-03 20:52:44');
 
 -- --------------------------------------------------------
 
@@ -223,14 +239,42 @@ INSERT INTO `products` (`ID`, `name`, `item_number`, `description`, `category_ID
 
 CREATE TABLE `transports` (
   `ID` int(11) NOT NULL,
+  `batch_id` varchar(50) DEFAULT NULL,
   `product_ID` int(11) NOT NULL,
   `warehouse_ID` int(11) NOT NULL,
   `type` enum('import','export') NOT NULL,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
   `user_ID` int(11) NOT NULL,
   `description` text NOT NULL,
-  `arriveIn` date DEFAULT NULL
+  `arriveIn` date DEFAULT NULL,
+  `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `transports`
+--
+
+INSERT INTO `transports` (`ID`, `batch_id`, `product_ID`, `warehouse_ID`, `type`, `date`, `user_ID`, `description`, `arriveIn`, `quantity`) VALUES
+(1, 'TR-1769108616-95A6', 60, 21, 'export', '2026-01-22 20:03:36', 12, 'Kiszállítás cél: Raktár #24. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23', 0),
+(2, 'TR-1769108616-95A6', 60, 24, 'import', '2026-01-22 20:03:36', 12, 'Beérkezés forrás: Raktár #21. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23', 0),
+(3, 'TR-1769108616-95A6', 48, 21, 'export', '2026-01-22 20:03:36', 12, 'Kiszállítás cél: Raktár #24. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23', 0),
+(4, 'TR-1769108616-95A6', 48, 24, 'import', '2026-01-22 20:03:36', 12, 'Beérkezés forrás: Raktár #21. (Ford transit Rendszám: FKI-211 B épület)', '2026-01-23', 0),
+(5, 'TR-1769108794-88FE', 59, 23, 'export', '2026-01-22 20:06:34', 12, 'Kiszállítás cél: Raktár #26. (Nagy János - SJF-834)', '2026-01-24', 0),
+(6, 'TR-1769108794-88FE', 59, 26, 'import', '2026-01-22 20:06:34', 12, 'Beérkezés forrás: Raktár #23. (Nagy János - SJF-834)', '2026-01-24', 0),
+(7, 'TR-1769108794-88FE', 45, 23, 'export', '2026-01-22 20:06:34', 12, 'Kiszállítás cél: Raktár #26. (Nagy János - SJF-834)', '2026-01-24', 0),
+(8, 'TR-1769108794-88FE', 45, 26, 'import', '2026-01-22 20:06:34', 12, 'Beérkezés forrás: Raktár #23. (Nagy János - SJF-834)', '2026-01-24', 0),
+(9, 'TR-1769108932-2160', 58, 24, 'export', '2026-01-22 20:08:52', 12, 'Kiszállítás cél: Raktár #27. (Ford transit Rendszám: ZZA-211 B épület)', '2222-02-22', 0),
+(10, 'TR-1769108932-2160', 58, 27, 'import', '2026-01-22 20:08:52', 12, 'Beérkezés forrás: Raktár #24. (Ford transit Rendszám: ZZA-211 B épület)', '2222-02-22', 0),
+(11, 'TR-1769605868-8DD4', 53, 23, 'export', '2026-01-28 14:11:08', 12, 'Kiszállítás cél: Raktár #22. (XAW-241)', '2026-01-28', 10),
+(12, 'TR-1769605868-8DD4', 53, 22, 'import', '2026-01-28 14:11:08', 12, 'Beérkezés forrás: Raktár #23. (XAW-241)', '2026-01-28', 10),
+(13, 'TR-1769605868-8DD4', 42, 23, 'export', '2026-01-28 14:11:08', 12, 'Kiszállítás cél: Raktár #22. (XAW-241)', '2026-01-28', 11),
+(14, 'TR-1769605868-8DD4', 42, 22, 'import', '2026-01-28 14:11:08', 12, 'Beérkezés forrás: Raktár #23. (XAW-241)', '2026-01-28', 11),
+(15, 'TR-1770110688-36AC', 52, 22, 'export', '2026-02-03 10:24:48', 5, 'Kiszállítás cél: Raktár #31. (Várj, generálok egyetttt, na mit irjak meg ide, NA, na jojo jolesz, termasdadsasaaasdsaadsasdswerqw3ertweterwtrezgsgfsek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-03', 10),
+(16, 'TR-1770110688-36AC', 52, 31, 'import', '2026-02-03 10:24:48', 5, 'Beérkezés forrás: Raktár #22. (Várj, generálok egyetttt, na mit irjak meg ide, NA, na jojo jolesz, termasdadsasaaasdsaadsasdswerqw3ertweterwtrezgsgfsek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-03', 10),
+(17, 'TR-1770110688-36AC', 51, 22, 'export', '2026-02-03 10:24:48', 5, 'Kiszállítás cél: Raktár #31. (Várj, generálok egyetttt, na mit irjak meg ide, NA, na jojo jolesz, termasdadsasaaasdsaadsasdswerqw3ertweterwtrezgsgfsek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-03', 1),
+(18, 'TR-1770110688-36AC', 51, 31, 'import', '2026-02-03 10:24:48', 5, 'Beérkezés forrás: Raktár #22. (Várj, generálok egyetttt, na mit irjak meg ide, NA, na jojo jolesz, termasdadsasaaasdsaadsasdswerqw3ertweterwtrezgsgfsek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-03', 1),
+(19, 'TR-1770149319-496A', 74, 31, 'export', '2026-02-03 21:08:39', 12, 'Kiszállítás cél: Raktár #27. (a)', '2026-02-03', 12),
+(20, 'TR-1770149319-496A', 74, 27, 'import', '2026-02-03 21:08:39', 12, 'Beérkezés forrás: Raktár #31. (a)', '2026-02-03', 12);
 
 -- --------------------------------------------------------
 
@@ -242,11 +286,22 @@ CREATE TABLE `users` (
   `ID` int(11) NOT NULL,
   `username` varchar(30) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
-  `password` varchar(40) NOT NULL,
-  `role` enum('user','admin') NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('user','admin','owner') NOT NULL,
+  `warehouse_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `login_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `users`
+--
+
+INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `warehouse_id`, `created_at`, `login_at`) VALUES
+(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', NULL, '2026-01-21 15:02:35', '2026-02-03 21:40:56'),
+(11, '1', 1, '$2y$10$80/EqxHnQnBCPFMe3qLwp.YP0PlSmMky2K4auOBUE7vHyBcAEO98a', 'admin', NULL, '2026-01-21 15:08:42', '2026-02-03 21:39:43'),
+(12, 'Tőkés Roland', 1, '$2y$10$1LLVsSxLFWUnChal0TUg1OsDZi3uhjv3d0H1YYjrdBih2S5OYHPjy', 'owner', NULL, '2026-01-22 13:40:39', '2026-02-03 19:20:41'),
+(13, 'Minta Pista', 1, '$2y$10$7uSpwJScnN1dWajysVu1DecFE02odcrfRYnYWTVKfuKZEklFRMPOK', 'user', 31, '2026-02-03 10:09:14', '2026-02-03 10:24:59');
 
 -- --------------------------------------------------------
 
@@ -258,24 +313,27 @@ CREATE TABLE `warehouses` (
   `ID` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
-  `max_quantity` int(20) NOT NULL
+  `max_quantity` int(20) NOT NULL,
+  `type` enum('warehouse','store') NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `warehouses`
 --
 
-INSERT INTO `warehouses` (`ID`, `name`, `address`, `max_quantity`) VALUES
-(21, 'Központi Raktár', 'Budapest, Fő utca 12.', 20000),
-(22, 'Északi Logisztikai Központ', 'Győr, Ipari park 5.', 50000),
-(23, 'Déli Regionális Raktár', 'Pécs, Logisztikai út 8.', 50000),
-(24, 'Keleti Elosztó', 'Debrecen, Külső-Böszörményi út 44.', 100000),
-(25, 'Nyugati Raktárbázis', 'Szombathely, Bevásárló köz 2.', 54000),
-(26, 'Mini Depó 1', 'Székesfehérvár, Seregélyesi út 19.', 40000),
-(27, 'Mini Depó 2', 'Kecskemét, Vágóhíd utca 7.', 5000),
-(28, 'High-Tech Raktár', 'Budapest, Üllői út 215.', 5660),
-(29, 'Készletközpont 1', 'Miskolc, Szentpéteri kapu 103.', 60000),
-(30, 'Készletközpont 2', 'Szeged, Dorozsmai út 33.', 40000);
+INSERT INTO `warehouses` (`ID`, `name`, `address`, `max_quantity`, `type`, `active`) VALUES
+(21, 'Központi Raktár', 'Budapest, Fő utca 12.', 20000, 'warehouse', 1),
+(22, 'Északi Logisztikai Központ', 'Győr, Ipari park 5.', 50000, 'warehouse', 1),
+(23, 'Déli Regionális Raktár', 'Pécs, Logisztikai út 8.', 50000, 'warehouse', 1),
+(24, 'Keleti Elosztó', 'Debrecen, Külső-Böszörményi út 44.', 100000, 'warehouse', 1),
+(25, 'Nyugati Raktárbázis', 'Szombathely, Bevásárló köz 2.', 54000, 'warehouse', 1),
+(26, 'Mini Depó 1', 'Székesfehérvár, Seregélyesi út 19.', 40000, 'warehouse', 1),
+(27, 'Mini Depó 2', 'Kecskemét, Vágóhíd utca 7.', 5000, 'warehouse', 1),
+(28, 'High-Tech Raktár', 'Budapest, Üllői út 215.', 5660, 'warehouse', 1),
+(29, 'Készletközpont 1', 'Miskolc, Szentpéteri kapu 103.', 60000, 'warehouse', 1),
+(30, 'Készletközpont 2', 'Szeged, Dorozsmai út 33.', 40000, 'warehouse', 1),
+(31, 'Keleti CRUD Üzlet', '1214 Mars u. 16.', 6800, 'store', 1);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -318,7 +376,8 @@ ALTER TABLE `transports`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`ID`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD KEY `fk_user_warehouse` (`warehouse_id`);
 
 --
 -- A tábla indexei `warehouses`
@@ -334,37 +393,37 @@ ALTER TABLE `warehouses`
 -- AUTO_INCREMENT a táblához `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT a táblához `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
 
 --
 -- AUTO_INCREMENT a táblához `products`
 --
 ALTER TABLE `products`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT a táblához `transports`
 --
 ALTER TABLE `transports`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT a táblához `users`
 --
 ALTER TABLE `users`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT a táblához `warehouses`
 --
 ALTER TABLE `warehouses`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- Megkötések a kiírt táblákhoz
@@ -390,6 +449,12 @@ ALTER TABLE `transports`
   ADD CONSTRAINT `fk_transports_warehouse` FOREIGN KEY (`warehouse_ID`) REFERENCES `warehouses` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `transports_ibfk_1` FOREIGN KEY (`product_ID`) REFERENCES `products` (`ID`),
   ADD CONSTRAINT `transports_ibfk_2` FOREIGN KEY (`user_ID`) REFERENCES `users` (`ID`);
+
+--
+-- Megkötések a táblához `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_user_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`ID`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -112,7 +112,6 @@ include './components/navbar.php';
                         <tr>
                             <th>ID</th>
                             <th>Név</th>
-                            <th>Cikkszám</th>
                             <th>Kategória</th>
                             <th>Raktárak / Készlet</th>
                             <th>Státusz</th>
@@ -129,8 +128,7 @@ include './components/navbar.php';
                             ?>
                             <tr class="<?= (int)$prod['active'] === 1 ? '' : 'inactive-row' ?>">
                                 <td><?= $id ?></td>
-                                <td> <a class="product-link" href="product.php?id=<?= $id ?>"> <?= htmlspecialchars($prod['name']) ?></a></td>
-                                <td><?= htmlspecialchars($prod['item_number']) ?></td>
+                                <td class="prod-name-cell"> <a class="product-link" href="product.php?id=<?= $id ?>"> <?= htmlspecialchars($prod['name']) ?></a></td>
                                 <td><?= htmlspecialchars($prod['category_name'] ?? 'Nincs kategória') ?></td>
 
                                 <td>
