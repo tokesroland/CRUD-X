@@ -4,55 +4,55 @@ session_start();
 include "config.php";
 $error = "";
 
-// --- Password/username recovery ---
+// --- Jelszó/Felhasználónév emlékeztető kérés feldolgozása ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['recover'])) {
     $input = trim($_POST['recover_input'] ?? '');
     
     if ($input === "") {
         $error = "Kérlek töltsd ki a mezőt!";
     } else {
-        // Try to find a matching user by email or username
+        // 1. Megpróbáljuk megkeresni a felhasználót
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :val OR email = :val LIMIT 1");
         $stmt->execute(['val' => $input]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $user_ID = $user['ID'] ?? null;
-        $username_snapshot = $user['username'] ?? null;
-        $email_snapshot = $user['email'] ?? (filter_var($input, FILTER_VALIDATE_EMAIL) ? $input : null);
+        $username_to_save = $user['username'] ?? null;
+        $email_to_save = $user['email'] ?? null;
 
-        // Insert into user_error
+        // 2. Ha nincs meg a user, akkor a beírt adatot mentjük el, hogy az admin lássa
+        if (!$user) {
+            if (filter_var($input, FILTER_VALIDATE_EMAIL)) {
+                $email_to_save = $input; // Emailnek tűnik
+            } else {
+                $username_to_save = $input; // Felhasználónévnek tűnik
+            }
+        }
+
+        // 3. Mentés a user_error táblába (input_value nélkül, a sémához igazodva)
         $stmt = $pdo->prepare("
-            INSERT INTO user_error (user_ID, input_value, username, email, status)
-            VALUES (:user_ID, :input_value, :username, :email, 'incomplete')
+            INSERT INTO user_error (user_ID, username, email, status)
+            VALUES (:user_ID, :username, :email, 'incomplete')
         ");
         $stmt->execute([
             'user_ID' => $user_ID,
-            'input_value' => $input,
-            'username' => $username_snapshot,
-            'email' => $email_snapshot
+            'username' => $username_to_save,
+            'email' => $email_to_save
         ]);
 
-        // If email exists, optionally send an email reminder
-        if ($email_snapshot && $user_ID) {
-            $subject = "Felhasználónév / jelszó emlékeztető";
-            $message = "Szia " . htmlspecialchars($username_snapshot) . ",\n\n"
-                     . "Kértél emlékeztetőt. A felhasználóneved: " . htmlspecialchars($username_snapshot) . "\n\n"
-                     . "Kérjük, vedd fel a kapcsolatot az adminnal, hogy jelszót változtathass.";
-            // mail($email_snapshot, $subject, $message); // Uncomment if mail() is configured
-        }
-
-        $error = "A kérésedet rögzítettük. Az admin hamarosan segíteni fog.";
+        $error = "A kérésedet rögzítettük. Az adminisztrátor hamarosan felveszi veled a kapcsolatot.";
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// --- Bejelentkezés feldolgozása ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['recover'])) {
     $user = $_POST['username'] ?? '';
     $pass = $_POST['password'] ?? '';
 
     if ($user === "" || $pass === "") {
         $error = "Kérlek tölts ki minden mezőt!";
     } else {
-        // Módosított lekérdezés: JOIN-oljuk a raktár nevét is
+        // JOIN-oljuk a raktár nevét is
         $stmt = $pdo->prepare("
             SELECT u.*, w.name as warehouse_name 
             FROM users u 
@@ -69,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_id'] = $row['ID'];
                 $_SESSION['username'] = $row['username'];
                 $_SESSION['role'] = $row['role'];
-                // Új session adatok
                 $_SESSION['warehouse_id'] = $row['warehouse_id'];
                 $_SESSION['warehouse_name'] = $row['warehouse_name'] ?? 'Minden egység';
 
@@ -156,7 +155,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
-
     <div class="login-card">
 
         <div class="login-logo">CRUD-X</div>
@@ -195,9 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 kérése</button>
         </form>
 
-
     </div>
 
 </body>
-
 </html>

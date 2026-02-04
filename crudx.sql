@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2026. Feb 04. 12:48
+-- Létrehozás ideje: 2026. Feb 04. 13:55
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -299,18 +299,19 @@ CREATE TABLE `users` (
   `role` enum('user','admin','owner') NOT NULL,
   `warehouse_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
-  `login_at` datetime NOT NULL
+  `login_at` datetime NOT NULL,
+  `email` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `users`
 --
 
-INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `warehouse_id`, `created_at`, `login_at`) VALUES
-(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', NULL, '2026-01-21 15:02:35', '2026-02-04 12:22:04'),
-(11, '1', 1, '$2y$10$80/EqxHnQnBCPFMe3qLwp.YP0PlSmMky2K4auOBUE7vHyBcAEO98a', 'admin', NULL, '2026-01-21 15:08:42', '2026-02-03 21:39:43'),
-(12, 'Tőkés Roland', 1, '$2y$10$1LLVsSxLFWUnChal0TUg1OsDZi3uhjv3d0H1YYjrdBih2S5OYHPjy', 'owner', NULL, '2026-01-22 13:40:39', '2026-02-03 19:20:41'),
-(13, 'Minta Pista', 1, '$2y$10$7uSpwJScnN1dWajysVu1DecFE02odcrfRYnYWTVKfuKZEklFRMPOK', 'user', 31, '2026-02-03 10:09:14', '2026-02-03 10:24:59');
+INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `warehouse_id`, `created_at`, `login_at`, `email`) VALUES
+(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', NULL, '2026-01-21 15:02:35', '2026-02-04 13:41:29', '2@2.com'),
+(11, '1', 1, '$2y$10$DfAj37RrGPwoG/JvB7WiKOluMdPiGHh48ME3wBhntkUivZBg68rYi', 'admin', NULL, '2026-01-21 15:08:42', '2026-02-04 13:40:53', '1@1.com'),
+(12, 'Tőkés Roland', 1, '$2y$10$1LLVsSxLFWUnChal0TUg1OsDZi3uhjv3d0H1YYjrdBih2S5OYHPjy', 'owner', NULL, '2026-01-22 13:40:39', '2026-02-03 19:20:41', 'tokesrolandcsete@gmail.com'),
+(13, 'Minta Pista', 1, '$2y$10$7uSpwJScnN1dWajysVu1DecFE02odcrfRYnYWTVKfuKZEklFRMPOK', 'user', 31, '2026-02-03 10:09:14', '2026-02-03 10:24:59', 'mintapista@yahoo.com');
 
 -- --------------------------------------------------------
 
@@ -321,13 +322,21 @@ INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `warehouse_
 CREATE TABLE `user_error` (
   `errID` int(11) NOT NULL,
   `user_ID` int(11) DEFAULT NULL,
-  `input_value` varchar(255) NOT NULL,
   `username` varchar(30) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `status` enum('incomplete','complete') NOT NULL DEFAULT 'incomplete',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `completed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `user_error`
+--
+
+INSERT INTO `user_error` (`errID`, `user_ID`, `username`, `email`, `status`, `created_at`, `completed_at`) VALUES
+(1, 11, '1', '1@1.com', 'complete', '2026-02-04 13:39:25', '2026-02-04 13:39:49'),
+(2, 11, '1', '1@1.com', 'complete', '2026-02-04 13:39:56', '2026-02-04 13:40:19'),
+(3, 11, '1', '1@1.com', 'complete', '2026-02-04 13:40:37', '2026-02-04 13:40:50');
 
 -- --------------------------------------------------------
 
@@ -422,6 +431,7 @@ ALTER TABLE `transports`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`),
   ADD KEY `fk_user_warehouse` (`warehouse_id`);
 
 --
@@ -483,7 +493,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT a táblához `user_error`
 --
 ALTER TABLE `user_error`
-  MODIFY `errID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `errID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT a táblához `user_warehouse_access`

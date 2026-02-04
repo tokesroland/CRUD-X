@@ -13,20 +13,23 @@ $message = "";
 // Raktárak betöltése
 $warehouses_for_select = $pdo->query("SELECT * FROM warehouses WHERE active = 1 ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-/* 1. ÚJ FELHASZNÁLÓ */
+/* 1. ÚJ FELHASZNÁLÓ LÉTREHOZÁSA (Bővítve Email-lel) */
 if (isset($_POST['add_user'])) {
     $username = trim($_POST['username'] ?? '');
+    $email = trim($_POST['email'] ?? ''); // ÚJ: Email kezelés
     $password_raw = $_POST['password'] ?? '';
     $role = $_POST['role'] ?? 'user';
     $wh_id = !empty($_POST['warehouse_id']) ? $_POST['warehouse_id'] : null;
     $now = date('Y-m-d H:i:s');
 
-    if (!empty($username) && !empty($password_raw)) {
+    if (!empty($username) && !empty($password_raw) && !empty($email)) {
         $password_hash = password_hash($password_raw, PASSWORD_DEFAULT);
         try {
-            $stmt = $pdo->prepare("INSERT INTO users (username, password, role, warehouse_id, active, created_at, login_at) VALUES (?, ?, ?, ?, 1, ?, ?)");
-            $stmt->execute([$username, $password_hash, $role, $wh_id, $now, $now]);
+            // INSERT, beleértve az email-t is
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, warehouse_id, active, created_at, login_at) VALUES (?, ?, ?, ?, ?, 1, ?, ?)");
+            $stmt->execute([$username, $email, $password_hash, $role, $wh_id, $now, $now]);
             
+            // Kapcsolótábla frissítés
             if($wh_id) {
                 $uid = $pdo->lastInsertId();
                 $stmtAccess = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
@@ -35,28 +38,34 @@ if (isset($_POST['add_user'])) {
             
             $message = "Sikeresen létrehozva: $username";
         } catch (PDOException $e) {
-            $message = "Hiba: " . ($e->getCode() == 23000 ? "A felhasználónév már foglalt!" : $e->getMessage());
+            // Egyedi hibaüzenetek (Username vagy Email duplikáció)
+            if ($e->getCode() == 23000) {
+                $message = "Hiba: A felhasználónév vagy az email cím már foglalt!";
+            } else {
+                $message = "Hiba: " . $e->getMessage();
+            }
         }
     } else {
-        $message = "Hiba: Minden kötelező mezőt ki kell tölteni!";
+        $message = "Hiba: Minden kötelező mezőt (Név, Email, Jelszó) ki kell tölteni!";
     }
 }
 
-/* 2. FELHASZNÁLÓ MÓDOSÍTÁSA */
+/* 2. FELHASZNÁLÓ MÓDOSÍTÁSA (Bővítve Email-lel) */
 if (isset($_POST['update_user'])) {
     $id = $_POST['user_id'];
     $username = trim($_POST['username']);
+    $email = trim($_POST['email']); // ÚJ
     $role = $_POST['role'];
     $active = isset($_POST['active']) ? 1 : 0;
     
     try {
         if (!empty($_POST['new_password'])) {
             $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, role = ?, password = ?, active = ? WHERE ID = ?");
-            $stmt->execute([$username, $role, $password, $active, $id]);
+            $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, password = ?, active = ? WHERE ID = ?");
+            $stmt->execute([$username, $email, $role, $password, $active, $id]);
         } else {
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, role = ?, active = ? WHERE ID = ?");
-            $stmt->execute([$username, $role, $active, $id]);
+            $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, active = ? WHERE ID = ?");
+            $stmt->execute([$username, $email, $role, $active, $id]);
         }
         $message = "Adatok frissítve!";
     } catch (PDOException $e) {
@@ -100,16 +109,39 @@ if (isset($_POST['update_warehouse'])) {
     }
 }
 
-// --- NAPLÓ SZŰRŐK ---
+/* 5. HIBAJEGY LEZÁRÁSA (Elvégezve) */
+if (isset($_POST['resolve_error'])) {
+    $errID = (int)$_POST['error_id'];
+    try {
+        $stmt = $pdo->prepare("UPDATE user_error SET status = 'complete', completed_at = NOW() WHERE errID = ?");
+        $stmt->execute([$errID]);
+        $message = "Hibajegy (#$errID) lezárva.";
+    } catch (PDOException $e) {
+        $message = "Hiba: " . $e->getMessage();
+    }
+}
+
+// --- LEKÉRDEZÉSEK ---
+
+// Aktív hibajegyek lekérése
+$errorReports = $pdo->query("
+    SELECT e.*, u.username as registered_username 
+    FROM user_error e 
+    LEFT JOIN users u ON e.user_ID = u.ID 
+    WHERE e.status = 'incomplete' 
+    ORDER BY e.created_at DESC
+")->fetchAll(PDO::FETCH_ASSOC);
+
+// Napló szűrők
 $f_batch  = isset($_GET['f_batch']) ? trim($_GET['f_batch']) : '';
 $f_user   = isset($_GET['f_user'])  ? (int)$_GET['f_user']  : 0;
 $f_date   = isset($_GET['f_date'])  ? $_GET['f_date']       : '';
 $f_status = isset($_GET['f_status']) ? $_GET['f_status']    : '';
 
-// JAVÍTÁS: Ellenőrizzük, van-e aktív szűrés. Ha igen, nyitva hagyjuk a fület.
+// Dinamikusan nyitva tartjuk a fület, ha van szűrés
 $isLogOpen = (!empty($f_batch) || $f_user > 0 || !empty($f_date) || !empty($f_status));
 
-// --- NAPLÓ LEKÉRDEZÉS ---
+// Napló lekérdezés
 $logQuery = "
     SELECT 
         t.batch_id, 
@@ -125,22 +157,10 @@ $logQuery = "
 ";
 
 $logParams = [];
-if (!empty($f_batch)) {
-    $logQuery .= " AND t.batch_id LIKE ?";
-    $logParams[] = "%$f_batch%";
-}
-if ($f_user > 0) {
-    $logQuery .= " AND t.user_ID = ?";
-    $logParams[] = $f_user;
-}
-if (!empty($f_date)) {
-    $logQuery .= " AND DATE(t.date) = ?";
-    $logParams[] = $f_date;
-}
-if (!empty($f_status)) {
-    $logQuery .= " AND t.status = ?";
-    $logParams[] = $f_status;
-}
+if (!empty($f_batch)) { $logQuery .= " AND t.batch_id LIKE ?"; $logParams[] = "%$f_batch%"; }
+if ($f_user > 0) { $logQuery .= " AND t.user_ID = ?"; $logParams[] = $f_user; }
+if (!empty($f_date)) { $logQuery .= " AND DATE(t.date) = ?"; $logParams[] = $f_date; }
+if (!empty($f_status)) { $logQuery .= " AND t.status = ?"; $logParams[] = $f_status; }
 
 $logQuery .= " GROUP BY t.batch_id ORDER BY t.date DESC LIMIT 50";
 $stmtLog = $pdo->prepare($logQuery);
@@ -157,36 +177,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
     <meta charset="UTF-8">
     <title>Tulajdonosi Panel | CRUD-X</title>
     <link rel="stylesheet" href="./style/style.css">
-    <style>
-        .management-grid { display: grid; grid-template-columns: 350px 1fr; gap: 20px; margin-top: 20px; align-items: start; }
-        .card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 20px; border: none; }
-        .data-table { width: 100%; border-collapse: collapse; background: white; }
-        .data-table thead th { background-color: #0f172a; color: #ffffff; padding: 15px; text-align: left; font-weight: 600; font-size: 0.9rem; }
-        .data-table tbody td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; color: #334155; }
-        .card-header-toggle { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .toggle-icon { transition: transform 0.3s; }
-        .collapsed .toggle-icon { transform: rotate(-90deg); }
-        .is-hidden { display: none; }
-        .search-container { padding: 10px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
-        .search-input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
-        .btn-primary-blue { background: #0f172a; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 600; }
-        .btn-save-sm { background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .batch-id-cell { position: relative; cursor: pointer; transition: background 0.2s; }
-        .batch-id-cell:hover { background: #f1f5f9 !important; }
-        .batch-id-cell a { text-decoration: none; color: #2563eb; font-family: monospace; font-weight: bold; }
-        .batch-id-cell::after { content: '→'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0; transition: all 0.2s; color: #2563eb; }
-        .batch-id-cell:hover::after { opacity: 1; right: 8px; }
-        .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; padding: 15px 20px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; align-items: flex-end; }
-        .filter-item { display: flex; flex-direction: column; gap: 4px; }
-        .filter-item label { font-size: 0.75rem; font-weight: bold; color: #64748b; }
-        .filter-item input, .filter-item select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-        .status-active { background: #dcfce7; color: #16a34a; }
-        .status-inactive { background: #fee2e2; color: #dc2626; }
-        .pill-pending { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;}
-        .pill-completed { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;}
-        @media (max-width: 900px) { .management-grid { grid-template-columns: 1fr; } }
-    </style>
+    <link rel="stylesheet" href="style/owner.css">
 </head>
 <body>
 
@@ -206,14 +197,20 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                     <form method="POST">
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Felhasználónév</label>
                         <input type="text" max="30" name="username" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        
+                        <label style="display:block; margin-bottom:5px; font-weight:600;">Email cím</label>
+                        <input type="email" max="255" name="email" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Jelszó</label>
                         <input type="password" max="30" name="password" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Szerepkör</label>
                         <select name="role" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                             <option value="user">User</option>
                             <option value="admin">Admin</option>
                             <option value="owner">Owner</option>
                         </select>
+                        
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Elsődleges Raktár (Opcionális)</label>
                         <select name="warehouse_id" style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:6px;">
                             <option value="">-- Nincs --</option>
@@ -248,6 +245,41 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
         </div>
 
         <div class="lists-stack">
+            
+            <section class="card" style="border-left: 4px solid #f97316;">
+                <div class="card-header-toggle" onclick="toggleSection('errorContent', this)">
+                    <h2>⚠️ Aktív segítségkérések (<?= count($errorReports) ?>)</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div id="errorContent">
+                    <?php if(empty($errorReports)): ?>
+                        <p style="padding:15px; color:#666;">Nincs aktív hibajelzés.</p>
+                    <?php else: ?>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead><tr><th>Dátum</th><th>Azonosított User</th><th>Megadott Név</th><th>Megadott Email</th><th>Művelet</th></tr></thead>
+                                <tbody>
+                                    <?php foreach ($errorReports as $err): ?>
+                                    <tr>
+                                        <td><?= $err['created_at'] ?></td>
+                                        <td><?= $err['registered_username'] ? '<strong>'.htmlspecialchars($err['registered_username']).'</strong>' : '<span style="color:#aaa;">-</span>' ?></td>
+                                        <td><?= htmlspecialchars($err['username'] ?? '-') ?></td>
+                                        <td><?= htmlspecialchars($err['email'] ?? '-') ?></td>
+                                        <td>
+                                            <form method="POST">
+                                                <input type="hidden" name="error_id" value="<?= $err['errID'] ?>">
+                                                <button type="submit" name="resolve_error" class="btn-success-sm">Elvégezve</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </section>
+
             <section class="card">
                 <div class="card-header-toggle collapsed" onclick="toggleSection('userContent', this)">
                     <h2><img class="icon" src="./img/users_icon_197608.png"> Felhasználók kezelése</h2>
@@ -259,13 +291,14 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                     </div>
                     <div style="overflow-x: auto;">
                         <table class="data-table" id="userTable">
-                            <thead><tr><th>Név</th><th>Jog</th><th>Jelszó</th><th>Aktív</th><th></th></tr></thead>
+                            <thead><tr><th>Név</th><th>Email</th><th>Jog</th><th>Jelszó</th><th>Aktív</th><th></th></tr></thead>
                             <tbody>
                                 <?php foreach ($users as $u): ?>
                                 <tr class="user-row">
                                     <form method="POST">
                                         <input type="hidden" name="user_id" value="<?= $u['ID'] ?>">
                                         <td><input type="text" name="username" value="<?= htmlspecialchars($u['username']) ?>" style="width:120px; padding:5px; border-radius:4px; border:1px solid #ddd;"></td>
+                                        <td><input type="email" name="email" value="<?= htmlspecialchars($u['email']) ?>" style="width:160px; padding:5px; border-radius:4px; border:1px solid #ddd;"></td>
                                         <td>
                                             <select name="role" style="padding:5px; border-radius:4px; border:1px solid #ddd;">
                                                 <option value="user" <?= $u['role'] == 'user' ? 'selected' : '' ?>>User</option>
