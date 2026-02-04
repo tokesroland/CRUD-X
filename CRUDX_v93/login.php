@@ -4,6 +4,47 @@ session_start();
 include "config.php";
 $error = "";
 
+// --- Password/username recovery ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['recover'])) {
+    $input = trim($_POST['recover_input'] ?? '');
+    
+    if ($input === "") {
+        $error = "Kérlek töltsd ki a mezőt!";
+    } else {
+        // Try to find a matching user by email or username
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :val OR email = :val LIMIT 1");
+        $stmt->execute(['val' => $input]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $user_ID = $user['ID'] ?? null;
+        $username_snapshot = $user['username'] ?? null;
+        $email_snapshot = $user['email'] ?? (filter_var($input, FILTER_VALIDATE_EMAIL) ? $input : null);
+
+        // Insert into user_error
+        $stmt = $pdo->prepare("
+            INSERT INTO user_error (user_ID, input_value, username, email, status)
+            VALUES (:user_ID, :input_value, :username, :email, 'incomplete')
+        ");
+        $stmt->execute([
+            'user_ID' => $user_ID,
+            'input_value' => $input,
+            'username' => $username_snapshot,
+            'email' => $email_snapshot
+        ]);
+
+        // If email exists, optionally send an email reminder
+        if ($email_snapshot && $user_ID) {
+            $subject = "Felhasználónév / jelszó emlékeztető";
+            $message = "Szia " . htmlspecialchars($username_snapshot) . ",\n\n"
+                     . "Kértél emlékeztetőt. A felhasználóneved: " . htmlspecialchars($username_snapshot) . "\n\n"
+                     . "Kérjük, vedd fel a kapcsolatot az adminnal, hogy jelszót változtathass.";
+            // mail($email_snapshot, $subject, $message); // Uncomment if mail() is configured
+        }
+
+        $error = "A kérésedet rögzítettük. Az admin hamarosan segíteni fog.";
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $_POST['username'] ?? '';
     $pass = $_POST['password'] ?? '';
@@ -46,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <title>CRUD-WMS – Bejelentkezés</title>
@@ -108,41 +150,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 1rem;
             font-size: 0.9rem;
         }
-        
     </style>
 
 </head>
+
 <body>
 
 
-<div class="login-card">
+    <div class="login-card">
 
-    <div class="login-logo">CRUD-X</div>
+        <div class="login-logo">CRUD-X</div>
 
-    <h2 style="margin-bottom: 1.5rem;">Bejelentkezés</h2>
+        <h2 style="margin-bottom: 1.5rem;">Bejelentkezés</h2>
 
-    <?php if ($error): ?>
-        <div class="login-error">
-            <?= htmlspecialchars($error) ?>
-        </div>
-    <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="login-error">
+                <?= htmlspecialchars($error) ?>
+            </div>
+        <?php endif; ?>
 
-    <form action="#" method="POST">
+        <form action="#" method="POST">
 
-        <div class="login-field">
-            <label for="username">Felhasználónév</label>
-            <input type="text" name="username" id="username" placeholder="pl.: raktar_kezelo">
-        </div>
+            <div class="login-field">
+                <label for="username">Felhasználónév</label>
+                <input type="text" name="username" id="username" placeholder="pl.: raktar_kezelo">
+            </div>
 
-        <div class="login-field">
-            <label for="password">Jelszó</label>
-            <input type="password" name="password" id="password" placeholder="••••••••">
-        </div>
+            <div class="login-field">
+                <label for="password">Jelszó</label>
+                <input type="password" name="password" id="password" placeholder="••••••••">
+            </div>
 
-        <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">Bejelentkezés</button>
-    </form>
+            <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">Bejelentkezés</button>
+        </form>
+        <hr style="margin: 1.5rem 0;">
+        <h3>Elfelejtett jelszó / felhasználónév?</h3>
+        <form action="#" method="POST">
+            <div class="login-field">
+                <label for="recover_input">Felhasználónév vagy email</label>
+                <input type="text" name="recover_input" id="recover_input"
+                    placeholder="Írd be a felhasználóneved vagy email címed">
+            </div>
+            <button type="submit" name="recover" class="btn" style="width: 100%; margin-top: 0.5rem;">Segítség
+                kérése</button>
+        </form>
 
-</div>
+
+    </div>
 
 </body>
+
 </html>
