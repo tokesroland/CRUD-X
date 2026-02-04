@@ -1,0 +1,51 @@
+// Projekt: raktárkezelő webalkalmazás
+Ami kész:
+  - 3 user jogosultsági szint (user, admin, owner)
+  - Felhasználó regisztráció és bejelentkezés
+  - Dashboard
+  - Profilkezelés
+  - Termékek listázása és részletek megtekintése szűrővel
+  - Termék hozzáadás, szerkesztés és törlés (admin, owner jogosultsággal)
+  - Készletkezelés (készlet növelése, csökkentése)
+  - Rendelések kezelése (rendelés létrehozása, státusz frissítése)
+  - Felhasználók kezelése (owner jogosultsággal)
+  - Alapvető biztonsági intézkedések (jelszó hash-elés, jogosultság ellenőrzés)
+  - Részletes riportok készítése (készletmozgás, eladások)
+  - Keresési funkció (termékek, készletek, rendelések között)
+  - Alacsony készlet figyelmeztetések emailben
+  - Egységes UI dizájn és navigáció
+  - Kiszállítás admin felület --> Honnan - hova kosár módszer, logolható
+  - Kiszállítás ellenőrzése
+  - Statisztikák megjelenítése grafikonokon (Félkész)
+  - Audit naplózás (Felhasználói tevékenységek naplózása)
+  - Új Termék importálási funkció CSV fájlból
+  - Új terméktípus létrehozása és kezelése
+  - Új készletek felvétele és szerkesztése
+  - Tulajdonosi vezérlőpult (owner dashboard: logolás, raktárak, felhasználók kezelése)
+
+
+
+To do:
+  - Jelszó visszaállítás funkció
+  - Reszponzív dizájn: navbar és footer hamburger menu mobilon
+  - Várható Kiszállítási idő számítása rendeléseknél
+  - CSV fájlból minta
+  - API valamilyen szinten (pl. Képek a termékekhez) *
+  - Saját fiókot ne lehessen módosítani (pl. jogosultságok)
+  - Database hibaüzenetek ne jelenjenek meg a felhasználó számára
+  -	Chart.js 1% > ne jelenjen meg és egyéb hibajavítások --> Kördiagram helyett tooltipben, hoverben és lent írja a %-ot
+  - transports.php -> címek közti távolság és időszámítás
+  - bevételezás elfogadása
+
+  Plus:
+    - Owner fiók megtekintése és hozzátartozó információ
+    - Angol fordítás
+
+
+
+MAIN TODO:
+transports.php -> választható funkciók -> transport indítás vagy bevételezés
+		:Adminhoz tartozik konkrét üzlet/raktár (akár több is)
+Kártyák --> kiválasztás -> listázza a bevételezésre váró transportokat --> elfogadás, szállítás inactivvá válik
+todo: Függővé alakítani a műveletet (levonja, de csak akkor kapja meg ha elfogadják)
+    :Bevételezés elfogadása után lépjen be a készletbe az adott termék mennyiség

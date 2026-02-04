@@ -83,7 +83,7 @@ $lowStockRows = $stmtLow->fetchAll(PDO::FETCH_ASSOC);
 /**
  * ---------------------------------------------
  * 2. kártya: várható beérkezések (transports)
- * Feltétel: type='import' és arriveIn nem null és >= ma
+ * Feltétel: type='import' és arriveIn nem null és >= ma ÉS STATUS PENDING
  * ---------------------------------------------
  */
 $paramsShip = [];
@@ -102,6 +102,7 @@ $sqlShip = "
     JOIN products p ON p.ID = t.product_ID
     JOIN warehouses w ON w.ID = t.warehouse_ID
     WHERE t.type = 'import'
+      AND t.status = 'pending'
       AND t.arriveIn IS NOT NULL
       AND t.arriveIn >= CURDATE()
 ";
@@ -205,7 +206,6 @@ try {
 
     <div class="dashboard-grid">
 
-        <!-- 1. kártya: Alacsony készlet -->
         <section class="card col-6">
             <div class="card-header">
                 <h2><img class="icon" src="./img/danger_icon_243248.png">Alacsony készlet</h2>
@@ -269,7 +269,6 @@ try {
             </div>
         </section>
 
-        <!-- 2. kártya: Kiszállítás alatt / Beérkezés várható -->
         <section class="card col-6">
             <div class="card-header">
                 <h2><img class="icon" src="./img/truck_23929.png"> Kiszállítás alatt (beérkezés várható)</h2>
@@ -314,7 +313,7 @@ try {
                         </thead>
                         <tbody>
                             <?php if (empty($shipRows)): ?>
-                                <tr><td colspan="5" style="opacity:.7;">Nincs beérkezés a szűrőkre (import + arriveIn >= ma).</td></tr>
+                                <tr><td colspan="5" style="opacity:.7;">Nincs beérkezés a szűrőkre (import + pending + arriveIn >= ma).</td></tr>
                             <?php else: ?>
                                 <?php foreach ($shipRows as $t): ?>
                                     <tr>
