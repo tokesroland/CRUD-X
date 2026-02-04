@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2026. Feb 04. 13:55
+-- Létrehozás ideje: 2026. Feb 04. 15:16
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -104,7 +104,7 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (28, 47, 24, 128, 7, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
 (29, 48, 21, 28, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
 (30, 48, 22, 96, 5, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
-(31, 48, 23, 111, 6, '2026-01-21 10:56:53', '2026-02-04 12:41:49'),
+(31, 48, 23, 110, 6, '2026-01-21 10:56:53', '2026-02-04 14:16:14'),
 (32, 48, 24, 34, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
 (33, 49, 21, 147, 8, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
 (34, 49, 22, 62, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
@@ -185,7 +185,107 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (110, 60, 31, 1, NULL, '2026-02-04 12:09:56', NULL),
 (111, 43, 31, 10, NULL, '2026-02-04 12:23:35', NULL),
 (112, 54, 31, 1, NULL, '2026-02-04 12:23:35', NULL),
-(113, 66, 31, 10, NULL, '2026-02-04 12:31:42', NULL);
+(113, 66, 31, 10, NULL, '2026-02-04 12:31:42', NULL),
+(114, 86, 21, 15, NULL, '2026-02-04 15:13:45', NULL),
+(115, 87, 22, 42, NULL, '2026-02-04 15:13:45', NULL),
+(116, 88, 23, 8, NULL, '2026-02-04 15:13:45', NULL),
+(117, 89, 24, 25, NULL, '2026-02-04 15:13:45', NULL),
+(118, 90, 25, 5, NULL, '2026-02-04 15:13:45', NULL),
+(119, 91, 26, 12, NULL, '2026-02-04 15:13:45', NULL),
+(120, 92, 27, 30, NULL, '2026-02-04 15:13:45', NULL),
+(121, 93, 28, 18, NULL, '2026-02-04 15:13:45', NULL),
+(122, 94, 29, 22, NULL, '2026-02-04 15:13:45', NULL),
+(123, 95, 30, 7, NULL, '2026-02-04 15:13:45', NULL),
+(124, 96, 31, 14, NULL, '2026-02-04 15:13:45', NULL),
+(125, 97, 21, 4, NULL, '2026-02-04 15:13:45', NULL),
+(126, 98, 22, 10, NULL, '2026-02-04 15:13:45', NULL),
+(127, 99, 23, 9, NULL, '2026-02-04 15:13:45', NULL),
+(128, 100, 24, 16, NULL, '2026-02-04 15:13:45', NULL),
+(129, 101, 25, 11, NULL, '2026-02-04 15:13:45', NULL),
+(130, 102, 26, 13, NULL, '2026-02-04 15:13:45', NULL),
+(131, 103, 27, 50, NULL, '2026-02-04 15:13:45', NULL),
+(132, 104, 28, 20, NULL, '2026-02-04 15:13:45', NULL),
+(133, 105, 29, 35, NULL, '2026-02-04 15:13:45', NULL),
+(134, 106, 30, 6, NULL, '2026-02-04 15:13:45', NULL),
+(135, 107, 31, 100, NULL, '2026-02-04 15:13:45', NULL),
+(136, 108, 21, 28, NULL, '2026-02-04 15:13:45', NULL),
+(137, 109, 22, 3, NULL, '2026-02-04 15:13:45', NULL),
+(138, 110, 23, 12, NULL, '2026-02-04 15:13:45', NULL),
+(139, 111, 24, 20, NULL, '2026-02-04 15:13:45', NULL),
+(140, 112, 25, 15, NULL, '2026-02-04 15:13:45', NULL),
+(141, 113, 26, 45, NULL, '2026-02-04 15:13:45', NULL),
+(142, 114, 27, 4, NULL, '2026-02-04 15:13:45', NULL),
+(143, 115, 28, 2, NULL, '2026-02-04 15:13:45', NULL),
+(144, 116, 29, 18, NULL, '2026-02-04 15:13:45', NULL),
+(145, 117, 30, 24, NULL, '2026-02-04 15:13:45', NULL),
+(146, 118, 31, 30, NULL, '2026-02-04 15:13:45', NULL),
+(147, 119, 21, 40, NULL, '2026-02-04 15:13:45', NULL),
+(148, 120, 22, 38, NULL, '2026-02-04 15:13:45', NULL),
+(149, 121, 23, 10, NULL, '2026-02-04 15:13:45', NULL),
+(150, 122, 24, 80, NULL, '2026-02-04 15:13:45', NULL),
+(151, 123, 25, 5, NULL, '2026-02-04 15:13:45', NULL),
+(152, 124, 26, 7, NULL, '2026-02-04 15:13:45', NULL),
+(153, 125, 27, 4, NULL, '2026-02-04 15:13:45', NULL),
+(154, 126, 28, 12, NULL, '2026-02-04 15:13:45', NULL),
+(155, 127, 29, 15, NULL, '2026-02-04 15:13:45', NULL),
+(156, 128, 30, 8, NULL, '2026-02-04 15:13:45', NULL),
+(157, 129, 31, 10, NULL, '2026-02-04 15:13:45', NULL),
+(158, 130, 21, 60, NULL, '2026-02-04 15:13:45', NULL),
+(159, 131, 22, 48, NULL, '2026-02-04 15:13:45', NULL),
+(160, 132, 23, 25, NULL, '2026-02-04 15:13:45', NULL),
+(161, 133, 24, 3, NULL, '2026-02-04 15:13:45', NULL),
+(162, 134, 25, 6, NULL, '2026-02-04 15:13:45', NULL),
+(163, 135, 26, 9, NULL, '2026-02-04 15:13:45', NULL),
+(164, 136, 27, 5, NULL, '2026-02-04 15:13:45', NULL),
+(165, 137, 28, 2, NULL, '2026-02-04 15:13:45', NULL),
+(166, 138, 29, 14, NULL, '2026-02-04 15:13:45', NULL),
+(167, 139, 30, 11, NULL, '2026-02-04 15:13:45', NULL),
+(168, 140, 31, 9, NULL, '2026-02-04 15:13:45', NULL),
+(169, 141, 21, 13, NULL, '2026-02-04 15:13:45', NULL),
+(170, 142, 22, 8, NULL, '2026-02-04 15:13:45', NULL),
+(171, 143, 23, 4, NULL, '2026-02-04 15:13:45', NULL),
+(172, 144, 24, 6, NULL, '2026-02-04 15:13:45', NULL),
+(173, 145, 25, 12, NULL, '2026-02-04 15:13:45', NULL),
+(174, 146, 26, 15, NULL, '2026-02-04 15:13:45', NULL),
+(175, 147, 27, 10, NULL, '2026-02-04 15:13:45', NULL),
+(176, 148, 28, 14, NULL, '2026-02-04 15:13:45', NULL),
+(177, 149, 29, 22, NULL, '2026-02-04 15:13:45', NULL),
+(178, 150, 30, 19, NULL, '2026-02-04 15:13:45', NULL),
+(179, 151, 31, 17, NULL, '2026-02-04 15:13:45', NULL),
+(180, 152, 21, 13, NULL, '2026-02-04 15:13:45', NULL),
+(181, 153, 22, 11, NULL, '2026-02-04 15:13:45', NULL),
+(182, 154, 23, 5, NULL, '2026-02-04 15:13:45', NULL),
+(183, 155, 24, 7, NULL, '2026-02-04 15:13:45', NULL),
+(184, 156, 25, 3, NULL, '2026-02-04 15:13:45', NULL),
+(185, 157, 26, 28, NULL, '2026-02-04 15:13:45', NULL),
+(186, 158, 27, 55, NULL, '2026-02-04 15:13:45', NULL),
+(187, 159, 28, 20, NULL, '2026-02-04 15:13:45', NULL),
+(188, 160, 29, 15, NULL, '2026-02-04 15:13:45', NULL),
+(189, 161, 30, 40, NULL, '2026-02-04 15:13:45', NULL),
+(190, 162, 31, 120, NULL, '2026-02-04 15:13:45', NULL),
+(191, 163, 21, 200, NULL, '2026-02-04 15:13:45', NULL),
+(192, 164, 22, 180, NULL, '2026-02-04 15:13:45', NULL),
+(193, 165, 23, 30, NULL, '2026-02-04 15:13:45', NULL),
+(194, 166, 24, 25, NULL, '2026-02-04 15:13:45', NULL),
+(195, 167, 25, 65, NULL, '2026-02-04 15:13:45', NULL),
+(196, 168, 26, 40, NULL, '2026-02-04 15:13:45', NULL),
+(197, 169, 27, 90, NULL, '2026-02-04 15:13:45', NULL),
+(198, 170, 28, 35, NULL, '2026-02-04 15:13:45', NULL),
+(199, 171, 29, 18, NULL, '2026-02-04 15:13:45', NULL),
+(200, 172, 30, 12, NULL, '2026-02-04 15:13:45', NULL),
+(201, 173, 31, 10, NULL, '2026-02-04 15:13:45', NULL),
+(202, 174, 21, 50, NULL, '2026-02-04 15:13:45', NULL),
+(203, 175, 22, 6, NULL, '2026-02-04 15:13:45', NULL),
+(204, 176, 23, 3, NULL, '2026-02-04 15:13:45', NULL),
+(205, 177, 24, 2, NULL, '2026-02-04 15:13:45', NULL),
+(206, 178, 25, 4, NULL, '2026-02-04 15:13:45', NULL),
+(207, 179, 26, 8, NULL, '2026-02-04 15:13:45', NULL),
+(208, 180, 27, 12, NULL, '2026-02-04 15:13:45', NULL),
+(209, 181, 28, 5, NULL, '2026-02-04 15:13:45', NULL),
+(210, 182, 29, 7, NULL, '2026-02-04 15:13:45', NULL),
+(211, 183, 30, 15, NULL, '2026-02-04 15:13:45', NULL),
+(212, 184, 31, 20, NULL, '2026-02-04 15:13:45', NULL),
+(213, 185, 21, 14, NULL, '2026-02-04 15:13:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -237,7 +337,107 @@ INSERT INTO `products` (`ID`, `name`, `item_number`, `description`, `category_ID
 (70, 'ASUS Vivobook 3 A', '177011271', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio corporis eaque eveniet, quam sed ab vero expedita, odit, doloremque voluptatum aliquid nobis quo ratione aperiam incidunt animi quae! Facere, obcaecati.', 21, 1, '2026-02-03 10:58:28', '2026-02-03 20:52:44'),
 (74, 'Hikvision DS-2CD5526G0-IZHS(2.8-12mm)(B) FULLHD Ultra plus oliva olaj', '1770146457', 'Fejhallgató Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum earum cupiditate repudiandae illo eum corporis consequuntur facere similique, quos explicabo voluptates, quisquam error exercitationem. Quisquam libero excepturi voluptatum architecto? Voluptates.', 20, 1, '2026-02-03 20:20:57', '2026-02-03 20:52:44'),
 (81, '3e24ewf', '2342342', '23423424', 19, 1, '2026-02-03 20:39:13', '2026-02-03 20:52:44'),
-(82, 'RokesToland bodypillow', '1531434343', 'Gamer', 7, 1, '2026-02-03 20:39:27', '2026-02-03 20:52:44');
+(82, 'RokesToland bodypillow', '1531434343', 'Gamer', 7, 1, '2026-02-03 20:39:27', '2026-02-03 20:52:44'),
+(86, 'Dell Optiplex G1', '1770214427', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(87, 'Logitech MX Mouse v1', '1770214428', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(88, 'Samsung 27 Monitor', '1770214429', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(89, 'Kingston 16GB RAM', '1770214430', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(90, 'HP LaserJet Pro', '1770214431', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(91, 'Asus ROG Strix GPU', '1770214432', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(92, 'TP-Link Router AX', '1770214433', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(93, 'Western Digital 2TB', '1770214434', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(94, 'SteelSeries Keyboard', '1770214435', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(95, 'Blue Yeti Microphone', '1770214436', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(96, 'Sony WH-1000XM4', '1770214437', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(97, 'LG UltraWide 34', '1770214438', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(98, 'Intel Core i7-13700K', '1770214439', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(99, 'AMD Ryzen 9 7900X', '1770214440', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(100, 'Corsair 850W PSU', '1770214441', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(101, 'NZXT H510 Case', '1770214442', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(102, 'Gigabyte B650 MB', '1770214443', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(103, 'Samsung 980 Pro 1TB', '1770214444', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(104, 'Noctua NH-D15 Fan', '1770214445', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(105, 'Razer DeathAdder V3', '1770214446', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(106, 'Elgato Stream Deck', '1770214447', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(107, 'SanDisk 64GB USB', '1770214448', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(108, 'Creative Pebble V3', '1770214449', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(109, 'BenQ Zowie XL2546', '1770214450', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(110, 'Seagate IronWolf 4TB', '1770214451', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(111, 'Crucial Ballistix 32GB', '1770214452', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(112, 'Be Quiet Dark Rock 4', '1770214453', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(113, 'Anker USB-C Hub', '1770214454', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(114, 'Wacom Intuos Pro', '1770214455', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(115, 'Sennheiser HD 600', '1770214456', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(116, 'Keychron K2 V2', '1770214457', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(117, 'Logitech C920 Webcam', '1770214458', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(118, 'HyperX Cloud II', '1770214459', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(119, 'Microsoft Xbox Pad', '1770214460', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(120, 'DualSense Controller', '1770214461', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(121, 'Bose QC45 Headset', '1770214462', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(122, 'Ugreen Cat7 Cable', '1770214463', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(123, 'Rode NT1-A Kit', '1770214464', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(124, 'Focusrite Scarlett 2i2', '1770214465', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(125, 'Epson EcoTank L3250', '1770214466', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(126, 'Apple Magic Trackpad', '1770214467', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(127, 'Surface Precision Mouse', '1770214468', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(128, 'Fractal Design Meshify', '1770214469', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(129, 'EVGA SuperNova 750', '1770214470', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(130, 'Thermal Grizzly Paste', '1770214471', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(131, 'Arctic P12 PWM Fan', '1770214472', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(132, 'D-Link 8-Port Switch', '1770214473', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(133, 'Synology DS220+ NAS', '1770214474', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(134, 'APC Back-UPS 700VA', '1770214475', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(135, 'Kensington Trackball', '1770214476', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(136, 'Oculus Quest 2 Pro', '1770214477', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(137, 'Valve Index Kit', '1770214478', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(138, 'Nintendo Switch OLED', '1770214479', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(139, 'Sony PlayStation 5', '1770214480', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(140, 'Xbox Series X', '1770214481', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(141, 'GoPro Hero 11', '1770214482', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(142, 'Insta360 X3', '1770214483', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(143, 'Shure SM7B', '1770214484', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(144, 'Yamaha HS5 Monitor', '1770214485', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(145, 'Mackie CR5-XBT', '1770214486', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(146, 'Akai MPK Mini MK3', '1770214487', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(147, 'Novation Launchpad X', '1770214488', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(148, 'Arturia MiniLab 3', '1770214489', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(149, 'PreSonus Eris 3.5', '1770214490', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(150, 'Audio-Technica M50x', '1770214491', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(151, 'Beyerdynamic DT 770', '1770214492', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(152, 'Jabra Evolve2 65', '1770214493', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(153, 'Poly Voyager Focus 2', '1770214494', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(154, 'Brother HL-L2350DW', '1770214495', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(155, 'Canon PIXMA TS5350', '1770214496', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(156, 'Lexmark B2236dw', '1770214497', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(157, 'Sandberg Bluetooth Pad', '1770214498', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(158, 'Trust GXT 101 Mouse', '1770214499', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(159, 'A4Tech Bloody B120', '1770214500', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(160, 'Verbatim DVD-R 50pk', '1770214501', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(161, 'TDK Audio Cassette', '1770214502', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(162, 'Maxell CR2032 5pk', '1770214503', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(163, 'Energizer AA 12pk', '1770214504', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(164, 'Duracell AAA 8pk', '1770214505', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(165, 'Varta PowerBank 10k', '1770214506', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(166, 'Belkin Surge Strip', '1770214507', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(167, 'Hama HDMI 2.1 3m', '1770214508', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(168, 'Baseus 65W GaN Charger', '1770214509', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(169, 'Joyroom Lightning Cab', '1770214510', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(170, 'Orico 2.5 HDD Case', '1770214511', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(171, 'Ulanzi MT-08 Tripod', '1770214512', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(172, 'Godox LED Video Light', '1770214513', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(173, 'Neewer Ring Light', '1770214514', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(174, 'Boyo BY-M1 Lavalier', '1770214515', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(175, 'Saramonic Blink 500', '1770214516', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(176, 'Hollyland Mars 400S', '1770214517', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(177, 'Teradek Bolt 500', '1770214518', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(178, 'Blackmagic ATEM Mini', '1770214519', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(179, 'Feelworld F6 Monitor', '1770214520', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(180, 'SmallRig Cage A7III', '1770214521', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(181, 'Zhiyun Crane M3', '1770214522', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(182, 'DJI RS 3 Mini', '1770214523', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(183, 'Insta360 Flow', '1770214524', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(184, 'Manfrotto Pixi Evo', '1770214525', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(185, 'Joby GorillaPod 3K', '1770214526', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45');
 
 -- --------------------------------------------------------
 
@@ -283,7 +483,9 @@ INSERT INTO `transports` (`ID`, `batch_id`, `product_ID`, `warehouse_ID`, `type`
 (17, 'TR-1770204586-93AC', 66, 23, 'export', '2026-02-04 12:29:46', 5, 'Kiszállítás cél: Raktár #31. (weww)', '2026-02-04', 10, 'completed'),
 (18, 'TR-1770204586-93AC', 66, 31, 'import', '2026-02-04 12:29:46', 5, 'Beérkezés forrás: Raktár #23. (weww)', '2026-02-04', 10, 'completed'),
 (19, 'TR-1770205309-24F4', 48, 23, 'export', '2026-02-04 12:41:49', 5, 'Kiszállítás cél: Raktár #27. (weww)', '2026-02-26', 1, 'completed'),
-(20, 'TR-1770205309-24F4', 48, 27, 'import', '2026-02-04 12:41:49', 5, 'Beérkezés forrás: Raktár #23. (weww)', '2026-02-26', 1, 'pending');
+(20, 'TR-1770205309-24F4', 48, 27, 'import', '2026-02-04 12:41:49', 5, 'Beérkezés forrás: Raktár #23. (weww)', '2026-02-26', 1, 'pending'),
+(21, 'TR-1770210974-35A9', 48, 23, 'export', '2026-02-04 14:16:14', 5, 'Kiszállítás cél: Raktár #31. (B épület AFS-2422)', '2026-02-04', 1, 'completed'),
+(22, 'TR-1770210974-35A9', 48, 31, 'import', '2026-02-04 14:16:14', 5, 'Beérkezés forrás: Raktár #23. (B épület AFS-2422)', '2026-02-04', 1, 'pending');
 
 -- --------------------------------------------------------
 
@@ -297,7 +499,6 @@ CREATE TABLE `users` (
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `password` varchar(255) NOT NULL,
   `role` enum('user','admin','owner') NOT NULL,
-  `warehouse_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `login_at` datetime NOT NULL,
   `email` varchar(255) NOT NULL
@@ -307,11 +508,12 @@ CREATE TABLE `users` (
 -- A tábla adatainak kiíratása `users`
 --
 
-INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `warehouse_id`, `created_at`, `login_at`, `email`) VALUES
-(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', NULL, '2026-01-21 15:02:35', '2026-02-04 13:41:29', '2@2.com'),
-(11, '1', 1, '$2y$10$DfAj37RrGPwoG/JvB7WiKOluMdPiGHh48ME3wBhntkUivZBg68rYi', 'admin', NULL, '2026-01-21 15:08:42', '2026-02-04 13:40:53', '1@1.com'),
-(12, 'Tőkés Roland', 1, '$2y$10$1LLVsSxLFWUnChal0TUg1OsDZi3uhjv3d0H1YYjrdBih2S5OYHPjy', 'owner', NULL, '2026-01-22 13:40:39', '2026-02-03 19:20:41', 'tokesrolandcsete@gmail.com'),
-(13, 'Minta Pista', 1, '$2y$10$7uSpwJScnN1dWajysVu1DecFE02odcrfRYnYWTVKfuKZEklFRMPOK', 'user', 31, '2026-02-03 10:09:14', '2026-02-03 10:24:59', 'mintapista@yahoo.com');
+INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `created_at`, `login_at`, `email`) VALUES
+(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', '2026-01-21 15:02:35', '2026-02-04 15:11:11', '2@2.com'),
+(11, '1', 1, '$2y$10$hCJHkQk24YF.tEEK8Gxepu2R0JsGetVFVLDQy.3bDfw7ZnQLtMDfi', 'user', '2026-01-21 15:08:42', '2026-02-04 15:10:26', '1@1.com'),
+(12, 'Tőkés Roland', 1, '$2y$10$px8aQeyDFgkRYL9V2XjcH.6E6fOnaFCSnkb7x0TCy8CdgL8eeJhe2', 'admin', '2026-01-22 13:40:39', '2026-02-04 15:10:38', 'tokesrolandcsete@gmail.com'),
+(13, 'Minta Pista', 1, '$2y$10$7uSpwJScnN1dWajysVu1DecFE02odcrfRYnYWTVKfuKZEklFRMPOK', 'user', '2026-02-03 10:09:14', '2026-02-03 10:24:59', 'mintapista@yahoo.com'),
+(14, 'rol', 1, '$2y$10$.rUryFyFmUkRv3beeSLohOSsyLVHEXMWrbu95GBPWnr7INGNj5hRu', 'user', '2026-02-04 14:46:48', '2026-02-04 14:47:16', 'Kecskesajt@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -336,7 +538,8 @@ CREATE TABLE `user_error` (
 INSERT INTO `user_error` (`errID`, `user_ID`, `username`, `email`, `status`, `created_at`, `completed_at`) VALUES
 (1, 11, '1', '1@1.com', 'complete', '2026-02-04 13:39:25', '2026-02-04 13:39:49'),
 (2, 11, '1', '1@1.com', 'complete', '2026-02-04 13:39:56', '2026-02-04 13:40:19'),
-(3, 11, '1', '1@1.com', 'complete', '2026-02-04 13:40:37', '2026-02-04 13:40:50');
+(3, 11, '1', '1@1.com', 'complete', '2026-02-04 13:40:37', '2026-02-04 13:40:50'),
+(4, 11, '1', '1@1.com', 'complete', '2026-02-04 15:00:00', '2026-02-04 15:00:14');
 
 -- --------------------------------------------------------
 
@@ -355,7 +558,10 @@ CREATE TABLE `user_warehouse_access` (
 --
 
 INSERT INTO `user_warehouse_access` (`id`, `user_id`, `warehouse_id`) VALUES
-(1, 13, 31);
+(11, 12, 22),
+(10, 12, 23),
+(2, 13, 31),
+(7, 14, 31);
 
 -- --------------------------------------------------------
 
@@ -431,8 +637,7 @@ ALTER TABLE `transports`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `fk_user_warehouse` (`warehouse_id`);
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- A tábla indexei `user_error`
@@ -469,37 +674,37 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT a táblához `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=214;
 
 --
 -- AUTO_INCREMENT a táblához `products`
 --
 ALTER TABLE `products`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
 
 --
 -- AUTO_INCREMENT a táblához `transports`
 --
 ALTER TABLE `transports`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT a táblához `users`
 --
 ALTER TABLE `users`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT a táblához `user_error`
 --
 ALTER TABLE `user_error`
-  MODIFY `errID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `errID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT a táblához `user_warehouse_access`
 --
 ALTER TABLE `user_warehouse_access`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT a táblához `warehouses`
@@ -531,12 +736,6 @@ ALTER TABLE `transports`
   ADD CONSTRAINT `fk_transports_warehouse` FOREIGN KEY (`warehouse_ID`) REFERENCES `warehouses` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `transports_ibfk_1` FOREIGN KEY (`product_ID`) REFERENCES `products` (`ID`),
   ADD CONSTRAINT `transports_ibfk_2` FOREIGN KEY (`user_ID`) REFERENCES `users` (`ID`);
-
---
--- Megkötések a táblához `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `fk_user_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`ID`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `user_error`

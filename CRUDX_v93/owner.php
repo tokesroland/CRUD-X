@@ -10,35 +10,49 @@ include './components/navbar.php';
 
 $message = "";
 
-// Raktárak betöltése
+// Raktárak betöltése a legördülő listákhoz (Csak aktívak)
 $warehouses_for_select = $pdo->query("SELECT * FROM warehouses WHERE active = 1 ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-/* 1. ÚJ FELHASZNÁLÓ LÉTREHOZÁSA (Bővítve Email-lel) */
+/* |--------------------------------------------------------------------------
+| 1. LOGIKA: ÚJ FELHASZNÁLÓ LÉTREHOZÁSA (Több raktárral + Owner logika)
+|-------------------------------------------------------------------------- */
 if (isset($_POST['add_user'])) {
     $username = trim($_POST['username'] ?? '');
-    $email = trim($_POST['email'] ?? ''); // ÚJ: Email kezelés
+    $email = trim($_POST['email'] ?? '');
     $password_raw = $_POST['password'] ?? '';
     $role = $_POST['role'] ?? 'user';
-    $wh_id = !empty($_POST['warehouse_id']) ? $_POST['warehouse_id'] : null;
+    
+    // Checkboxokból érkező tömb
+    $selected_whs = $_POST['warehouse_ids'] ?? []; 
+    
     $now = date('Y-m-d H:i:s');
 
     if (!empty($username) && !empty($password_raw) && !empty($email)) {
-        $password_hash = password_hash($password_raw, PASSWORD_DEFAULT);
         try {
-            // INSERT, beleértve az email-t is
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, warehouse_id, active, created_at, login_at) VALUES (?, ?, ?, ?, ?, 1, ?, ?)");
-            $stmt->execute([$username, $email, $password_hash, $role, $wh_id, $now, $now]);
+            $pdo->beginTransaction();
+
+            $password_hash = password_hash($password_raw, PASSWORD_DEFAULT);
             
-            // Kapcsolótábla frissítés
-            if($wh_id) {
-                $uid = $pdo->lastInsertId();
+            // 1. Felhasználó beszúrása
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, active, created_at, login_at) VALUES (?, ?, ?, ?, 1, ?, ?)");
+            $stmt->execute([$username, $email, $password_hash, $role, $now, $now]);
+            
+            $new_user_id = $pdo->lastInsertId();
+            
+            // 2. Kapcsolótábla feltöltése (CSAK HA NEM OWNER)
+            // Az Ownernek programozottan van joga mindenhez, nem kell DB bejegyzés
+            if ($role !== 'owner' && !empty($selected_whs)) {
                 $stmtAccess = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
-                $stmtAccess->execute([$uid, $wh_id]);
+                foreach ($selected_whs as $wh_id) {
+                    $stmtAccess->execute([$new_user_id, $wh_id]);
+                }
             }
             
+            $pdo->commit();
             $message = "Sikeresen létrehozva: $username";
+
         } catch (PDOException $e) {
-            // Egyedi hibaüzenetek (Username vagy Email duplikáció)
+            $pdo->rollBack();
             if ($e->getCode() == 23000) {
                 $message = "Hiba: A felhasználónév vagy az email cím már foglalt!";
             } else {
@@ -50,15 +64,23 @@ if (isset($_POST['add_user'])) {
     }
 }
 
-/* 2. FELHASZNÁLÓ MÓDOSÍTÁSA (Bővítve Email-lel) */
+/* |--------------------------------------------------------------------------
+| 2. LOGIKA: FELHASZNÁLÓ MÓDOSÍTÁSA (Több raktárral + Owner logika)
+|-------------------------------------------------------------------------- */
 if (isset($_POST['update_user'])) {
     $id = $_POST['user_id'];
     $username = trim($_POST['username']);
-    $email = trim($_POST['email']); // ÚJ
+    $email = trim($_POST['email']);
     $role = $_POST['role'];
     $active = isset($_POST['active']) ? 1 : 0;
     
+    // A kiválasztott raktárak tömbje
+    $selected_whs = $_POST['warehouse_ids'] ?? [];
+
     try {
+        $pdo->beginTransaction();
+
+        // 1. Alapadatok frissítése
         if (!empty($_POST['new_password'])) {
             $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, password = ?, active = ? WHERE ID = ?");
@@ -67,13 +89,31 @@ if (isset($_POST['update_user'])) {
             $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, active = ? WHERE ID = ?");
             $stmt->execute([$username, $email, $role, $active, $id]);
         }
-        $message = "Adatok frissítve!";
+
+        // 2. Jogosultságok szinkronizálása
+        // Először töröljük a felhasználó összes eddigi jogosultságát
+        $delStmt = $pdo->prepare("DELETE FROM user_warehouse_access WHERE user_id = ?");
+        $delStmt->execute([$id]);
+
+        // Majd beszúrjuk az újakat (HA NEM OWNER)
+        if ($role !== 'owner' && !empty($selected_whs)) {
+            $insStmt = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
+            foreach ($selected_whs as $wh_id) {
+                $insStmt->execute([$id, $wh_id]);
+            }
+        }
+
+        $pdo->commit();
+        $message = "Adatok és jogosultságok frissítve!";
     } catch (PDOException $e) {
+        $pdo->rollBack();
         $message = "Hiba: " . $e->getMessage();
     }
 }
 
-/* 3. ÚJ RAKTÁR */
+/* |--------------------------------------------------------------------------
+| 3. LOGIKA: ÚJ RAKTÁR
+|-------------------------------------------------------------------------- */
 if (isset($_POST['add_warehouse'])) {
     $name = trim($_POST['w_name'] ?? '');
     $type = $_POST['w_type'] ?? 'warehouse';
@@ -91,7 +131,9 @@ if (isset($_POST['add_warehouse'])) {
     }
 }
 
-/* 4. RAKTÁR MÓDOSÍTÁSA */
+/* |--------------------------------------------------------------------------
+| 4. LOGIKA: RAKTÁR MÓDOSÍTÁSA
+|-------------------------------------------------------------------------- */
 if (isset($_POST['update_warehouse'])) {
     $id = $_POST['w_id'];
     $name = trim($_POST['w_name']);
@@ -109,7 +151,9 @@ if (isset($_POST['update_warehouse'])) {
     }
 }
 
-/* 5. HIBAJEGY LEZÁRÁSA (Elvégezve) */
+/* |--------------------------------------------------------------------------
+| 5. LOGIKA: HIBAJEGY LEZÁRÁSA
+|-------------------------------------------------------------------------- */
 if (isset($_POST['resolve_error'])) {
     $errID = (int)$_POST['error_id'];
     try {
@@ -123,7 +167,7 @@ if (isset($_POST['resolve_error'])) {
 
 // --- LEKÉRDEZÉSEK ---
 
-// Aktív hibajegyek lekérése
+// Aktív hibajegyek
 $errorReports = $pdo->query("
     SELECT e.*, u.username as registered_username 
     FROM user_error e 
@@ -167,7 +211,16 @@ $stmtLog = $pdo->prepare($logQuery);
 $stmtLog->execute($logParams);
 $logs = $stmtLog->fetchAll(PDO::FETCH_ASSOC);
 
+// Felhasználók lekérdezése
 $users = $pdo->query("SELECT * FROM users ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+
+// **FONTOS**: Lekérjük a felhasználó-raktár kapcsolatokat a checkboxok bejelöléséhez
+$user_access_map = [];
+$access_rows = $pdo->query("SELECT user_id, warehouse_id FROM user_warehouse_access")->fetchAll(PDO::FETCH_ASSOC);
+foreach($access_rows as $row) {
+    $user_access_map[$row['user_id']][] = $row['warehouse_id'];
+}
+
 $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -177,7 +230,71 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
     <meta charset="UTF-8">
     <title>Tulajdonosi Panel | CRUD-X</title>
     <link rel="stylesheet" href="./style/style.css">
-    <link rel="stylesheet" href="style/owner.css">
+    <style>
+        .management-grid { display: grid; grid-template-columns: 350px 1fr; gap: 20px; margin-top: 20px; align-items: start; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); }
+        .data-table { width: 100%; border-collapse: collapse; background: white; }
+        .data-table thead th { background-color: #0f172a; color: #ffffff; padding: 15px; text-align: left; font-weight: 600; font-size: 0.9rem; }
+        .data-table tbody td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+        .card-header-toggle { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .toggle-icon { transition: transform 0.3s; }
+        .collapsed .toggle-icon { transform: rotate(-90deg); }
+        .is-hidden { display: none; }
+        .search-container { padding: 10px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+        .search-input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        .btn-primary-blue { background: #0f172a; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 600; }
+        .btn-save-sm { background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-success-sm { background: #16a34a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .batch-id-cell { position: relative; cursor: pointer; transition: background 0.2s; }
+        .batch-id-cell:hover { background: #f1f5f9 !important; }
+        .batch-id-cell a { text-decoration: none; color: #2563eb; font-family: monospace; font-weight: bold; }
+        .batch-id-cell::after { content: '→'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0; transition: all 0.2s; color: #2563eb; }
+        .batch-id-cell:hover::after { opacity: 1; right: 8px; }
+        .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; padding: 15px 20px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; align-items: flex-end; }
+        .filter-item { display: flex; flex-direction: column; gap: 4px; }
+        .filter-item label { font-size: 0.75rem; font-weight: bold; color: #64748b; }
+        .filter-item input, .filter-item select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+        .status-active { background: #dcfce7; color: #16a34a; }
+        .status-inactive { background: #fee2e2; color: #dc2626; }
+        .pill-pending { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;}
+        .pill-completed { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;}
+        
+        /* ÚJ: Checkbox lista stílus a raktárválasztóhoz */
+        .checkbox-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            padding: 5px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 4px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+        }
+        .checkbox-item:last-child { border-bottom: none; }
+        .checkbox-item input { margin-right: 8px; width: auto !important; cursor: pointer; }
+        .checkbox-item label { cursor: pointer; flex: 1; margin: 0; color: #333; user-select: none; }
+        .checkbox-item:hover { background: #f8fafc; }
+        
+        /* Owner info box */
+        .owner-access-info {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none; /* JS kapcsolja be */
+            border: 1px solid #bfdbfe;
+        }
+
+        @media (max-width: 900px) { .management-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
 
@@ -191,6 +308,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
 
     <div class="management-grid">
         <div class="forms-stack">
+            
             <section class="card">
                 <div style="padding: 20px; border-bottom: 1px solid #eee;"><h2><img class="icon" src="./img/create-group-button_icon-icons.com_72792.png">  Új felhasználó</h2></div>
                 <div style="padding: 20px;">
@@ -205,20 +323,29 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                         <input type="password" max="30" name="password" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                         
                         <label style="display:block; margin-bottom:5px; font-weight:600;">Szerepkör</label>
-                        <select name="role" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                        <select name="role" id="new_user_role" onchange="toggleWarehouseSelect('new_user_role', 'new_user_whs')" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
                             <option value="user">User</option>
                             <option value="admin">Admin</option>
                             <option value="owner">Owner</option>
                         </select>
                         
-                        <label style="display:block; margin-bottom:5px; font-weight:600;">Elsődleges Raktár (Opcionális)</label>
-                        <select name="warehouse_id" style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:6px;">
-                            <option value="">-- Nincs --</option>
-                            <?php foreach($warehouses_for_select as $wh): ?>
-                                <option value="<?= $wh['ID'] ?>"><?= htmlspecialchars($wh['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <button type="submit" name="add_user" class="btn-primary-blue">Létrehozás</button>
+                        <div id="new_user_whs">
+                            <label style="display:block; margin-bottom:5px; font-weight:600;">Hozzárendelt raktárak</label>
+                            <div class="checkbox-list">
+                                <?php foreach($warehouses_for_select as $wh): ?>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="warehouse_ids[]" value="<?= $wh['ID'] ?>" id="wh_new_<?= $wh['ID'] ?>">
+                                        <label for="wh_new_<?= $wh['ID'] ?>"><?= htmlspecialchars($wh['name']) ?></label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        
+                        <div id="new_user_whs_msg" class="owner-access-info">
+                            <strong>Global Admin:</strong> Teljes hozzáférés minden raktárhoz.
+                        </div>
+
+                        <button type="submit" name="add_user" class="btn-primary-blue" style="margin-top:15px;">Létrehozás</button>
                     </form>
                 </div>
             </section>
@@ -248,7 +375,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
             
             <section class="card" style="border-left: 4px solid #f97316;">
                 <div class="card-header-toggle" onclick="toggleSection('errorContent', this)">
-                    <h2>⚠️ Aktív segítségkérések (<?= count($errorReports) ?>)</h2>
+                    <h2><img class="icon" src="./img/icons8-error-48.png"> Aktív segítségkérések (<?= count($errorReports) ?>)</h2>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div id="errorContent">
@@ -291,22 +418,45 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                     </div>
                     <div style="overflow-x: auto;">
                         <table class="data-table" id="userTable">
-                            <thead><tr><th>Név</th><th>Email</th><th>Jog</th><th>Jelszó</th><th>Aktív</th><th></th></tr></thead>
+                            <thead><tr><th>Név / Email</th><th>Jog</th><th>Raktárak</th><th>Jelszó</th><th>Aktív</th><th></th></tr></thead>
                             <tbody>
                                 <?php foreach ($users as $u): ?>
                                 <tr class="user-row">
                                     <form method="POST">
                                         <input type="hidden" name="user_id" value="<?= $u['ID'] ?>">
-                                        <td><input type="text" name="username" value="<?= htmlspecialchars($u['username']) ?>" style="width:120px; padding:5px; border-radius:4px; border:1px solid #ddd;"></td>
-                                        <td><input type="email" name="email" value="<?= htmlspecialchars($u['email']) ?>" style="width:160px; padding:5px; border-radius:4px; border:1px solid #ddd;"></td>
                                         <td>
-                                            <select name="role" style="padding:5px; border-radius:4px; border:1px solid #ddd;">
+                                            <input type="text" name="username" value="<?= htmlspecialchars($u['username']) ?>" style="width:130px; padding:5px; border-radius:4px; border:1px solid #ddd; margin-bottom:4px;"><br>
+                                            <input type="email" name="email" value="<?= htmlspecialchars($u['email']) ?>" style="width:130px; padding:5px; border-radius:4px; border:1px solid #ddd; font-size:0.75rem;">
+                                        </td>
+                                        <td>
+                                            <select name="role" id="role_<?= $u['ID'] ?>" onchange="toggleWarehouseSelect('role_<?= $u['ID'] ?>', 'wh_box_<?= $u['ID'] ?>')" style="padding:5px; border-radius:4px; border:1px solid #ddd;">
                                                 <option value="user" <?= $u['role'] == 'user' ? 'selected' : '' ?>>User</option>
                                                 <option value="admin" <?= $u['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
                                                 <option value="owner" <?= $u['role'] == 'owner' ? 'selected' : '' ?>>Owner</option>
                                             </select>
                                         </td>
-                                        <td><input type="password" name="new_password" placeholder="Új jelszó..." style="width:100px; padding:5px; border-radius:4px; border:1px solid #ddd;"></td>
+                                        <td style="min-width: 200px;">
+                                            <?php $isOwner = ($u['role'] === 'owner'); ?>
+                                            
+                                            <div id="wh_box_<?= $u['ID'] ?>" style="display: <?= $isOwner ? 'none' : 'block' ?>;">
+                                                <div class="checkbox-list" style="max-height: 100px;">
+                                                    <?php foreach($warehouses_for_select as $wh): 
+                                                        // Ellenőrizzük, hogy a usernek van-e joga ehhez a raktárhoz
+                                                        $checked = (isset($user_access_map[$u['ID']]) && in_array($wh['ID'], $user_access_map[$u['ID']])) ? 'checked' : '';
+                                                    ?>
+                                                        <div class="checkbox-item">
+                                                            <input type="checkbox" name="warehouse_ids[]" value="<?= $wh['ID'] ?>" <?= $checked ?>>
+                                                            <label><?= htmlspecialchars($wh['name']) ?></label>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="wh_box_<?= $u['ID'] ?>_msg" class="owner-access-info" style="display: <?= $isOwner ? 'block' : 'none' ?>;">
+                                                Teljes hozzáférés.
+                                            </div>
+                                        </td>
+                                        <td><input type="password" name="new_password" placeholder="Új jelszó..." style="width:80px; padding:5px; border-radius:4px; border:1px solid #ddd;"></td>
                                         <td style="text-align:center;"><input type="checkbox" name="active" <?= $u['active'] ? 'checked' : '' ?>></td>
                                         <td><button type="submit" name="update_user" class="btn-save-sm">Mentés</button></td>
                                     </form>
@@ -424,8 +574,8 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                                         <?php endif; ?>
                                     </td>
                                     <td><strong><?= htmlspecialchars($log['username'] ?? 'Rendszer') ?></strong></td>
-                                    <td><span class="status-badge status-inactive" style="font-size: 0.7rem;"><?= htmlspecialchars($log['source_wh'] ?? 'Ismeretlen') ?></span></td>
-                                    <td><span class="status-badge status-active" style="font-size: 0.7rem;"><?= htmlspecialchars($log['target_wh'] ?? 'Ismeretlen') ?></span></td>
+                                    <td><span class="status-badge status-inactive"><?= htmlspecialchars($log['source_wh'] ?? 'Ismeretlen') ?></span></td>
+                                    <td><span class="status-badge status-active"><?= htmlspecialchars($log['target_wh'] ?? 'Ismeretlen') ?></span></td>
                                 </tr>
                                 <?php endforeach; ?>
                                 <?php if(empty($logs)): ?>
@@ -473,6 +623,21 @@ function filterWarehouses() {
             const val = (nameInput.value + addrInput.value).toLowerCase();
             rows[i].style.display = val.includes(filter) ? "" : "none";
         }
+    }
+}
+
+// ÚJ JS Logika: Ha 'owner'-re vált, eltűnik a raktárválasztó
+function toggleWarehouseSelect(roleSelectId, whBoxId) {
+    const roleSelect = document.getElementById(roleSelectId);
+    const whBox = document.getElementById(whBoxId);
+    const msgBox = document.getElementById(whBoxId + "_msg");
+    
+    if (roleSelect.value === 'owner') {
+        whBox.style.display = 'none';
+        if(msgBox) msgBox.style.display = 'block';
+    } else {
+        whBox.style.display = 'block';
+        if(msgBox) msgBox.style.display = 'none';
     }
 }
 </script>
