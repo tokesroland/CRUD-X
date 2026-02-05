@@ -1,0 +1,130 @@
+/* Alapértelmezett rács elrendezés */
+    .transport-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media(min-width: 992px) { .transport-grid { grid-template-columns: 350px 1fr; align-items: start; } }
+    
+    .pending-card {
+        border-left: 4px solid #f59e0b;
+        background: #fffbeb;
+    }
+    .batch-link {
+        color: var(--primary);
+        font-weight: bold;
+        text-decoration: none;
+        word-break: break-all; /* Biztosítja a hosszú ID-k tördelését */
+    }
+    .batch-link:hover { text-decoration: underline; }
+
+    /* =========================================
+       TRANSPORTS.PHP ÉS MÉDIA FIXEK
+       ========================================= */
+
+    @media (max-width: 900px) {
+        /* 1. Kényszerítjük, hogy minden rács függőleges lista legyen */
+        .management-grid, 
+        .transport-grid, 
+        .dashboard-layout,
+        [class*="-grid"] { 
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            gap: 15px !important;
+        }
+
+        /* 2. Kártyák láthatósága és méretezése */
+        .card {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            display: block !important; 
+            overflow-x: auto; 
+            box-sizing: border-box;
+            padding: 12px !important; /* Kisebb padding a több helyért */
+        }
+
+        /* 3. Szakaszok belső igazítása */
+        section, .section-content {
+            width: 100% !important;
+            padding: 10px !important;
+            box-sizing: border-box;
+            overflow-wrap: break-word; 
+        }
+
+        /* 4. Médiatartalmak (képek, ikonok, svg) korlátozása */
+        .section-content img, 
+        .card img, 
+        .transport-icon,
+        svg {
+            max-width: 100% !important;
+            height: auto !important;
+            object-fit: contain;
+        }
+
+        /* 5. Adatsorok és űrlap elemek (Célállomás, Dátum) egymás alá rendezése */
+        .info-row, .data-row, .filters, .filter-bar, .input-group-grid {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+            display: flex !important;
+        }
+
+        .field, .filter-item {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        /* Dátumválasztó és beviteli mezők reszponzív fixálása */
+        .field input[type="date"],
+        .field select,
+        .field input[type="text"],
+        .field input[type="number"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 10px !important;
+            height: 40px;
+            min-width: 0; /* Megakadályozza a szülő kinyomását */
+        }
+
+        /* 6. Szövegtördelés kényszerítése a kilógás ellen */
+        p, span, td, h2, h3 {
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+
+        /* 7. Táblázat kompaktálása a görgetésmentes nézetért */
+        .data-table {
+            display: table !important; /* Visszaállítás, hogy a tartalomhoz zsugorodjon */
+            width: 100% !important;
+            font-size: 0.8rem !important; /* Kisebb betű a helytakarékosságért */
+        }
+
+        .data-table th, .data-table td {
+            padding: 8px 4px !important;
+            white-space: normal !important;
+        }
+
+        .prod-name-cell {
+            max-width: 120px !important; /* Korlátozott szélesség a névnek */
+            word-break: break-word;
+        }
+
+        /* 8. Gombok teljes szélessége mobilon */
+        .btn, .btn-primary-blue, .actions, .button-container {
+            width: 100% !important;
+            margin-bottom: 5px;
+            margin-top: 5px;
+        }
+    }
+
+    /* Globális védelem a vízszintes "lötyögés" ellen */
+    html, body {
+        position: relative;
+        overflow-x: hidden !important;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }

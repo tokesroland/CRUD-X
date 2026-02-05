@@ -229,24 +229,12 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Szállítás | CRUD-X</title>
     <link rel="stylesheet" href="./style/style.css">
-    <style>
-        .transport-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media(min-width: 992px) { .transport-grid { grid-template-columns: 350px 1fr; align-items: start; } }
-        
-        .pending-card {
-            border-left: 4px solid #f59e0b;
-            background: #fffbeb;
-        }
-        .batch-link {
-            color: var(--primary);
-            font-weight: bold;
-            text-decoration: none;
-        }
-        .batch-link:hover { text-decoration: underline; }
-    </style>
+    <link rel="stylesheet" href="./style/transports.css">
 </head>
+
 <body>
 
 <main class="container">
@@ -366,6 +354,7 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
 
         <section class="card">
             <h3 style="margin-bottom:15px;">3. Szállítmány tartalma</h3>
+            <p style="font-size: 0.8rem;">Telefonos nézeten görgessen a részletekhez!</p>
             <?php if (empty($_SESSION['transport_cart']['items'])): ?>
                 <p style="text-align:center; color:#aaa;">A lista üres.</p>
             <?php else: ?>

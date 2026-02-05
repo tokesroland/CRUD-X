@@ -160,21 +160,27 @@
             border-radius: 4px;
         }
 
+        /* legyen vízszintesen a badge középre igazítva */
         .status-badge {
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: bold;
+            text-align: center;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .status-active {
             background: #dcfce7;
             color: #16a34a;
+            text-align: center;
         }
 
         .status-inactive {
             background: #fee2e2;
             color: #dc2626;
+            text-align: center;
         }
 
         .pill-pending {
@@ -253,3 +259,169 @@
                 grid-template-columns: 1fr;
             }
         }
+
+
+        /* STATUS BADGE STÍLUSOK */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        /* Aktív állapot (zöld) */
+        .status-active {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        /* Inaktív állapot (piros) */
+        .status-inactive {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Függőben lévő (pill stílus) */
+        .pill-pending {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fcd34d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        /* Befejezett (pill stílus) */
+        .pill-completed {
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #86efac;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+/* =========================================
+   OWNER & TRANSPORTS RESPONSIVE FIX
+   ========================================= */
+
+@media (max-width: 900px) {
+    /* 1. A fő rács összeomlasztása (Dashboard és Kezelő) */
+    .management-grid, 
+    .transport-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 15px;
+    }
+
+    /* 2. Fix szélességű oszlopok (pl. 350px) törlése */
+    .management-grid > div, 
+    .transport-grid > div {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* 3. Summary és Section elemek igazítása */
+    summary {
+        white-space: normal; /* Engedi a hosszú címek törését */
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    summary h2 {
+        font-size: 1rem !important; /* Kicsit kisebb betű, hogy elférjen */
+        line-height: 1.4;
+    }
+
+    /* 4. Táblázatok kényszerített görgetése a kártyán belül */
+    .card {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        overflow-x: auto; /* Ha a tartalom mégis nagyobb, a kártyán belül görgessen */
+    }
+
+    .data-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 5. Badge-ek és státuszok tördelése */
+    .status-badge, .badge, .pill-pending, .pill-completed {
+        max-width: none !important; /* Ne vágja le a szöveget */
+        word-wrap: normal;
+        margin-bottom: 5px;
+    }
+
+    /* 6. Filter bar (Kereső és Szűrők) egymás alá */
+    .filter-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 15px !important;
+    }
+
+    .filter-item {
+        width: 100% !important;
+    }
+
+    .filter-item input, 
+    .filter-item select {
+        width: 100% !important;
+    }
+}
+
+/* Extra fix: ne engedje a body-nak az oldalirányú mozgást */
+body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* =========================================
+   MODERN TÁBLÁZAT GÖRGETÉS JELZÉS (UX)
+   ========================================= */
+
+@media (max-width: 900px) {
+    /* Konténer, ami segít a jelzés pozicionálásában */
+    .card {
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* A táblázat wrapperén engedélyezzük a görgetést */
+    .data-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        /* Eltüntetjük az alapértelmezett csúnya görgetősávot */
+        scrollbar-width: none; 
+    }
+    .data-table::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Finom színátmenet a jobb szélen, ami jelzi a folytatást */
+    .card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 30px;
+        height: 100%;
+        /* Halvány fehér átmenet a kártya szélére */
+        background: linear-gradient(to right, rgba(255,255,255,0), rgba(226, 232, 240, 0.7));
+        pointer-events: none; /* Átkattintható marad */
+        z-index: 5;
+    }
+    
+    /* Egy kis plusz: sorkiemelés mobilon a jobb olvashatóságért */
+    .data-table tbody tr:active {
+        background-color: #f1f5f9;
+    }
+}

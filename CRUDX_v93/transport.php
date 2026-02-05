@@ -146,18 +146,10 @@ if ($hasPendingImport) {
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Szállítás részletei: <?= htmlspecialchars($batchId) ?></title>
     <link rel="stylesheet" href="./style/style.css">
-    <style>
-        .status-badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 0.9em; }
-        .status-pending { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; }
-        .status-completed { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
-        
-        .accept-section {
-            background: #fff7ed; border: 1px solid #ffedd5; padding: 20px; border-radius: 12px; margin-bottom: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-    </style>
+    <link rel="stylesheet" href="./style/transport.css">
 </head>
 <body>
 <?php include './components/navbar.php'; ?>
@@ -193,7 +185,7 @@ if ($hasPendingImport) {
     <section class="card">
         <div class="card-header">
             <h2><img class="icon" src="./img/truck_23929.png"> Szállítmány: <?= htmlspecialchars($batchId) ?></h2>
-            <a href="<?= $_SESSION['role'] === 'user' || $_SESSION['role'] === 'admin' ? 'index.php' : 'owner.php' ?>" class="btn btn-outline">
+            <a href="<?= $_SESSION['role'] === 'user' || $_SESSION['role'] === 'admin' ? 'index.php' : 'transports.php' ?>" class="btn btn-outline">
                 Vissza
             </a>
         </div>

@@ -139,64 +139,7 @@ try {
     <title>CRUD-X – Készlet áttekintés</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style/style.css?v=<?= time() ?>">
-
-    <style>
-        /* Letisztult dashboard grid */
-        .dashboard-grid{
-            display:grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 14px;
-        }
-        .col-12{ grid-column: span 12; }
-        .col-6{ grid-column: span 6; }
-
-        @media (max-width: 1000px){
-            .col-6{ grid-column: span 12; }
-        }
-
-        .card-body{ padding: 14px; }
-        .card-tools{
-            display:flex;
-            gap:10px;
-            flex-wrap:wrap;
-            align-items:center;
-            margin-bottom: 12px;
-        }
-        .card-tools label{ font-size: 12px; opacity:.8; }
-        .card-tools select, .card-tools input{
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        .mini-table{
-            width:100%;
-            border-collapse: collapse;
-        }
-        .mini-table th, .mini-table td{
-            padding: 10px 8px;
-            border-bottom: 1px solid #eee;
-            vertical-align: top;
-        }
-        .mini-table th{
-            text-align:left;
-            font-size: 12px;
-            opacity: .75;
-        }
-        .hint{
-            font-size: 12px;
-            opacity: .75;
-            margin-top: 10px;
-        }
-        .pill{
-            display:inline-block;
-            padding: 4px 10px;
-            border-radius: 999px;
-            border: 1px solid #ddd;
-            font-size: 12px;
-        }
-        .pill-warn{ border-color: #f2c94c; }
-        .pill-ok{ border-color: #27ae60; }
-    </style>
+    <link rel="stylesheet" href="./style/inventory.css?v=<?= time() ?>">
 </head>
 
 <body>

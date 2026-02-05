@@ -240,11 +240,11 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tulajdonosi Panel | CRUD-X</title>
     <link rel="stylesheet" href="./style/owner.css">
     <link rel="stylesheet" href="./style/style.css">
-    <style>
-    </style>
+
 </head>
 
 <body>

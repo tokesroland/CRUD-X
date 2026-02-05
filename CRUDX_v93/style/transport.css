@@ -1,0 +1,55 @@
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .status-pending {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fcd34d;
+        }
+
+        .status-completed {
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #86efac;
+        }
+
+        .accept-section {
+            background: #fff7ed;
+            border: 1px solid #ffedd5;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            .accept-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .accept-section form {
+                margin-top: 15px;
+            }
+
+            .data-table thead {
+                width: 100%;
+                border-collapse: collapse;
+                background: none;
+                color: black;
+            }
+
+            .status-badge {
+                display: inline-block;
+                padding: 5px 10px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 0.9em;
+            }
+        }

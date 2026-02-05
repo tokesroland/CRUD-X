@@ -1,0 +1,68 @@
+    /* =========================================
+   PRODUCT.PHP RAKTÁRKÉSZLET FIX
+   ========================================= */
+
+/* Konténer védelem a túllógás ellen */
+.card-body {
+    width: 100%;
+    overflow-x: hidden; /* Megakadályozza az oldalirányú elcsúszást */
+    box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    /* 1. A táblázat reszponzívvá tétele */
+    .mini-table, .data-table {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto; /* Belső görgetés, ha szükséges */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 2. Sorok és cellák igazítása */
+    .mini-table tr, .data-table tr {
+        display: flex !important;
+        flex-wrap: wrap; /* Engedi a tördelést */
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        width: 100%;
+    }
+
+    .mini-table td, .mini-table th,
+    .data-table td, .data-table th {
+        display: block !important;
+        padding: 5px !important;
+        border: none !important;
+        box-sizing: border-box;
+    }
+
+    /* 3. Raktár neve: balra, teljes szélességben vagy tördelve */
+    .mini-table td:first-child,
+    .data-table td:first-child {
+        flex: 1 1 60%; /* Rugalmas szélesség */
+        font-weight: bold;
+        word-break: break-word; /* Hosszú nevek törése */
+    }
+
+    /* 4. Mennyiség: jobbra igazítva */
+    .mini-table td:last-child,
+    .data-table td:last-child {
+        flex: 0 0 auto;
+        text-align: right;
+        color: var(--primary);
+    }
+
+    /* 5. Fejléc elrejtése mobilon a helytakarékosság miatt */
+    .mini-table thead, .data-table thead {
+        display: none !important;
+    }
+}
+
+/* Globális rögzítés az egész oldalra */
+html, body {
+    width: 100%;
+    overflow-x: hidden !important;
+    position: relative;
+    margin: 0;
+    padding: 0;
+}

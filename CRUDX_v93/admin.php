@@ -34,10 +34,9 @@ if (isset($_POST['create_product'])) {
         if (strpos($itemNumber, '-') === 0) {
             throw new Exception("Hiba: A cikkszám nem lehet negatív szám!");
         }
-        if (empty($name) || empty($categoryID) || $categoryID === "NEW") {
+        if (empty($name) || empty($categoryID) || ($categoryID === "NEW" && empty(trim($_POST['new_category_name'])))) {
             throw new Exception("Név és Kategória kötelező!");
         }
-
         // --- 2. DUPLIKÁCIÓ ELLENŐRZÉS (PONTOS HIBAÜZENETÉRT) ---
         // Név ellenőrzése
         $stmtCheckName = $pdo->prepare("SELECT ID FROM products WHERE name = ?");

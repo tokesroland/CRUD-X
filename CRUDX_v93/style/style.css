@@ -388,7 +388,10 @@ th{
     .topbar {
         flex-wrap: wrap;
         justify-content: flex-start;
+        position: sticky;
+
     }
+    
 
     .nav {
         flex-wrap: wrap;
@@ -707,8 +710,9 @@ h3 {
     border: none;
     cursor: pointer;
     flex-direction: column;
-    justify-content: space-between;
-    height: 18px;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
     width: 25px;
     padding: 0;
     z-index: 1001;
@@ -721,6 +725,8 @@ h3 {
     background-color: #e5e7eb;
     border-radius: 2px;
     transition: all 0.3s ease;
+    /* legyen térköz a span között */
+    margin: 2px 0;
     
 }
 
@@ -809,6 +815,12 @@ img, svg, video, canvas, audio, iframe, embed, object {
    RESPONSIVE DESIGN (max-width: 900px)
    ============================================================ */
 @media (max-width: 900px) {
+    .logo {
+        position: absolute; /* Abszolút pozíció a független középért */
+        left: 50%;
+        transform: translate(-50%); /* Tökéletes vízszintes és függőleges közép */
+        margin: 0 !important;
+    }
     
     /* --- KONTÉNER ÉS ELRENDEZÉS --- */
     main.container {
@@ -888,6 +900,8 @@ img, svg, video, canvas, audio, iframe, embed, object {
         display: flex;
         justify-content: center;
         padding: 12px; /* Könnyebb ujjbeggyel eltalálni */
+        text-align: center;
+        vertical-align: middle;
     }
 
     /* --- LAPOZÓ (PAGINATION) --- */
@@ -944,3 +958,4 @@ img, svg, video, canvas, audio, iframe, embed, object {
         border-top: 1px solid rgba(255,255,255,0.1);
     }
 }
+
