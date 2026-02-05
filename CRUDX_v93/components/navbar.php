@@ -23,11 +23,19 @@ $wh_count = count($wh_list);
 </style>
 
 <header style="user-select: none;" class="topbar">
-    <div class="logo">
-        <a style="text-decoration: none; color:white;" href="index.php">CRUD-X</a>
+    <div class="topbar-brand-container">
+        <div class="logo">
+            <a style="text-decoration: none; color:white;" href="index.php">CRUD-X</a>
+        </div>
+        
+        <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Menü">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </div>
     
-    <nav class="nav">
+    <nav class="nav" id="mainNav">
         <a class="nav-link <?= $activePage == "index.php" ? 'active': '' ?>" href="index.php">Dashboard</a>
         <a class="nav-link <?= $activePage == "products.php" ? 'active': '' ?>" href="products.php">Termékek</a>
         <a class="nav-link <?= $activePage == "inventory.php" ? 'active': '' ?>" href="inventory.php">Raktárkészlet</a>
@@ -41,18 +49,18 @@ $wh_count = count($wh_list);
         <?php endif; ?>
     </nav>
 
-    <div class="user-box">
+    <div class="user-box" id="userBox">
         <div class="nav-user-container">
             <div class="wh-tooltip-box">
                 <span class="wh-badge"><?= $wh_count > 0 ? $wh_count . ' helyszín' : 'Minden egység' ?></span>
                 <?php if($wh_count > 0): ?>
                 <div class="wh-tooltip">
                     <strong style="color:var(--primary); font-size:0.8rem;">Hozzárendelt raktárak:</strong>
-                    <ul><?php foreach($wh_list as $name): ?><li><?= htmlspecialchars($name) ?></li><?php endforeach; ?></ul>
+                    <ul><?php foreach($wh_list as $name_): ?><li><?= htmlspecialchars($name_) ?></li><?php endforeach; ?></ul>
                 </div>
                 <?php endif; ?>
             </div>
-            <div class="user-info" style="display: flex; flex-direction: column; text-align: right;">
+            <div class="user-info">
                 <span class="user-name" style="font-weight: bold;"><?= htmlspecialchars($_SESSION['username']) ?></span>
                 <span class="user-role" style="font-size: 0.65rem; opacity: 0.7; text-transform: uppercase;"><?= htmlspecialchars($_SESSION['role']) ?></span>
             </div>
@@ -60,3 +68,12 @@ $wh_count = count($wh_list);
         <a href="components/logout.php" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; color:white; border-color:rgba(255,255,255,0.2);">Kijelentkezés</a>    
     </div>
 </header>
+
+<script>
+    function toggleMenu() {
+        const nav = document.getElementById('mainNav');
+        const userBox = document.getElementById('userBox');
+        nav.classList.toggle('open');
+        userBox.classList.toggle('open');
+    }
+</script>

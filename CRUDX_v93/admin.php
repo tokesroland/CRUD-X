@@ -271,7 +271,7 @@ if (isset($_POST['update_inventory_bulk']) && isset($_POST['inventory'])) {
 
 /*
 |--------------------------------------------------------------------------
-| 4️⃣ CSV IMPORT (Szigorú Backend Validációval)
+| 4️⃣ CSV IMPORT (Bővített Funkcionalitás: Leírás és Kategória - JAVÍTOTT)
 |--------------------------------------------------------------------------
 */
 if (isset($_POST['csv_submit']) && isset($_FILES['csv_file'])) {
@@ -283,20 +283,25 @@ if (isset($_POST['csv_submit']) && isset($_FILES['csv_file'])) {
         $imported = 0;
 
         try {
+            // Alapértelmezett kategória lekérése vészhelyzet esetére
             $defaultCat = $pdo->query("SELECT ID FROM categories LIMIT 1")->fetchColumn();
-            if (!$defaultCat) throw new Exception("Nincs kategória az adatbázisban!");
+            if (!$defaultCat) throw new Exception("Nincs kategória az adatbázisban! Hozz létre legalább egyet.");
 
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 $row++;
-                if ($row === 1) continue; // Fejléc skip
+                if ($row === 1) continue; // Fejléc átugrása
 
+                // --- Adatok beolvasása ---
                 $productName = trim($data[0] ?? '');
                 $warehouseId = (int)($data[1] ?? 0);
                 $quantity    = (int)($data[2] ?? 0);
+                // Leírás és Kategória beolvasása
+                $description = !empty($data[3]) ? trim($data[3]) : 'CSV Importált termék';
+                $categoryInput = !empty($data[4]) ? trim($data[4]) : '';
 
                 if ($productName === "") continue;
 
-                // --- PHP VALIDÁCIÓ CSV SOROKRA ---
+                // --- Validáció ---
                 if (mb_strlen($productName) > 100) {
                     throw new Exception("Hiba a $row. sorban: A terméknév túl hosszú (max 100 karakter).");
                 }
@@ -307,26 +312,59 @@ if (isset($_POST['csv_submit']) && isset($_FILES['csv_file'])) {
                     throw new Exception("Hiba a $row. sorban: A mennyiség túl sok ($quantity). Max 9999.");
                 }
 
-                // 1. Termék keresés / Létrehozás
+                // 1. Termék keresése név alapján
                 $stmt = $pdo->prepare("SELECT ID FROM products WHERE name = ?");
                 $stmt->execute([$productName]);
                 $pId = $stmt->fetchColumn();
 
+                // 2. Ha NINCS termék, létrehozzuk (Okos kategóriakezeléssel)
                 if (!$pId) {
+                    $catIdToUse = $defaultCat; // Alapértelmezés
+
+                    // Kategória felderítése (ha megadtak valamit)
+                    if ($categoryInput !== '') {
+                        // A) Keresés név alapján
+                        $stmtC = $pdo->prepare("SELECT ID FROM categories WHERE category_name = ?");
+                        $stmtC->execute([$categoryInput]);
+                        $foundCat = $stmtC->fetchColumn();
+
+                        if ($foundCat) {
+                            $catIdToUse = $foundCat;
+                        } else {
+                            $foundCatId = false; // <--- JAVÍTÁS: Változó inicializálása a hiba elkerülésére
+
+                            // B) Keresés ID alapján (csak ha számot adtak meg)
+                            if (is_numeric($categoryInput)) {
+                                $stmtC2 = $pdo->prepare("SELECT ID FROM categories WHERE ID = ?");
+                                $stmtC2->execute([$categoryInput]);
+                                $foundCatId = $stmtC2->fetchColumn();
+                                if ($foundCatId) $catIdToUse = $foundCatId;
+                            }
+                            
+                            // C) Ha még mindig nincs (sem névre, sem ID-ra), létrehozzuk új kategóriaként
+                            if (!$foundCat && !$foundCatId) {
+                                $stmtNewC = $pdo->prepare("INSERT INTO categories (category_name) VALUES (?)");
+                                $stmtNewC->execute([$categoryInput]);
+                                $catIdToUse = $pdo->lastInsertId();
+                            }
+                        }
+                    }
+
+                    // Termék beszúrása a felderített adatokkal
                     $stmt = $pdo->prepare("
                         INSERT INTO products (name, item_number, description, category_ID, active)
                         VALUES (?, ?, ?, ?, 1)
                     ");
                     $stmt->execute([
                         $productName, 
-                        (string)(time() + $row), 
-                        'CSV Importált termék', 
-                        $defaultCat
+                        (string)(time() + $row), // Generált cikkszám
+                        $description,            // CSV-ből vagy alapértelmezett
+                        $catIdToUse              // Felderített kategória ID
                     ]);
                     $pId = $pdo->lastInsertId();
                 }
 
-                // 2. Készlet kezelés
+                // 3. Készlet kezelés (Hozzáadás vagy Frissítés)
                 $stmt = $pdo->prepare("SELECT ID FROM inventory WHERE product_ID = ? AND warehouse_ID = ?");
                 $stmt->execute([$pId, $warehouseId]);
                 $invId = $stmt->fetchColumn();
@@ -343,7 +381,7 @@ if (isset($_POST['csv_submit']) && isset($_FILES['csv_file'])) {
 
             fclose($handle);
             $pdo->commit();
-            $message = "CSV Import kész: $imported tétel feldolgozva.";
+            $message = "CSV Import kész: $imported tétel feldolgozva (Termékek létrehozva/frissítve).";
             $msgType = "success";
         } catch (Exception $e) {
             $pdo->rollBack();
@@ -527,7 +565,7 @@ $inventoryList = $pdo->query("
                         <input type="file" name="csv_file" accept=".csv" required style="padding: 6px;">
                     </div>
                     <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
-                        <strong>Formátum:</strong> Név, RaktárID, Mennyiség
+                        <strong>Formátum:</strong> Név, RaktárID, Mennyiség, <em>Leírás (opc), Kategória (opc)</em>
                     </div>
                     <div class="field actions" style="justify-content: flex-end;">
                         <button type="submit" name="csv_submit" class="btn btn-outline">Feltöltés</button>

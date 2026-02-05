@@ -12,7 +12,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             margin-bottom: 20px;
-            border: none;
+            border: 1px solid var(--border);
         }
 
         .data-table {
@@ -99,9 +99,9 @@
         }
 
         .batch-id-cell {
-            font-family: monospace;
-            max-width: 150px;
-            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
         .batch-id-cell:hover {
@@ -160,33 +160,6 @@
             border-radius: 4px;
         }
 
-        /* Ez kezeli a képen látható piros/zöld dobozokat */
-        .status-badge,
-        .pill-pending,
-        .pill-completed,
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            line-height: 1.2;
-            max-width: 140px;
-            word-wrap: break-word;
-            text-align: center;
-        }
-
-
-        /* TERMÉKNÉV CELLA SPECIÁLIS KEZELÉSE */
-        .prod-name-cell {
-            max-width: 250px;
-            min-width: 120px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-            word-break: break-word;
-        }
-
         .status-badge {
             padding: 4px 8px;
             border-radius: 4px;
@@ -222,18 +195,61 @@
             font-size: 0.75rem;
         }
 
+        /* ÚJ: Checkbox lista stílus a raktárválasztóhoz */
+        .checkbox-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            padding: 5px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 4px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+        }
+
+        .checkbox-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox-item input {
+            margin-right: 8px;
+            width: auto !important;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            flex: 1;
+            margin: 0;
+            color: #333;
+            user-select: none;
+        }
+
+        .checkbox-item:hover {
+            background: #f8fafc;
+        }
+
+        /* Owner info box */
+        .owner-access-info {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+            /* JS kapcsolja be */
+            border: 1px solid #bfdbfe;
+        }
+
         @media (max-width: 900px) {
             .management-grid {
                 grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .prod-name-cell {
-                max-width: 150px;
-            }
-
-            .status-badge {
-                max-width: 100px;
             }
         }

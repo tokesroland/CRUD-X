@@ -688,3 +688,259 @@ h3 {
 .pill{
     text-align: center;
 }
+
+
+/* =================================
+   MOBIL RESPONSIVE KIEGÉSZÍTÉS
+   ================================= */
+
+/* Desktopon elrejtjük a konténert */
+.topbar-brand-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 18px;
+    width: 25px;
+    padding: 0;
+    z-index: 1001;
+}
+
+.hamburger-btn span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    
+}
+
+@media (max-width: 900px) {
+    .topbar {
+        display: block; /* Flex helyett blokk, hogy a menü alá tudjon esni */
+        padding: 15px 20px;
+        height: auto;
+    }
+
+    .topbar-brand-container {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .hamburger-btn {
+        display: flex;
+    }
+
+    .nav, 
+    .user-box {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center; /* Középre igazítás */
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .nav.open, 
+    .user-box.open {
+        display: flex;
+    }
+
+    .nav-link {
+        width: auto; /* Csak a szöveg szélessége legyen a kattintható terület */
+        min-width: 200px;
+        padding: 12px;
+        margin: 5px 0;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 999px; /* Megtartjuk a lekerekített stílust */
+        display: inline-block;
+    }
+
+    .user-box {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 15px;
+        padding-top: 20px;
+    }
+
+    .nav-user-container {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .user-info {
+        text-align: center !important;
+        margin-right: 0 !important;
+        margin-top: 10px;
+    }
+}
+
+
+
+/* ============================================================
+   MOBIL OPTIMALIZÁCIÓ ÉS TÚLLÓGÁS JAVÍTÁSA
+   ============================================================ */
+
+/* 1. Alapvető túlcsordulás védelem */
+html, body {
+    overflow-x: hidden; /* Megakadályozza az oldal vízszintes csúszkálását */
+    width: 100%;
+}
+
+/* Képek és média elemek ne lógjanak túl */
+img, svg, video, canvas, audio, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN (max-width: 900px)
+   ============================================================ */
+@media (max-width: 900px) {
+    
+    /* --- KONTÉNER ÉS ELRENDEZÉS --- */
+    main.container {
+        padding: 0 15px; /* Kisebb margó mobilon a több helyért */
+        width: 100%;
+        overflow: hidden; /* Biztonsági ráhagyás */
+    }
+
+    .card {
+        padding: 15px; /* Kisebb belső margó mobilon */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Grid rendszerek "kilapítása" 1 oszlopra */
+    .dashboard-layout, 
+    .management-grid, 
+    .stats-grid, 
+    .filters, 
+    .action-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+    }
+
+    /* Minden rács-elem teljes szélességű */
+    .full-width, .col-2, .col-3, .col-4, .col-6, .col-12 {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    /* --- TÁBLÁZATOK KEZELÉSE (A legkritikusabb rész) --- */
+    .table-wrapper {
+        display: block;
+        width: 100%;
+        overflow-x: auto; /* Belső görgetés engedélyezése */
+        -webkit-overflow-scrolling: touch; /* Simább görgetés iOS-en */
+        border: 1px solid #eee;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .data-table {
+        min-width: 600px; /* Minimum szélesség, hogy ne nyomódjon össze olvashatatlanra */
+        width: 100%;
+    }
+
+    /* Cellák formázása a helytakarékosságért */
+    .data-table th, .data-table td {
+        padding: 10px 8px;
+        font-size: 0.85rem;
+        white-space: normal; /* Engedi a szövegtörést */
+    }
+
+    /* Terméknév cella korlátozása, hogy ne legyen túl széles */
+    .prod-name-cell {
+        min-width: 140px;
+        max-width: 200px;
+        word-break: break-word; /* Hosszú szavak törése */
+    }
+
+    /* --- FILTEREK ÉS ŰRLAPOK --- */
+    .filters .field {
+        margin-bottom: 10px;
+    }
+
+    .filters .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn {
+        width: 100%; /* Gombok teljes szélességgel mobilon */
+        display: flex;
+        justify-content: center;
+        padding: 12px; /* Könnyebb ujjbeggyel eltalálni */
+    }
+
+    /* --- LAPOZÓ (PAGINATION) --- */
+    .pagination-wrapper {
+        display: flex;
+        flex-wrap: wrap; /* Engedi a gombokat új sorba törni */
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 0;
+    }
+    
+    .pagination-wrapper .btn-small {
+        padding: 8px 12px;
+        width: auto; /* A lapozó gombok ne legyenek 100% szélesek */
+        min-width: 40px;
+    }
+
+    /* --- POPUP TOOLTIP (Készlet) --- */
+    .popup-card {
+        width: 260px; /* Fix szélesség mobilon */
+        max-width: 85vw; /* De ne lógjon túl a képernyőn */
+        left: 50% !important;
+        transform: translateX(-50%); /* Középre igazítás a gombhoz képest */
+        margin-top: 10px;
+    }
+
+    /* --- NAVBAR MOBIL NÉZET --- */
+    .topbar {
+        flex-wrap: wrap;
+        padding: 10px 15px;
+        height: auto;
+    }
+
+    .hamburger-btn { display: block; }
+
+    /* Menü elrejtése/megjelenítése */
+    .nav {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding-top: 15px;
+        gap: 5px;
+    }
+    
+    .nav.open { display: flex; }
+
+    .user-box { display: none; } /* User box rejtve */
+    
+    .mobile-user-menu {
+        display: block !important;
+        text-align: center;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+}
