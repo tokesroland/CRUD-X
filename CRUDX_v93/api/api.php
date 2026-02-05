@@ -10,15 +10,12 @@ if (!isset($_GET['query']) || empty($_GET['query'])) {
     exit;
 }
 
-// Clean the search term: 
-// We take the first 2 words to avoid specific model numbers (like "DS-2CD5526G0") 
-// that would result in 0 hits.
-$rawQuery = $_GET['query'];
-$words = explode(' ', $rawQuery);
-$searchTerm = urlencode($words[0] . (isset($words[1]) ? ' ' . $words[1] : ''));
+// Use the full search term (do not truncate to the first two words)
+$rawQuery = trim($_GET['query']);
+$searchTerm = urlencode($rawQuery);
 
 // Added &lang=hu to the URL
-$apiUrl = "https://pixabay.com/api/?key=$apiKey&q=$searchTerm&lang=hu&image_type=photo&per_page=3";
+$apiUrl = "https://pixabay.com/api/?key=$apiKey&q=$searchTerm&lang=hu&safesearch=true&image_type=photo&per_page=3";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $apiUrl);
@@ -40,5 +37,5 @@ echo json_encode([
     'source' => 'Pixabay REST API',
     'image_url' => $finalImage,
     'language' => 'hu',
-    'query_used' => urldecode($searchTerm)
+    'query_used' => $rawQuery
 ]);
