@@ -3,15 +3,19 @@ session_start();
 require 'config.php';
 require "./components/auth_check.php";
 authorize(['admin', 'owner']);
+
 $pageTitle = "Jelentések";
 $activePage = "reports.php";
 include './components/navbar.php';
+include './components/reports_filter.php'; 
 
-
+// --- SZŰRŐK PARAMÉTEREINEK BEOLVASÁSA ---
+$range = isset($_GET['range']) ? (int)$_GET['range'] : 30;
+$wh_filter = (isset($_GET['wh']) && $_GET['wh'] !== 'all') ? (int)$_GET['wh'] : 'all';
 
 /*
 |--------------------------------------------------------------------------
-| 1. ADATLEKÉRÉSEK
+| 1. ADATLEKÉRÉSEK (ALAP STATISZTIKÁK)
 |--------------------------------------------------------------------------
 */
 
@@ -56,6 +60,62 @@ $totalStockForCats = array_sum(array_column($catStats, 'q'));
 
 $statusStats = $pdo->query("SELECT active, COUNT(*) as count FROM products GROUP BY active")->fetchAll(PDO::FETCH_ASSOC);
 $totalProductCount = array_sum(array_column($statusStats, 'count'));
+
+
+/*
+|--------------------------------------------------------------------------
+| 2. IDŐSZAKOS FORGALOM (JAVÍTOTT SZŰRÉSSEL)
+|--------------------------------------------------------------------------
+*/
+$timeline_sql = "
+    SELECT 
+        DATE(date) as move_date,
+        SUM(CASE WHEN type = 'import' THEN quantity ELSE 0 END) as total_in,
+        SUM(CASE WHEN type = 'export' THEN quantity ELSE 0 END) as total_out
+    FROM transports
+    WHERE date >= DATE_SUB(NOW(), INTERVAL ? DAY)
+";
+
+$timeline_params = [$range];
+
+// Ha van raktár szűrő, hozzáadjuk a feltételt
+if ($wh_filter !== 'all') {
+    $timeline_sql .= " AND warehouse_ID = ?";
+    $timeline_params[] = $wh_filter;
+}
+
+$timeline_sql .= " GROUP BY DATE(date) ORDER BY move_date ASC";
+
+$stmt = $pdo->prepare($timeline_sql);
+$stmt->execute($timeline_params);
+$timelineData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+/*
+|--------------------------------------------------------------------------
+| 3. ELFEKVŐ KÉSZLETEK (JAVÍTOTT: JOIN ÉS SZŰRÉS)
+|--------------------------------------------------------------------------
+*/
+// Itt volt a hiba: hiányzott a raktár nevének lekérése (w.name) és a szűrés
+$dead_sql = "
+    SELECT p.name, i.quantity, MAX(t.date) as last_move, w.name as warehouse_name
+    FROM inventory i
+    JOIN products p ON i.product_ID = p.ID
+    JOIN warehouses w ON i.warehouse_ID = w.ID
+    LEFT JOIN transports t ON (t.product_ID = p.ID AND t.warehouse_ID = i.warehouse_ID)
+    WHERE i.quantity > 0
+";
+
+if ($wh_filter !== 'all') {
+    $dead_sql .= " AND i.warehouse_ID = " . (int)$wh_filter;
+}
+
+$dead_sql .= " GROUP BY p.ID, i.warehouse_ID
+               HAVING (last_move < DATE_SUB(NOW(), INTERVAL 30 DAY) OR last_move IS NULL) 
+               ORDER BY i.quantity DESC LIMIT 10";
+
+$deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -69,6 +129,49 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <style>
+        /* Központi szűrő sáv elrendezése */
+        .filter-bar {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            padding: 0 20px 20px 20px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 0 1 auto;
+            min-width: 200px;
+        }
+
+        .filter-item label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .filter-item select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Mobil nézet a szűrőhöz */
+        @media (max-width: 900px) {
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-item {
+                width: 100%;
+            }
+        }
         .chart-container {
             position: relative;
             height: 350px;
@@ -138,6 +241,7 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
             font-weight: 500;
             color: #dc2626;
         }
+        
     </style>
 </head>
 
@@ -160,6 +264,77 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
                 <span class="stat-value"><?= $criticalWarehouses ?> db</span>
             </div>
         </div>
+
+        <section class="card">
+            <div class="card-header">
+                <h2><img class="icon" src="./img/category_icon_241610.png"> Jelentések Szűrése</h2>
+            </div>
+            <form method="GET" class="filter-bar" style="display:flex; gap:15px; background:none; border:none; padding:0 20px 20px 20px; flex-wrap: wrap;">
+                <div class="filter-item">
+                    <label>Raktár kiválasztása:</label>
+                    <select name="wh" onchange="this.form.submit()">
+                        <option value="all" <?= $wh_filter === 'all' ? 'selected' : '' ?>>Összes raktár (Globális)</option>
+                        <?php foreach ($warehouseStats as $w): ?>
+                            <option value="<?= $w['ID'] ?>" <?= (int)$wh_filter === (int)$w['ID'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($w['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Időszak:</label>
+                    <select name="range" onchange="this.form.submit()">
+                        <option value="7" <?= $range == 7 ? 'selected' : '' ?>>Utolsó 7 nap</option>
+                        <option value="30" <?= $range == 30 ? 'selected' : '' ?>>Utolsó 30 nap</option>
+                        <option value="90" <?= $range == 90 ? 'selected' : '' ?>>Utolsó 90 nap</option>
+                    </select>
+                </div>
+                <div class="filter-item" style="display:flex; align-items:flex-end;">
+                     <a href="reports.php" class="btn btn-outline" style="padding: 8px 15px; font-size:0.9rem;">Szűrők törlése</a>
+                </div>
+            </form>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h2><img class="icon" src="./img/1485477213-statistics_78572.png"> Forgalmi Idővonal</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h2>⚠️ Elfekvő készletek (Inaktív > 30 nap)</h2>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Termék</th>
+                            <th>Raktár</th>
+                            <th>Készlet</th>
+                            <th>Utolsó mozgás</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($deadStock)): ?>
+                            <tr><td colspan="4" style="text-align:center;">Nincs elfekvő készlet a szűrés alapján.</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($deadStock as $ds): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($ds['name']) ?></td>
+                                <td><small><?= htmlspecialchars($ds['warehouse_name']) ?></small></td>
+                                <td><strong><?= $ds['quantity'] ?> db</strong></td>
+                                <td><span class="badge badge-muted"><?= $ds['last_move'] ? date('Y.m.d', strtotime($ds['last_move'])) : 'Soha nem mozdult' ?></span></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
         <section class="card">
             <div class="card-header">
@@ -220,15 +395,58 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
 
     <?php include './components/footer.php'; ?>
 
-    <script>
+<script>
         // Plugin regisztrálása
         Chart.register(ChartDataLabels);
         Chart.defaults.font.family = "system-ui, sans-serif";
 
         const warehouseData = <?= json_encode($warehouseStats) ?>;
         const stockRaw = <?= json_encode($stockData) ?>;
+        const timelineRaw = <?= json_encode($timelineData) ?>;
         let capChart, stockChart;
+        
+        // JAVÍTÁS: Globális változó inicializálása alapértelmezett értékkel
         let selectedStockWarehouseId = 'all';
+
+        // --- TIMELINE CHART (FORGALMI IDŐVONAL) ---
+        // Ha már létezik timelineChart, megsemmisítjük és újraalkotjuk a szűrt adatokkal
+        if (window.myTimelineChart) window.myTimelineChart.destroy();
+
+        window.myTimelineChart = new Chart(document.getElementById('timelineChart'), {
+            type: 'line',
+            data: {
+                labels: timelineRaw.map(d => d.move_date),
+                datasets: [
+                    {
+                        label: 'Bevételezés',
+                        data: timelineRaw.map(d => d.total_in),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Kiadás',
+                        data: timelineRaw.map(d => d.total_out),
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    datalabels: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
 
         // --- 1. Kapacitás Chart Logika (Százalékkal) ---
         function renderCap() {
@@ -243,8 +461,7 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
                 type: 'bar',
                 data: {
                     labels,
-                    datasets: [
-                        {
+                    datasets: [{
                             label: 'Jelenlegi készlet',
                             data: current,
                             backgroundColor: colors,
@@ -254,7 +471,9 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
                                 anchor: 'end',
                                 align: 'top',
                                 color: '#475569',
-                                font: { weight: 'bold' },
+                                font: {
+                                    weight: 'bold'
+                                },
                                 formatter: (value, context) => {
                                     const maxVal = max[context.dataIndex];
                                     return maxVal > 0 ? Math.round((value / maxVal) * 100) + '%' : '0%';
@@ -268,7 +487,9 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
                             grouped: false,
                             order: 2,
                             borderRadius: 4,
-                            datalabels: { display: false }
+                            datalabels: {
+                                display: false
+                            }
                         }
                     ]
                 },
@@ -276,25 +497,37 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        tooltip: { mode: 'index', intersect: false },
-                        datalabels: { display: true }
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        datalabels: {
+                            display: true
+                        }
                     },
-                    scales: { y: { beginAtZero: true } }
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
             });
         }
 
-        // --- 2. Készlet vs Minimum Chart Logika (Változatlanul) ---
+        // --- 2. Készlet vs Minimum Chart Logika (JAVÍTVA) ---
         function selectStockWarehouse(el) {
             document.querySelectorAll('.stock-wh-filter').forEach(chip => chip.classList.remove('active'));
             el.classList.add('active');
-            selectedStockWarehouseId = el.dataset.id;
+            selectedStockWarehouseId = el.dataset.id; // Itt frissítjük a globális szűrőt
             updateStockChart();
         }
 
         function updateStockChart() {
             const onlyCrit = document.getElementById('onlyCriticalCheck').checked;
+            
+            // JAVÍTÁS: A globális selectedStockWarehouseId-t használjuk a szűréshez
             let filtered = stockRaw.filter(i => (selectedStockWarehouseId === 'all' || i.warehouse_id == selectedStockWarehouseId));
+            
             if (onlyCrit) {
                 filtered = filtered.filter(i => parseInt(i.quantity) <= parseInt(i.min_quantity));
             }
@@ -310,19 +543,46 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
                 type: 'bar',
                 data: {
                     labels,
-                    datasets: [
-                        { label: 'Aktuális készlet', data: currentData, backgroundColor: barColors, order: 1, borderRadius: 4, datalabels: { display: false } },
-                        { label: 'Elvárt minimum', data: minData, backgroundColor: 'rgba(220, 38, 38, 0.25)', grouped: false, order: 2, borderRadius: 4, datalabels: { display: false } }
+                    datasets: [{
+                            label: 'Aktuális készlet',
+                            data: currentData,
+                            backgroundColor: barColors,
+                            order: 1,
+                            borderRadius: 4,
+                            datalabels: {
+                                display: false
+                            }
+                        },
+                        {
+                            label: 'Elvárt minimum',
+                            data: minData,
+                            backgroundColor: 'rgba(220, 38, 38, 0.25)',
+                            grouped: false,
+                            order: 2,
+                            borderRadius: 4,
+                            datalabels: {
+                                display: false
+                            }
+                        }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        tooltip: { mode: 'index', intersect: false },
-                        datalabels: { display: false }
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        datalabels: {
+                            display: false
+                        }
                     },
-                    scales: { y: { beginAtZero: true } }
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
             });
         }
@@ -347,10 +607,14 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
             options: {
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom' },
+                    legend: {
+                        position: 'bottom'
+                    },
                     datalabels: {
                         color: '#fff',
-                        font: { weight: 'bold' },
+                        font: {
+                            weight: 'bold'
+                        },
                         formatter: (value) => {
                             if (totalStock <= 0) return null;
 
@@ -382,10 +646,14 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
             options: {
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom' },
+                    legend: {
+                        position: 'bottom'
+                    },
                     datalabels: {
                         color: '#fff',
-                        font: { weight: 'bold' },
+                        font: {
+                            weight: 'bold'
+                        },
                         formatter: (value) => {
                             if (totalProdCount <= 0) return null;
 
@@ -401,10 +669,11 @@ $totalProductCount = array_sum(array_column($statusStats, 'count'));
             }
         });
 
-
+        // JAVÍTÁS: Automatikus indítás oldalbetöltéskor az összes adattal
         renderCap();
-        updateStockChart();
+        updateStockChart(); 
     </script>
+    
 </body>
 
 </html>

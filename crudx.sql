@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2026. Feb 04. 15:16
+-- Létrehozás ideje: 2026. Feb 05. 14:16
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -57,7 +57,9 @@ INSERT INTO `categories` (`ID`, `category_name`) VALUES
 (18, 'Biztonságtechnika'),
 (19, 'Ergonómiai kiegészítők'),
 (20, 'Egyéb elektronikai termékek'),
-(21, 'Laptop/PC');
+(21, 'Laptop/PC'),
+(22, 'Új Technológia'),
+(23, 'Egyéb');
 
 -- --------------------------------------------------------
 
@@ -83,8 +85,8 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (2, 41, 22, 41, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
 (4, 41, 24, 7, 1, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
 (5, 42, 21, 54, 4, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
-(6, 42, 22, 29, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
-(7, 42, 23, 122, 6, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
+(6, 42, 22, 31, 2, '2026-01-21 10:56:53', '2026-02-05 12:57:28'),
+(7, 42, 23, 108, 6, '2026-01-21 10:56:53', '2026-02-05 13:19:59'),
 (8, 42, 24, 66, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
 (9, 43, 21, 27, 2, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
 (10, 43, 22, 51, 3, '2026-01-21 10:56:53', '2026-02-03 21:01:14'),
@@ -199,7 +201,7 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (124, 96, 31, 14, NULL, '2026-02-04 15:13:45', NULL),
 (125, 97, 21, 4, NULL, '2026-02-04 15:13:45', NULL),
 (126, 98, 22, 10, NULL, '2026-02-04 15:13:45', NULL),
-(127, 99, 23, 9, NULL, '2026-02-04 15:13:45', NULL),
+(127, 99, 23, 8, NULL, '2026-02-04 15:13:45', '2026-02-05 13:19:59'),
 (128, 100, 24, 16, NULL, '2026-02-04 15:13:45', NULL),
 (129, 101, 25, 11, NULL, '2026-02-04 15:13:45', NULL),
 (130, 102, 26, 13, NULL, '2026-02-04 15:13:45', NULL),
@@ -285,7 +287,131 @@ INSERT INTO `inventory` (`ID`, `product_ID`, `warehouse_ID`, `quantity`, `min_qu
 (210, 182, 29, 7, NULL, '2026-02-04 15:13:45', NULL),
 (211, 183, 30, 15, NULL, '2026-02-04 15:13:45', NULL),
 (212, 184, 31, 20, NULL, '2026-02-04 15:13:45', NULL),
-(213, 185, 21, 14, NULL, '2026-02-04 15:13:45', NULL);
+(213, 185, 21, 14, NULL, '2026-02-04 15:13:45', NULL),
+(214, 186, 29, 54, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(215, 187, 25, 13, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(216, 188, 28, 151, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(217, 189, 22, 90, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(218, 190, 23, 433, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(219, 191, 22, 57, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(220, 192, 23, 73, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(221, 193, 26, 203, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(222, 194, 22, 237, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(223, 195, 21, 255, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(224, 196, 21, 403, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(225, 197, 23, 266, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(226, 198, 22, 41, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(227, 199, 28, 180, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(228, 200, 25, 85, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(229, 201, 24, 260, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(230, 202, 22, 42, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(231, 203, 21, 347, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(232, 204, 21, 427, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(233, 205, 28, 425, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(234, 206, 29, 405, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(235, 207, 22, 207, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(236, 208, 31, 444, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(237, 209, 31, 122, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(238, 210, 29, 99, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(239, 211, 23, 326, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(240, 212, 31, 273, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(241, 213, 25, 359, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(242, 214, 29, 232, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(243, 215, 21, 384, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(244, 216, 25, 258, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(245, 217, 28, 431, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(246, 218, 22, 376, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(247, 219, 27, 202, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(248, 220, 22, 7, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(249, 221, 27, 46, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(250, 222, 21, 206, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(251, 223, 24, 337, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(252, 224, 22, 125, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(253, 225, 29, 226, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(254, 226, 21, 185, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(255, 227, 27, 293, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(256, 228, 26, 388, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(257, 229, 30, 130, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(258, 230, 29, 442, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(259, 231, 23, 112, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(260, 232, 25, 369, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(261, 233, 24, 389, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(262, 234, 22, 157, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(263, 235, 25, 427, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(264, 236, 28, 320, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(265, 237, 25, 396, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(266, 238, 22, 370, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(267, 239, 26, 78, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(268, 240, 26, 47, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(269, 241, 28, 42, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(270, 242, 22, 313, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(271, 243, 22, 366, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(272, 244, 31, 380, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(273, 245, 23, 363, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(274, 246, 30, 368, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(275, 247, 26, 240, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(276, 248, 29, 412, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(277, 249, 21, 375, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(278, 250, 23, 172, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(279, 251, 24, 276, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(280, 252, 28, 366, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(281, 253, 30, 167, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(282, 254, 21, 24, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(283, 255, 21, 106, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(284, 256, 27, 319, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(285, 257, 21, 101, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(286, 258, 28, 114, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(287, 259, 29, 76, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(288, 260, 27, 403, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(289, 261, 30, 379, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(290, 262, 26, 197, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(291, 263, 27, 12, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(292, 264, 25, 31, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(293, 265, 28, 94, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(294, 266, 29, 399, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(295, 267, 30, 409, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(296, 268, 22, 107, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(297, 269, 26, 87, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(298, 270, 29, 176, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(299, 271, 31, 241, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(300, 272, 30, 129, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(301, 273, 31, 331, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(302, 274, 23, 205, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(303, 275, 27, 257, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(304, 276, 26, 352, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(305, 277, 26, 222, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(306, 278, 25, 334, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(307, 279, 22, 320, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(308, 280, 24, 188, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(309, 281, 28, 275, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(310, 282, 24, 348, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(311, 283, 26, 39, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(312, 284, 23, 427, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(313, 285, 27, 326, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(314, 286, 24, 91, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(315, 287, 28, 233, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(316, 288, 26, 264, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(317, 289, 24, 170, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(318, 290, 30, 260, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(319, 291, 26, 84, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(320, 292, 25, 162, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(321, 293, 27, 267, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(322, 294, 28, 276, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(323, 295, 28, 354, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(324, 296, 24, 385, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(325, 297, 29, 273, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(326, 298, 28, 242, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(327, 299, 31, 124, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(328, 300, 21, 436, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(329, 301, 28, 173, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(330, 302, 31, 105, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(331, 303, 29, 287, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(332, 304, 31, 329, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(333, 305, 27, 119, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(334, 306, 28, 314, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(335, 307, 26, 220, NULL, '2026-02-05 08:19:57', '2026-02-05 08:22:31'),
+(336, 48, 31, 1, NULL, '2026-02-05 08:24:17', NULL),
+(337, 309, 25, 121, NULL, '2026-02-05 12:54:21', NULL);
 
 -- --------------------------------------------------------
 
@@ -437,7 +563,132 @@ INSERT INTO `products` (`ID`, `name`, `item_number`, `description`, `category_ID
 (182, 'DJI RS 3 Mini', '1770214523', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
 (183, 'Insta360 Flow', '1770214524', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
 (184, 'Manfrotto Pixi Evo', '1770214525', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
-(185, 'Joby GorillaPod 3K', '1770214526', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45');
+(185, 'Joby GorillaPod 3K', '1770214526', 'CSV Importált termék', 1, 1, '2026-02-04 15:13:45', '2026-02-04 15:13:45'),
+(186, 'Kingston Gamer egérpad Gen 3', '1770275999', 'Prémium minőségű Kingston gamer egérpad, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(187, 'Asus Mesh WiFi rendszer', '1770276000', 'Prémium minőségű Asus mesh wifi rendszer, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(188, 'Logitech Ergonomikus billentyűzet', '1770276001', 'Prémium minőségű Logitech ergonomikus billentyűzet, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(189, 'Xiaomi Mesh WiFi rendszer V2', '1770276002', 'Prémium minőségű Xiaomi mesh wifi rendszer, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(190, 'Hama Mechanikus billentyűzet Elite', '1770276003', 'Prémium minőségű Hama mechanikus billentyűzet, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(191, 'Dell Dokumentum szkenner Pro', '1770276004', 'Prémium minőségű Dell dokumentum szkenner, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(192, 'HyperX USB-C to Lightning kábel Gen 3', '1770276005', 'Prémium minőségű HyperX usb-c to lightning kábel, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(193, 'Kingston USB-C to Lightning kábel Elite', '1770276006', 'Prémium minőségű Kingston usb-c to lightning kábel, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(194, 'Sandisk Hűtőventilátor V2', '1770276007', 'Prémium minőségű Sandisk hűtőventilátor, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(195, 'Philips Thunderbolt 4 kábel Pro', '1770276008', 'Prémium minőségű Philips thunderbolt 4 kábel, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(196, 'Baseus Webkamera 4K Gen 3', '1770276009', 'Prémium minőségű Baseus webkamera 4k, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(197, 'Sony AI Gyorsító modul Gen 3', '1770276010', 'Prémium minőségű Sony ai gyorsító modul, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(198, 'Apple Hordozható hangszóró Pro', '1770276011', 'Prémium minőségű Apple hordozható hangszóró, audio eszközök kategóriában. Megbízható választás professzionális használatra.', 9, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(199, 'Logitech Asztali lámpa LED Max', '1770276012', 'Prémium minőségű Logitech asztali lámpa led, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(200, 'LG Monitor kar Max', '1770276013', 'Prémium minőségű LG monitor kar, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(201, 'Philips Gateway hub Max', '1770276014', 'Prémium minőségű Philips gateway hub, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(202, 'Sennheiser Range extender 2024', '1770276015', 'Prémium minőségű Sennheiser range extender, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(203, 'Sennheiser Iratmegsemmisítő 2024', '1770276016', 'Prémium minőségű Sennheiser iratmegsemmisítő, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(204, 'Sandisk HDMI 2.1 kábel 2m Black Edition', '1770276017', 'Prémium minőségű Sandisk hdmi 2.1 kábel 2m, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(205, 'Trust Portable HDD 2TB Pro', '1770276018', 'Prémium minőségű Trust portable hdd 2tb, adattárolók kategóriában. Megbízható választás professzionális használatra.', 6, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(206, 'Bose USB Wi-Fi adapter Black Edition', '1770276019', 'Prémium minőségű Bose usb wi-fi adapter, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(207, 'Razer Mesh WiFi rendszer Ultra', '1770276020', 'Prémium minőségű Razer mesh wifi rendszer, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(208, 'Dell Vezérlő töltő Pro', '1770276021', 'Prémium minőségű Dell vezérlő töltő, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(209, 'Razer Monitor kar', '1770276022', 'Prémium minőségű Razer monitor kar, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(210, 'Logitech Gaming headset 7.1 2024', '1770276023', 'Prémium minőségű Logitech gaming headset 7.1, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(211, 'HyperX Wi-Fi 6 router Black Edition', '1770276024', 'Prémium minőségű HyperX wi-fi 6 router, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(212, 'Logitech Webkamera 4K', '1770276025', 'Prémium minőségű Logitech webkamera 4k, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(213, 'Sennheiser Range extender Elite', '1770276026', 'Prémium minőségű Sennheiser range extender, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(214, 'Xiaomi Dokumentum szkenner Pro', '1770276027', 'Prémium minőségű Xiaomi dokumentum szkenner, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(215, 'HyperX Digitális jegyzettömb Plus', '1770276028', 'Prémium minőségű HyperX digitális jegyzettömb, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(216, 'Seagate Bluetooth fejhallgató', '1770276029', 'Prémium minőségű Seagate bluetooth fejhallgató, audio eszközök kategóriában. Megbízható választás professzionális használatra.', 9, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(217, 'Sennheiser Védő takaró Elite', '1770276030', 'Prémium minőségű Sennheiser védő takaró, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(218, 'Ugreen USB elosztó 7-port Gen 3', '1770276031', 'Prémium minőségű Ugreen usb elosztó 7-port, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(219, 'Apple Golyóstoll készlet Elite', '1770276032', 'Prémium minőségű Apple golyóstoll készlet, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(220, 'MSI SDXC Pro 256GB Pro', '1770276033', 'Prémium minőségű MSI sdxc pro 256gb, adattárolók kategóriában. Megbízható választás professzionális használatra.', 6, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(221, 'Kingston VR Szemüveg kiegészítő Gen 3', '1770276034', 'Prémium minőségű Kingston vr szemüveg kiegészítő, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(222, 'AMD Védő takaró Black Edition', '1770276035', 'Prémium minőségű AMD védő takaró, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(223, 'LG Hordozható napelem panel Pro', '1770276036', 'Prémium minőségű LG hordozható napelem panel, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(224, 'HP Kalibráló eszköz Plus', '1770276037', 'Prémium minőségű HP kalibráló eszköz, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(225, 'AMD Bluetooth fejhallgató Ultra', '1770276038', 'Prémium minőségű AMD bluetooth fejhallgató, audio eszközök kategóriában. Megbízható választás professzionális használatra.', 9, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(226, 'HP Gaming headset 7.1 V2', '1770276039', 'Prémium minőségű HP gaming headset 7.1, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(227, 'Kingston USB elosztó 7-port', '1770276040', 'Prémium minőségű Kingston usb elosztó 7-port, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(228, 'Razer Portable HDD 2TB Max', '1770276041', 'Prémium minőségű Razer portable hdd 2tb, adattárolók kategóriában. Megbízható választás professzionális használatra.', 6, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(229, 'Intel AI Gyorsító modul Black Edition', '1770276042', 'Prémium minőségű Intel ai gyorsító modul, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(230, 'Logitech Gateway hub Elite', '1770276043', 'Prémium minőségű Logitech gateway hub, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(231, 'MSI Szilikon tok Gen 3', '1770276044', 'Prémium minőségű MSI szilikon tok, mobil kiegészítők kategóriában. Megbízható választás professzionális használatra.', 3, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(232, 'Razer Védő takaró', '1770276045', 'Prémium minőségű Razer védő takaró, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(233, 'Baseus Ethernet Cat7 kábel 5m V2', '1770276046', 'Prémium minőségű Baseus ethernet cat7 kábel 5m, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(234, 'Apple Ergonomikus billentyűzet Elite', '1770276047', 'Prémium minőségű Apple ergonomikus billentyűzet, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(235, 'Lenovo Vízszivárgás érzékelő 2024', '1770276048', 'Prémium minőségű Lenovo vízszivárgás érzékelő, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(236, 'LG Kalibráló eszköz', '1770276049', 'Prémium minőségű LG kalibráló eszköz, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(237, 'Seagate Vízszivárgás érzékelő Ultra', '1770276050', 'Prémium minőségű Seagate vízszivárgás érzékelő, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(238, 'Hama PoE injektor Plus', '1770276051', 'Prémium minőségű Hama poe injektor, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(239, 'Gigabyte Powerbank 20000mAh Gen 3', '1770276052', 'Prémium minőségű Gigabyte powerbank 20000mah, mobil kiegészítők kategóriában. Megbízható választás professzionális használatra.', 3, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(240, 'Corsair Hőmérséklet szenzor Black Edition', '1770276053', 'Prémium minőségű Corsair hőmérséklet szenzor, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(241, 'Apple Monitor kar Max', '1770276054', 'Prémium minőségű Apple monitor kar, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(242, 'Trust DisplayPort 1.4 kábel', '1770276055', 'Prémium minőségű Trust displayport 1.4 kábel, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(243, 'Keychron Golyóstoll készlet Pro', '1770276056', 'Prémium minőségű Keychron golyóstoll készlet, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(244, 'MSI Kalibráló eszköz Elite', '1770276057', 'Prémium minőségű MSI kalibráló eszköz, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(245, 'Xiaomi Szilikon tok 2024', '1770276058', 'Prémium minőségű Xiaomi szilikon tok, mobil kiegészítők kategóriában. Megbízható választás professzionális használatra.', 3, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(246, 'SteelSeries Mikrofon állvány V2', '1770276059', 'Prémium minőségű SteelSeries mikrofon állvány, audio eszközök kategóriában. Megbízható választás professzionális használatra.', 9, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(247, 'Lenovo Webkamera 4K Elite', '1770276060', 'Prémium minőségű Lenovo webkamera 4k, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(248, 'Samsung Mozgásérzékelő Plus', '1770276061', 'Prémium minőségű Samsung mozgásérzékelő, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(249, 'Keychron Mesh WiFi rendszer Pro', '1770276062', 'Prémium minőségű Keychron mesh wifi rendszer, hálázati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(250, 'HyperX Tisztító spray Ultra', '1770276063', 'Prémium minőségű HyperX tisztító spray, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(251, 'Gigabyte Üvegfólia Gen 3', '1770276064', 'Prémium minőségű Gigabyte üvegfólia, mobil kiegészítők kategóriában. Megbízható választás professzionális használatra.', 3, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(252, 'Logitech Dokumentum szkenner 2024', '1770276065', 'Prémium minőségű Logitech dokumentum szkenner, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(253, 'Intel Vízszivárgás érzékelő Black Edition', '1770276066', 'Prémium minőségű Intel vízszivárgás érzékelő, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(254, 'Dell Védő takaró Black Edition', '1770276067', 'Prémium minőségű Dell védő takaró, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(255, 'Trust Szilikon tok Black Edition', '1770276068', 'Prémium minőségű Trust szilikon tok, mobil kiegészítők kategóriában. Megbízható választás professzionális használatra.', 3, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(256, 'Xiaomi USB elosztó 7-port 2024', '1770276069', 'Prémium minőségű Xiaomi usb elosztó 7-port, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(257, 'Philips VR Szemüveg kiegészítő Black Edition', '1770276070', 'Prémium minőségű Philips vr szemüveg kiegészítő, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(258, 'LG NVMe SSD 1TB Pro', '1770276071', 'Prémium minőségű LG nvme ssd 1tb, adattárolók kategóriában. Megbízható választás professzionális használatra.', 6, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(259, 'Samsung Mechanikus billentyűzet 2024', '1770276072', 'Prémium minőségű Samsung mechanikus billentyűzet, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(260, 'Samsung Selfie bot Gen 3', '1770276073', 'Prémium minőségű Samsung selfie bot, mobil kiegészítők kategóriában. Megbízható választás professzionális használatra.', 3, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(261, 'Razer Portable HDD 2TB 2024', '1770276074', 'Prémium minőségű Razer portable hdd 2tb, adattárolók kategóriában. Megbízható választás professzionális használatra.', 6, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(262, 'Anker Digitális jegyzettömb', '1770276075', 'Prémium minőségű Anker digitális jegyzettömb, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(263, 'Samsung Gateway hub Elite', '1770276076', 'Prémium minőségű Samsung gateway hub, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(264, 'Razer Mágneses autós tartó Pro', '1770276077', 'Prémium minőségű Razer mágneses autós tartó, mobil kiegészítők kategóriában. Megbízható választás professzionális használatra.', 3, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(265, 'Dell Range extender 2024', '1770276078', 'Prémium minőségű Dell range extender, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(266, 'HyperX Aktív hangfal Elite', '1770276079', 'Prémium minőségű HyperX aktív hangfal, audio eszközök kategóriában. Megbízható választás professzionális használatra.', 9, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(267, 'Sony Ergonomikus billentyűzet V2', '1770276080', 'Prémium minőségű Sony ergonomikus billentyűzet, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(268, 'Kingston Portable HDD 2TB Plus', '1770276081', 'Prémium minőségű Kingston portable hdd 2tb, adattárolók kategóriában. Megbízható választás professzionális használatra.', 6, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(269, 'Dell Dokumentum szkenner Elite', '1770276082', 'Prémium minőségű Dell dokumentum szkenner, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(270, 'Razer Ethernet Cat7 kábel 5m Ultra', '1770276083', 'Prémium minőségű Razer ethernet cat7 kábel 5m, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(271, 'Bose Mesh WiFi rendszer Max', '1770276084', 'Prémium minőségű Bose mesh wifi rendszer, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(272, 'Xiaomi Tisztító spray 2024', '1770276085', 'Prémium minőségű Xiaomi tisztító spray, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(273, 'Asus VGA-HDMI átalakító Ultra', '1770276086', 'Prémium minőségű Asus vga-hdmi átalakító, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(274, 'Lenovo Mesh WiFi rendszer Ultra', '1770276087', 'Prémium minőségű Lenovo mesh wifi rendszer, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(275, 'Seagate Kalibráló eszköz', '1770276088', 'Prémium minőségű Seagate kalibráló eszköz, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(276, 'Kingston Tisztító készlet Plus', '1770276089', 'Prémium minőségű Kingston tisztító készlet, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(277, 'Ugreen Kalibráló eszköz Elite', '1770276090', 'Prémium minőségű Ugreen kalibráló eszköz, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(278, 'Kingston Vezérlő töltő V2', '1770276091', 'Prémium minőségű Kingston vezérlő töltő, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(279, 'Intel Webkamera 4K Gen 3', '1770276092', 'Prémium minőségű Intel webkamera 4k, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(280, 'Baseus USB-C to Lightning kábel 2024', '1770276093', 'Prémium minőségű Baseus usb-c to lightning kábel, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(281, 'Corsair Okos zár Gen 3', '1770276094', 'Prémium minőségű Corsair okos zár, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(282, 'TP-Link Asztali lámpa LED Gen 3', '1770276095', 'Prémium minőségű TP-Link asztali lámpa led, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(283, 'Gigabyte Ethernet Cat7 kábel 5m Max', '1770276096', 'Prémium minőségű Gigabyte ethernet cat7 kábel 5m, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(284, 'Keychron Vezérlő töltő Plus', '1770276097', 'Prémium minőségű Keychron vezérlő töltő, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(285, 'Baseus USB elosztó 7-port Gen 3', '1770276098', 'Prémium minőségű Baseus usb elosztó 7-port, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(286, 'TP-Link Hordozható napelem panel Pro', '1770276099', 'Prémium minőségű TP-Link hordozható napelem panel, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(287, 'Hama Mesh WiFi rendszer Plus', '1770276100', 'Prémium minőségű Hama mesh wifi rendszer, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(288, 'Lenovo Hőmérséklet szenzor Pro', '1770276101', 'Prémium minőségű Lenovo hőmérséklet szenzor, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(289, 'Asus HDMI 2.1 kábel 2m Elite', '1770276102', 'Prémium minőségű Asus hdmi 2.1 kábel 2m, kábelek és csatlakozók kategóriában. Megbízható választás professzionális használatra.', 1, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(290, 'TP-Link Webkamera 4K Ultra', '1770276103', 'Prémium minőségű TP-Link webkamera 4k, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(291, 'Keychron Vízszivárgás érzékelő', '1770276104', 'Prémium minőségű Keychron vízszivárgás érzékelő, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(292, 'AMD Powerbank 20000mAh Elite', '1770276105', 'Prémium minőségű AMD powerbank 20000mah, mobil kiegészítők kategóriában. Megbízható választás professzionális használatra.', 3, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(293, 'Logitech Hálózati switch Max', '1770276106', 'Prémium minőségű Logitech hálózati switch, hálózati eszközök kategóriában. Megbízható választás professzionális használatra.', 7, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(294, 'Kingston Védő takaró Ultra', '1770276107', 'Prémium minőségű Kingston védő takaró, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(295, 'Asus Védő takaró Pro', '1770276108', 'Prémium minőségű Asus védő takaró, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(296, 'Lenovo Okos konnektor Gen 3', '1770276109', 'Prémium minőségű Lenovo okos konnektor, okosotthon eszközök kategóriában. Megbízható választás professzionális használatra.', 17, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(297, 'Dell Monitor állvány Max', '1770276110', 'Prémium minőségű Dell monitor állvány, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(298, 'HyperX Tisztító spray Black Edition', '1770276111', 'Prémium minőségű HyperX tisztító spray, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(299, 'Corsair Hordozható hangszóró Max', '1770276112', 'Prémium minőségű Corsair hordozható hangszóró, audio eszközök kategóriában. Megbízható választás professzionális használatra.', 9, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(300, 'SteelSeries Gaming headset 7.1 Plus', '1770276113', 'Prémium minőségű SteelSeries gaming headset 7.1, gaming tartozékok kategóriában. Megbízható választás professzionális használatra.', 4, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(301, 'Dell Asztali lámpa LED Gen 3', '1770276114', 'Prémium minőségű Dell asztali lámpa led, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(302, 'Bose Monitor állvány V2', '1770276115', 'Prémium minőségű Bose monitor állvány, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(303, 'MSI Laptop hűtőpad Gen 3', '1770276116', 'Prémium minőségű MSI laptop hűtőpad, számítógép kiegészítők kategóriában. Megbízható választás professzionális használatra.', 2, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(304, 'Dell AI Gyorsító modul V2', '1770276117', 'Prémium minőségű Dell ai gyorsító modul, új technológia kategóriában. Megbízható választás professzionális használatra.', 22, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(305, 'Intel Laminálógép A4 Ultra', '1770276118', 'Prémium minőségű Intel laminálógép a4, irodai kiegészítők kategóriában. Megbízható választás professzionális használatra.', 8, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(306, 'Logitech Mikrofon állvány', '1770276119', 'Prémium minőségű Logitech mikrofon állvány, audio eszközök kategóriában. Megbízható választás professzionális használatra.', 9, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(307, 'Anker Kalibráló eszköz Black Edition', '1770276120', 'Prémium minőségű Anker kalibráló eszköz, monitor tartozékok kategóriában. Megbízható választás professzionális használatra.', 14, 1, '2026-02-05 08:19:57', '2026-02-05 08:19:57'),
+(308, 'Stereo hangszóró', '1770292134', 'Blalalalallalaall geci jo a ztene xddddd', 4, 1, '2026-02-05 12:48:54', '2026-02-05 12:48:54'),
+(309, 'LED asztali lámpa', '1770292294', 'Blalalalallalaall geci jo a asddassadasdasddsadassd', 23, 1, '2026-02-05 12:51:34', '2026-02-05 12:51:34'),
+(310, 'Téli gumi 29-es', '1770292378', 'Blalatllllllllllsdaaaaa TÉÉÉÉÉÉÉÉÉÉÉÉL HIDEG VANA AHAHAHHAHHHHHHHHHHHHHHHH', 23, 1, '2026-02-05 12:52:58', '2026-02-05 12:52:58');
 
 -- --------------------------------------------------------
 
@@ -485,7 +736,63 @@ INSERT INTO `transports` (`ID`, `batch_id`, `product_ID`, `warehouse_ID`, `type`
 (19, 'TR-1770205309-24F4', 48, 23, 'export', '2026-02-04 12:41:49', 5, 'Kiszállítás cél: Raktár #27. (weww)', '2026-02-26', 1, 'completed'),
 (20, 'TR-1770205309-24F4', 48, 27, 'import', '2026-02-04 12:41:49', 5, 'Beérkezés forrás: Raktár #23. (weww)', '2026-02-26', 1, 'pending'),
 (21, 'TR-1770210974-35A9', 48, 23, 'export', '2026-02-04 14:16:14', 5, 'Kiszállítás cél: Raktár #31. (B épület AFS-2422)', '2026-02-04', 1, 'completed'),
-(22, 'TR-1770210974-35A9', 48, 31, 'import', '2026-02-04 14:16:14', 5, 'Beérkezés forrás: Raktár #23. (B épület AFS-2422)', '2026-02-04', 1, 'pending');
+(22, 'TR-1770210974-35A9', 48, 31, 'import', '2026-02-04 14:16:14', 5, 'Beérkezés forrás: Raktár #23. (B épület AFS-2422)', '2026-02-04', 1, 'completed'),
+(23, 'TR-1770278804-3C49', 42, 23, 'export', '2026-02-05 09:06:44', 5, 'Kiszállítás cél: Raktár #22. (Várj, generálok egyetttt, na mit irjak meg ide, NA, aaana jojo jolesz, termek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-12', 2, 'completed'),
+(24, 'TR-1770278804-3C49', 42, 22, 'import', '2026-02-05 09:06:44', 5, 'Beérkezés forrás: Raktár #23. (Várj, generálok egyetttt, na mit irjak meg ide, NA, aaana jojo jolesz, termek mentese, nem befejezes, nyomj egy tabot roland. Igen? pont. termék mentése, nyomd meg a gombot roland, hahahahahahahhaahah néázd add ide az egeret)', '2026-02-12', 2, 'completed'),
+(25, 'TR-1770293999-F9B1', 42, 23, 'export', '2026-02-05 13:19:59', 12, 'Kiszállítás cél: Raktár #22. (Blalalalallalaall geci jo a asddassadasdasddsadassd)', '2026-02-05', 12, 'completed'),
+(26, 'TR-1770293999-F9B1', 42, 22, 'import', '2026-02-05 13:19:59', 12, 'Beérkezés forrás: Raktár #23. (Blalalalallalaall geci jo a asddassadasdasddsadassd)', '2026-02-05', 12, 'pending'),
+(27, 'TR-1770293999-F9B1', 99, 23, 'export', '2026-02-05 13:19:59', 12, 'Kiszállítás cél: Raktár #22. (Blalalalallalaall geci jo a asddassadasdasddsadassd)', '2026-02-05', 1, 'completed'),
+(28, 'TR-1770293999-F9B1', 99, 22, 'import', '2026-02-05 13:19:59', 12, 'Beérkezés forrás: Raktár #23. (Blalalalallalaall geci jo a asddassadasdasddsadassd)', '2026-02-05', 1, 'pending'),
+(29, 'TR-TEST-23582', 41, 21, 'import', '2025-12-16 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 15, 'completed'),
+(30, 'TR-TEST-6263', 41, 21, 'import', '2025-12-18 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 14, 'completed'),
+(31, 'TR-TEST-864352', 41, 21, 'import', '2025-11-07 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 23, 'completed'),
+(32, 'TR-TEST-979082', 41, 21, 'import', '2026-01-29 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 13, 'completed'),
+(33, 'TR-TEST-989053', 41, 21, 'import', '2025-12-06 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 7, 'completed'),
+(34, 'TR-TEST-689084', 41, 21, 'import', '2026-01-24 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 16, 'completed'),
+(35, 'TR-TEST-422336', 41, 21, 'import', '2025-12-24 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 22, 'completed'),
+(36, 'TR-TEST-181611', 41, 21, 'import', '2026-01-14 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 16, 'completed'),
+(37, 'TR-TEST-125811', 41, 21, 'import', '2025-11-02 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 13, 'completed'),
+(38, 'TR-TEST-161407', 41, 21, 'import', '2025-12-09 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 14, 'completed'),
+(39, 'TR-TEST-515725', 41, 21, 'import', '2026-01-15 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 15, 'completed'),
+(40, 'TR-TEST-900063', 41, 21, 'import', '2025-10-30 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 9, 'completed'),
+(41, 'TR-TEST-80513', 41, 21, 'import', '2025-11-19 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 19, 'completed'),
+(42, 'TR-TEST-139334', 41, 21, 'import', '2025-12-08 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 16, 'completed'),
+(43, 'TR-TEST-972943', 41, 21, 'import', '2026-01-15 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 7, 'completed'),
+(44, 'TR-TEST-73435', 41, 21, 'import', '2025-11-03 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 14, 'completed'),
+(45, 'TR-TEST-605373', 41, 21, 'import', '2025-12-11 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 5, 'completed'),
+(46, 'TR-TEST-447146', 41, 21, 'import', '2026-01-22 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 12, 'completed'),
+(47, 'TR-TEST-426634', 41, 21, 'import', '2026-02-03 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 21, 'completed'),
+(48, 'TR-TEST-57773', 41, 21, 'import', '2025-11-16 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 23, 'completed'),
+(49, 'TR-TEST-102772', 41, 21, 'import', '2025-11-19 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 17, 'completed'),
+(50, 'TR-TEST-661951', 41, 21, 'import', '2025-12-17 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 15, 'completed'),
+(51, 'TR-TEST-181220', 41, 21, 'import', '2026-01-08 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 22, 'completed'),
+(52, 'TR-TEST-624934', 41, 21, 'import', '2025-12-24 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 10, 'completed'),
+(53, 'TR-TEST-101842', 41, 21, 'import', '2025-11-30 13:37:32', 5, 'Automatikus teszt bevételezés', NULL, 6, 'completed'),
+(60, 'TR-TEST-274162', 41, 21, 'export', '2026-01-17 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 3, 'completed'),
+(61, 'TR-TEST-183250', 41, 21, 'export', '2025-12-22 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 11, 'completed'),
+(62, 'TR-TEST-257622', 41, 21, 'export', '2026-01-25 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 13, 'completed'),
+(63, 'TR-TEST-662084', 41, 21, 'export', '2025-11-07 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 9, 'completed'),
+(64, 'TR-TEST-10913', 41, 21, 'export', '2025-12-26 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 1, 'completed'),
+(65, 'TR-TEST-996820', 41, 21, 'export', '2025-11-14 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 3, 'completed'),
+(66, 'TR-TEST-450999', 41, 21, 'export', '2025-11-30 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 1, 'completed'),
+(67, 'TR-TEST-165801', 41, 21, 'export', '2025-11-27 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 1, 'completed'),
+(68, 'TR-TEST-87097', 41, 21, 'export', '2026-01-06 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 5, 'completed'),
+(69, 'TR-TEST-491154', 41, 21, 'export', '2025-12-07 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 9, 'completed'),
+(70, 'TR-TEST-940728', 41, 21, 'export', '2026-01-31 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 7, 'completed'),
+(71, 'TR-TEST-997124', 41, 21, 'export', '2025-11-28 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 8, 'completed'),
+(72, 'TR-TEST-370297', 41, 21, 'export', '2025-12-30 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 12, 'completed'),
+(73, 'TR-TEST-701448', 41, 21, 'export', '2026-01-15 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 15, 'completed'),
+(74, 'TR-TEST-117837', 41, 21, 'export', '2025-11-24 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 6, 'completed'),
+(75, 'TR-TEST-487931', 41, 21, 'export', '2025-12-26 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 10, 'completed'),
+(76, 'TR-TEST-852860', 41, 21, 'export', '2025-12-27 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 7, 'completed'),
+(77, 'TR-TEST-54683', 41, 21, 'export', '2025-11-06 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 7, 'completed'),
+(78, 'TR-TEST-347433', 41, 21, 'export', '2025-12-20 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 6, 'completed'),
+(79, 'TR-TEST-318242', 41, 21, 'export', '2025-12-14 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 12, 'completed'),
+(80, 'TR-TEST-78718', 41, 21, 'export', '2026-01-19 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 10, 'completed'),
+(81, 'TR-TEST-704955', 41, 21, 'export', '2025-12-09 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 13, 'completed'),
+(82, 'TR-TEST-271063', 41, 21, 'export', '2025-11-03 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 14, 'completed'),
+(83, 'TR-TEST-651311', 41, 21, 'export', '2025-12-10 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 14, 'completed'),
+(84, 'TR-TEST-786199', 41, 21, 'export', '2026-01-13 13:37:32', 5, 'Automatikus teszt kiadás', NULL, 13, 'completed');
 
 -- --------------------------------------------------------
 
@@ -509,10 +816,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`ID`, `username`, `active`, `password`, `role`, `created_at`, `login_at`, `email`) VALUES
-(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', '2026-01-21 15:02:35', '2026-02-04 15:11:11', '2@2.com'),
-(11, '1', 1, '$2y$10$hCJHkQk24YF.tEEK8Gxepu2R0JsGetVFVLDQy.3bDfw7ZnQLtMDfi', 'user', '2026-01-21 15:08:42', '2026-02-04 15:10:26', '1@1.com'),
-(12, 'Tőkés Roland', 1, '$2y$10$px8aQeyDFgkRYL9V2XjcH.6E6fOnaFCSnkb7x0TCy8CdgL8eeJhe2', 'admin', '2026-01-22 13:40:39', '2026-02-04 15:10:38', 'tokesrolandcsete@gmail.com'),
-(13, 'Minta Pista', 1, '$2y$10$7uSpwJScnN1dWajysVu1DecFE02odcrfRYnYWTVKfuKZEklFRMPOK', 'user', '2026-02-03 10:09:14', '2026-02-03 10:24:59', 'mintapista@yahoo.com'),
+(5, '2', 1, '$2y$10$HJdkInDHH2a0ai1lOuc4fuVoDn9.1K8kCuTIEYYoVStriK2b0rD/y', 'owner', '2026-01-21 15:02:35', '2026-02-05 13:21:13', '2@2.com'),
+(11, '1', 1, '$2y$10$hCJHkQk24YF.tEEK8Gxepu2R0JsGetVFVLDQy.3bDfw7ZnQLtMDfi', 'user', '2026-01-21 15:08:42', '2026-02-05 13:21:07', '1@1.com'),
+(12, 'Tőkés Roland', 1, '$2y$10$4Nxin6kAqqulirEqf3LRZewdDCqrVjYQGptlbElfb/h5kevzxTIBS', 'admin', '2026-01-22 13:40:39', '2026-02-05 12:56:03', 'tokesrolandcsete@gmail.com'),
+(13, 'Minta Pista', 1, '$2y$10$4G1dD4aGyJrYTp7.08XZbeLSr1ObfZcdYqW3ZX4mQrnKWF6bitVLK', 'admin', '2026-02-03 10:09:14', '2026-02-05 13:20:53', 'mintapista@yahoo.com'),
 (14, 'rol', 1, '$2y$10$.rUryFyFmUkRv3beeSLohOSsyLVHEXMWrbu95GBPWnr7INGNj5hRu', 'user', '2026-02-04 14:46:48', '2026-02-04 14:47:16', 'Kecskesajt@gmail.com');
 
 -- --------------------------------------------------------
@@ -558,9 +865,10 @@ CREATE TABLE `user_warehouse_access` (
 --
 
 INSERT INTO `user_warehouse_access` (`id`, `user_id`, `warehouse_id`) VALUES
-(11, 12, 22),
-(10, 12, 23),
-(2, 13, 31),
+(13, 12, 22),
+(12, 12, 23),
+(15, 13, 24),
+(14, 13, 31),
 (7, 14, 31);
 
 -- --------------------------------------------------------
@@ -668,25 +976,25 @@ ALTER TABLE `warehouses`
 -- AUTO_INCREMENT a táblához `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT a táblához `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=214;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=338;
 
 --
 -- AUTO_INCREMENT a táblához `products`
 --
 ALTER TABLE `products`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=311;
 
 --
 -- AUTO_INCREMENT a táblához `transports`
 --
 ALTER TABLE `transports`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT a táblához `users`
@@ -704,7 +1012,7 @@ ALTER TABLE `user_error`
 -- AUTO_INCREMENT a táblához `user_warehouse_access`
 --
 ALTER TABLE `user_warehouse_access`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT a táblához `warehouses`
