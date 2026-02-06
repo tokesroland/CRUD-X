@@ -32,7 +32,7 @@ $totalItems = 0;
 $criticalWarehouses = 0;
 foreach ($warehouseStats as &$w) {
     $percent = $w['max_quantity'] > 0 ? ($w['current_quantity'] / $w['max_quantity']) * 100 : 0;
-    $w['is_critical'] = $percent >= 90;
+    $w['is_critical'] = $percent >= 80;
     if ($w['is_critical'])
         $criticalWarehouses++;
     $totalItems += $w['current_quantity'];
