@@ -9,7 +9,8 @@ $wh_count = count($wh_list);
 <style>
     .nav-user-container { display: flex; align-items: center; gap: 15px; color: #e5e7eb; }
     .wh-tooltip-box { position: relative; display: inline-block; }
-    .wh-badge { background: #2563eb; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; cursor: help; font-weight: 700; border: 1px solid rgba(255,255,255,0.2); }
+    .wh-badge { display: inline-block; width: 100%; box-sizing: border-box; background: #2563eb; color: #fff; padding: 6px 8px; border-radius: 12px; font-size: 0.7rem; cursor: help; font-weight: 700; border: 1px solid rgba(255,255,255,0.2); white-space: normal; text-align: center;
+    }
     .wh-tooltip {
         visibility: hidden; width: 220px; background: #1e293b; color: #fff; text-align: left;
         border-radius: 8px; padding: 12px; position: absolute; z-index: 1000; right: 0; top: 35px;

@@ -46,6 +46,8 @@
 
         .toggle-icon {
             transition: transform 0.3s;
+            user-select: none;
+            margin-left: 10px;
         }
 
         .collapsed .toggle-icon {

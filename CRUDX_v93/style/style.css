@@ -229,6 +229,10 @@ main.container {
     color: var(--text-muted);
 }
 
+label{
+    user-select: none;
+}
+
 .stat-value {
     font-size: 1.5rem;
     font-weight: 700;
@@ -271,6 +275,9 @@ main.container {
     font-size: 0.9rem;
     outline: none;
     background: #f9fafb;
+}
+select{
+    user-select: none;
 }
 
 .field input:focus,
@@ -656,6 +663,7 @@ summary .icon {
     width: 18px !important;
     height: 18px !important;
     object-fit: contain;
+    user-select: none;
 }
 summary h2 {
     display: flex;
@@ -676,6 +684,7 @@ summary h2 {
     width: 24px;
     height: 24px;
     object-fit: contain;
+    user-select: none;
 }
 h3 .icon {
     width: 20px !important;
