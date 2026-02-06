@@ -382,12 +382,14 @@ $deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
                     <h2><img class="icon" src="./img/category_icon_241610.png"> Kategória megoszlás</h2>
                 </div>
                 <div class="chart-container"><canvas id="categoryChart"></canvas></div>
+                <i style="font-size: 0.8rem;">* < 3% nem jelenik meg.</i>
             </section>
             <section class="card">
                 <div class="card-header">
                     <h2><img class="icon" src="./img/status_icon_241869.png"> Termék státuszok</h2>
                 </div>
                 <div class="chart-container"><canvas id="statusChart"></canvas></div>
+                <i style="font-size: 0.8rem;">* < 3% nem jelenik meg.</i>
             </section>
         </div>
 
@@ -621,7 +623,7 @@ $deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
                             const percentage = (value / totalStock) * 100;
 
                             // 🔥 hide labels below X%
-                            if (percentage < 5) return null;
+                            if (percentage < 3) return null;
 
                             return Math.round(percentage) + '%';
                         }
@@ -660,7 +662,7 @@ $deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
                             const percentage = (value / totalProdCount) * 100;
 
                             // hide labels below X%
-                            if (percentage < 5) return null;
+                            if (percentage < 3) return null;
 
                             return Math.round(percentage) + '%';
                         }
