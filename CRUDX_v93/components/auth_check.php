@@ -6,7 +6,7 @@ function authorize($allowedRoles) {
     }
 
     if (!in_array($_SESSION['role'], $allowedRoles)) {
-        echo "Nincs jogosultságod az oldal megtekintéséhez.";
+        echo "Nincs jogosultságod az oldal megtekintéséhez!";
         echo "<br><a href='index.php'>Vissza a főoldalra</a>";
         exit;
     }

@@ -1,13 +1,13 @@
 <?php
 session_start();
-include 'config.php';
+require 'config.php';
 require "./components/auth_check.php";
 authorize(['admin', 'owner', 'user']);
-include 'components/filter.php';
+require 'components/filter.php';
 
 $activePage = "products.php";
 $pageTitle = "Termékek";
-include './components/navbar.php';
+require './components/navbar.php';
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -222,7 +222,7 @@ include './components/navbar.php';
 
     </main>
 
-    <?php include './components/footer.php'; ?>
+    <?php require './components/footer.php'; ?>
 
     <script>
         function toggleStockPopup(productId, event) {

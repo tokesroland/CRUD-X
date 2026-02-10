@@ -152,7 +152,7 @@ if ($hasPendingImport) {
     <link rel="stylesheet" href="./style/transport.css">
 </head>
 <body>
-<?php include './components/navbar.php'; ?>
+<?php require './components/navbar.php'; ?>
 
 <main class="container">
 
@@ -175,9 +175,11 @@ if ($hasPendingImport) {
                 </p>
             </div>
             <form method="POST">
-                <button type="submit" name="accept_transport" class="btn" style="background:#ea580c; border:none;">
-                    📦 Átvétel & Készlet növelése
-                </button>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button type="submit" name="accept_transport" class="btn" style="background:#ea580c; border:none;"> 
+                        Átvétel & Készlet növelése
+                    </button>
+                </div>
             </form>
         </section>
     <?php endif; ?>
@@ -195,7 +197,7 @@ if ($hasPendingImport) {
                 <p><strong>Rögzítette:</strong> <?= htmlspecialchars($baseInfo['username']) ?></p>
                 <p><strong>Időpont:</strong> <?= $baseInfo['date'] ?></p>
             </div>
-            <div>
+            <div style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; min-width: 0;">
                 <p><strong>Leírás:</strong> <?= htmlspecialchars($baseInfo['description']) ?></p>
                 <p>
                     <strong>Státusz:</strong> 
@@ -245,7 +247,7 @@ if ($hasPendingImport) {
     </section>
 </main>
 
-<?php include './components/footer.php'; ?>
+<?php require './components/footer.php'; ?>
 
 </body>
 </html>

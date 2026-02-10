@@ -25,25 +25,25 @@ Ami kész:
   - Jelszó visszaállítás funkció
   - bevételezás elfogadása
   - Database hibaüzenetek ne jelenjenek meg a felhasználó számára
-
-
-To do:
-  - Reszponzív dizájn: navbar és footer hamburger menu mobilon
-  - API valamilyen szinten (pl. Képek a termékekhez) *
   - Saját fiókot ne lehessen módosítani (pl. jogosultságok)
   - Statisztikák javítása
+  - adminisztrációs felület átszervezése
+  - reszponzív dizájn javítása
+  - hibakezelés javítása (pl. 404 oldal, form validáció)
+
+To do:
+  - API valamilyen szinten *
+  - transports.php  transport cancel opció (rákérdezés mikor hasznos)
+  - iconok beállítása
+  - gyorsműveletek -> arányos legyen
+  - login --> ha nincs email, felhasználó egyezés, akkor ne rögzítsen semmit
+  - elfekvő készletek - szűrhető legyen
+  - belső css-ek átszervezése
+  - Ha egy raktár inactive akkor a hozzá tartozó készletek is legyenek inaktívak
 
   Plus:
-    - Owner fiók megtekintése és hozzátartozó információ
+    - Owner funkció --> fiók megtekintése és hozzátartozó információ
     - Angol fordítás
     - Várható Kiszállítási idő számítása rendeléseknél + transports.php -> címek közti távolság és időszámítás
 
-
-
-
 MAIN TODO:
-transports.php -> választható funkciók -> transport indítás vagy bevételezés
-		:Adminhoz tartozik konkrét üzlet/raktár (akár több is)
-Kártyák --> kiválasztás -> listázza a bevételezésre váró transportokat --> elfogadás, szállítás inactivvá válik
-todo: Függővé alakítani a műveletet (levonja, de csak akkor kapja meg ha elfogadják)
-    :Bevételezés elfogadása után lépjen be a készletbe az adott termék mennyiség

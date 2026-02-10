@@ -911,7 +911,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
         padding: 12px; /* Könnyebb ujjbeggyel eltalálni */
         text-align: center;
         vertical-align: middle;
-    }
+   }
 
     /* --- LAPOZÓ (PAGINATION) --- */
     .pagination-wrapper {

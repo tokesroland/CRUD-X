@@ -1,0 +1,92 @@
+        /* --- RESZPONZÍV STÍLUSOK (MOBILE FIRST) --- */
+        
+        /* Alap beállítások a kilógás ellen */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            overflow-x: hidden; /* Vízszintes görgetés tiltása az oldalon */
+        }
+        .container {
+            padding: 10px; /* Kisebb padding mobilon */
+            max-width: 100%;
+        }
+
+        /* 1. Grid Rendszer (CSV és Új Készlet) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Mobilon 1 oszlop (egymás alatt) */
+            gap: 20px;
+        }
+
+        /* Tablet és Desktop (768px felett) */
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr; /* Egymás mellett */
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+
+        /* 2. Kereső űrlap (Gomb elhelyezkedése) */
+        .search-form {
+            display: flex;
+            flex-direction: column; /* Mobilon egymás alatt */
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Ha elég széles a képernyő, kerüljenek egymás mellé */
+        @media (min-width: 600px) {
+            .search-form {
+                flex-direction: row;
+                align-items: center;
+            }
+            .search-form input {
+                flex: 1;
+            }
+            .search-form .btn {
+                width: auto; /* Gomb mérete tartalomhoz igazodik */
+            }
+        }
+        
+        /* Mobilon a gomb legyen teljes szélességű a könnyebb kattintásért */
+        @media (max-width: 599px) {
+            .search-form .btn {
+                width: 100%;
+            }
+        }
+
+        /* 3. Táblázatok görgethetősége */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto; /* Vízszintes görgetés engedélyezése */
+            -webkit-overflow-scrolling: touch; /* Sima görgetés mobilon */
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px; /* Minimum szélesség, hogy ne nyomódjon össze mobilon */
+        }
+
+        /* Input mezők a táblázatban */
+        .table-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Fontos, hogy ne lógjon ki */
+        }
+
+        /* Toggle Header */
+        .toggle-header { 
+            cursor: pointer; 
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }

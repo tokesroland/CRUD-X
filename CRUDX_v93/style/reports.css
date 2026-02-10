@@ -1,0 +1,113 @@
+        /* Központi szűrő sáv elrendezése */
+        .filter-bar {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            padding: 0 20px 20px 20px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 0 1 auto;
+            min-width: 200px;
+        }
+
+        .filter-item label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .filter-item select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Mobil nézet a szűrőhöz */
+        @media (max-width: 900px) {
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-item {
+                width: 100%;
+            }
+        }
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+
+        .filter-scroll-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: thin;
+        }
+
+        .filter-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .filter-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .toggle-chip {
+            white-space: nowrap;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.8rem;
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .toggle-chip:hover {
+            background: #e2e8f0;
+        }
+
+        .toggle-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .toggle-chip.critical.active {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .filter-group {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .checkbox-label {
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-weight: 500;
+            color: #dc2626;
+        }
+        

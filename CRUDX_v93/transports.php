@@ -1,12 +1,12 @@
 <?php
 session_start();
-include 'config.php';
+require 'config.php';
 require "./components/auth_check.php";
 authorize(['admin', 'owner']); // Csak admin és tulajdonos indíthat szállítást
 
 $pageTitle = "Szállítás";
 $activePage = "transports.php";
-include './components/navbar.php'; 
+require './components/navbar.php'; 
 
 $message = "";
 $msgType = "";
@@ -248,11 +248,26 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($pendingTransports)): ?>
         <section class="card pending-card" style="margin-bottom: 30px;">
             <div class="card-header">
                 <h2><img class="icon" src="./img/1485477075-calendar_78587.png"> Beérkezésre váró szállítmányok (Átvétel szükséges)</h2>
             </div>
+
+            <div class="filter">
+                <form id="filterForm" style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                    <div class="field" style="flex:1; min-width:200px;">
+                        <input type="text" id="batchFilter" placeholder="Batch ID keresése..." style="width:100%;">
+                    </div>
+                    <div class="field" style="flex:1; min-width:200px;">
+                        <input type="date" id="dateFilter" style="width:100%;">
+                    </div>
+                    <button type="button" onclick="resetFilters()" class="btn btn-primary" style="align-self:flex-end; background:grey">Szűrés törlése</button>
+                </form>
+
+                <script src="./script/transports_filter.js"></script>
+                </script>
+            </div>
+
             <div class="table-wrapper">
                 <table class="data-table">
                     <thead>
@@ -266,7 +281,7 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($pendingTransports as $pt): ?>
+                        <?php if (!empty($pendingTransports)) foreach($pendingTransports as $pt): ?>
                             <tr>
                                 <td>
                                     <a href="transport.php?batch=<?= $pt['batch_id'] ?>" class="batch-link">
@@ -278,16 +293,20 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
                                 <td><?= $pt['arriveIn'] ? date('Y.m.d', strtotime($pt['arriveIn'])) : '-' ?></td>
                                 <td><?= $pt['item_count'] ?> db tétel</td>
                                 <td>
-                                    <a href="transport.php?batch=<?= $pt['batch_id'] ?>" class="btn btn-small btn-primary">Megtekintés / Átvétel</a>
+                                    <a href="transport.php?batch=<?= $pt['batch_id'] ?>" class="btn btn-small btn-primary" style="color:white !important;">Megtekintés / Átvétel</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
+                        <?php if (empty($pendingTransports)): ?>
+                            <tr>
+                                <td colspan="7" style="text-align:center; color:#aaa;">Nincs beérkezésre váró szállítmány.</td>
+                            </tr>
+                        <?php endif; ?>
                 </table>
             </div>
         </section>
         <hr style="margin: 30px 0; border: 0; border-top: 1px solid #dde1e7;">
-    <?php endif; ?>
 
 
     <div class="card-header">
@@ -321,6 +340,7 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
                         <?php endforeach; ?>
                     </select>
                 </div>
+                <br>
                 <button type="submit" name="set_source" class="btn">Kiválasztás</button>
             </form>
         <?php endif; ?>

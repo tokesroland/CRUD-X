@@ -66,47 +66,55 @@ if (isset($_POST['add_user'])) {
 /* |--------------------------------------------------------------------------
 | 2. LOGIKA: FELHASZNÁLÓ MÓDOSÍTÁSA (Több raktárral + Owner logika)
 |-------------------------------------------------------------------------- */
+
+
 if (isset($_POST['update_user'])) {
-    $id = $_POST['user_id'];
-    $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-    $role = $_POST['role'];
-    $active = isset($_POST['active']) ? 1 : 0;
 
-    // A kiválasztott raktárak tömbje
-    $selected_whs = $_POST['warehouse_ids'] ?? [];
+    // Megakadályozzuk, hogy a bejelentkezett user saját magát módosítsa
+    if ($_SESSION['user_id'] == $_POST['user_id']) {
+        $message = "Hiba: Saját magadat nem módosíthatod!";
+    } else {
+        $id = $_POST['user_id'];
+        $username = trim($_POST['username']);
+        $email = trim($_POST['email']);
+        $role = $_POST['role'];
+        $active = isset($_POST['active']) ? 1 : 0;
 
-    try {
-        $pdo->beginTransaction();
+        // A kiválasztott raktárak tömbje
+        $selected_whs = $_POST['warehouse_ids'] ?? [];
 
-        // 1. Alapadatok frissítése
-        if (!empty($_POST['new_password'])) {
-            $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, password = ?, active = ? WHERE ID = ?");
-            $stmt->execute([$username, $email, $role, $password, $active, $id]);
-        } else {
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, active = ? WHERE ID = ?");
-            $stmt->execute([$username, $email, $role, $active, $id]);
-        }
+        try {
+            $pdo->beginTransaction();
 
-        // 2. Jogosultságok szinkronizálása
-        // Először töröljük a felhasználó összes eddigi jogosultságát
-        $delStmt = $pdo->prepare("DELETE FROM user_warehouse_access WHERE user_id = ?");
-        $delStmt->execute([$id]);
-
-        // Majd beszúrjuk az újakat (HA NEM OWNER)
-        if ($role !== 'owner' && !empty($selected_whs)) {
-            $insStmt = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
-            foreach ($selected_whs as $wh_id) {
-                $insStmt->execute([$id, $wh_id]);
+            // 1. Alapadatok frissítése
+            if (!empty($_POST['new_password'])) {
+                $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, password = ?, active = ? WHERE ID = ?");
+                $stmt->execute([$username, $email, $role, $password, $active, $id]);
+            } else {
+                $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, active = ? WHERE ID = ?");
+                $stmt->execute([$username, $email, $role, $active, $id]);
             }
-        }
 
-        $pdo->commit();
-        $message = "Adatok és jogosultságok frissítve!";
-    } catch (PDOException $e) {
-        $pdo->rollBack();
-        $message = "Hiba: " . $e->getMessage();
+            // 2. Jogosultságok szinkronizálása
+            // Először töröljük a felhasználó összes eddigi jogosultságát
+            $delStmt = $pdo->prepare("DELETE FROM user_warehouse_access WHERE user_id = ?");
+            $delStmt->execute([$id]);
+
+            // Majd beszúrjuk az újakat (HA NEM OWNER)
+            if ($role !== 'owner' && !empty($selected_whs)) {
+                $insStmt = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
+                foreach ($selected_whs as $wh_id) {
+                    $insStmt->execute([$id, $wh_id]);
+                }
+            }
+
+            $pdo->commit();
+            $message = "Adatok és jogosultságok frissítve!";
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            $message = "Hiba: " . $e->getMessage();
+        }
     }
 }
 
@@ -248,7 +256,6 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
 </head>
 
 <body>
-
     <main class="container">
         <h1 style="margin: 20px 0;">Tulajdonosi Vezérlőpult</h1>
         <?php if ($message): ?>
@@ -575,58 +582,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
 
     <?php include './components/footer.php'; ?>
 
-    <script>
-        function toggleSection(id, header) {
-            const content = document.getElementById(id);
-            content.classList.toggle('is-hidden');
-            header.classList.toggle('collapsed');
-            header.parentElement.style.transform = 'scale(0.995)';
-            setTimeout(() => {
-                header.parentElement.style.transform = 'scale(1)';
-            }, 100);
-        }
-
-        function filterUsers() {
-            const input = document.getElementById('userSearch');
-            const filter = input.value.toLowerCase();
-            const rows = document.getElementsByClassName('user-row');
-            for (let i = 0; i < rows.length; i++) {
-                const usernameInput = rows[i].querySelector('input[name="username"]');
-                if (usernameInput) {
-                    const val = usernameInput.value.toLowerCase();
-                    rows[i].style.display = val.includes(filter) ? "" : "none";
-                }
-            }
-        }
-
-        function filterWarehouses() {
-            const input = document.getElementById('warehouseSearch');
-            const filter = input.value.toLowerCase();
-            const rows = document.getElementsByClassName('warehouse-row');
-            for (let i = 0; i < rows.length; i++) {
-                const nameInput = rows[i].querySelector('input[name="w_name"]');
-                const addrInput = rows[i].querySelector('input[name="w_address"]');
-                if (nameInput && addrInput) {
-                    const val = (nameInput.value + addrInput.value).toLowerCase();
-                    rows[i].style.display = val.includes(filter) ? "" : "none";
-                }
-            }
-        }
-
-        // ÚJ JS Logika: Ha 'owner'-re vált, eltűnik a raktárválasztó
-        function toggleWarehouseSelect(roleSelectId, whBoxId) {
-            const roleSelect = document.getElementById(roleSelectId);
-            const whBox = document.getElementById(whBoxId);
-            const msgBox = document.getElementById(whBoxId + "_msg");
-
-            if (roleSelect.value === 'owner') {
-                whBox.style.display = 'none';
-                if (msgBox) msgBox.style.display = 'block';
-            } else {
-                whBox.style.display = 'block';
-                if (msgBox) msgBox.style.display = 'none';
-            }
-        }
+    <script src="./script/owner.js"></script>
     </script>
 </body>
 
