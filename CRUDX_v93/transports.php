@@ -311,7 +311,7 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
                 </form>
             </div>
         <?php else: ?>
-            <form method="POST" style="display:flex; gap:10px; align-items:end;">
+            <form method="POST" style="gap:10px; align-items:end;">
                 <div class="field" style="flex:1;">
                     <label>Válassz indító raktárat (Csak saját):</label>
                     <select name="source_wh_id" required>

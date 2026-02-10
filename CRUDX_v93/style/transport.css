@@ -29,6 +29,7 @@
         }
 
         @media (max-width: 600px) {
+
             .accept-section {
                 flex-direction: column;
                 text-align: center;
@@ -51,5 +52,15 @@
                 border-radius: 4px;
                 font-weight: bold;
                 font-size: 0.9em;
+            }
+
+            .card,
+            .table-responsive {
+                width: 100% !important;
+                overflow-x: auto !important;
+                /* Vízszintes görgetés engedélyezése */
+                display: block !important;
+                -webkit-overflow-scrolling: touch;
+                /* Sima görgetés mobilon */
             }
         }

@@ -209,6 +209,7 @@ if ($hasPendingImport) {
         </div>
 
         <h2><img class="icon" src="./img/product_icon_238584.png"> Mozgatott tételek</h2><br>
+        <p style="font-size:0.8rem; margin-bottom:10px;">Telefonos nézeten görgessen a részletekhez.</p>
         <table class="data-table">
             <thead>
                 <tr>

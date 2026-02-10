@@ -39,25 +39,24 @@ foreach ($warehouseStats as &$w) {
 }
 
 // Készlet vs Minimum adatok
+// SQL: Csak a kritikus készletek (készlet <= minimum)
 $stmt = $pdo->query("
     SELECT p.name AS product_name, w.ID AS warehouse_id, w.name AS warehouse_name, i.quantity, i.min_quantity
     FROM inventory i
     JOIN products p ON p.ID = i.product_ID
     JOIN warehouses w ON w.ID = i.warehouse_ID
+    WHERE i.quantity <= i.min_quantity  -- Ez szűri ki a felesleget
     ORDER BY i.quantity ASC
 ");
-$stockData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$criticalData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $lowStockCount = 0;
-foreach ($stockData as $item) {
+foreach ($criticalData as $item) {
     if ($item['quantity'] <= $item['min_quantity'])
         $lowStockCount++;
 }
 
 // Kategória és Státusz statisztikák
-$catStats = $pdo->query("SELECT c.category_name, SUM(i.quantity) as q FROM inventory i JOIN products p ON i.product_ID = p.ID JOIN categories c ON p.category_ID = c.ID GROUP BY c.ID")->fetchAll(PDO::FETCH_ASSOC);
-$totalStockForCats = array_sum(array_column($catStats, 'q'));
-
 $statusStats = $pdo->query("SELECT active, COUNT(*) as count FROM products GROUP BY active")->fetchAll(PDO::FETCH_ASSOC);
 $totalProductCount = array_sum(array_column($statusStats, 'count'));
 
@@ -343,7 +342,7 @@ $deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
             <div class="filter-group">
                 <div class="filter-scroll-container">
                     <?php foreach ($warehouseStats as $index => $w): ?>
-                        <div class="toggle-chip active capacity-filter <?= $w['is_critical'] ? 'critical' : '' ?>"
+                        <div class="toggle-chip capacity-filter <?= $w['is_critical'] ? 'critical' : '' ?>"
                             data-index="<?= $index ?>" onclick="toggleFilter(this, 'cap')">
                             <?= htmlspecialchars($w['name']) ?>
                         </div>
@@ -353,37 +352,39 @@ $deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
             <div class="chart-container"><canvas id="capacityChart"></canvas></div>
         </section>
 
-        <section class="card">
-            <div class="card-header">
-                <h2><img class="icon" src="./img/product_icon_238584.png"> Készlet vs. Minimum Szint</h2>
-            </div>
-            <div class="filter-group">
-                <div class="filter-scroll-container">
-                    <div class="toggle-chip active stock-wh-filter" data-id="all" onclick="selectStockWarehouse(this)">
-                        Összes raktár</div>
-                    <?php foreach ($warehouseStats as $w): ?>
-                        <div class="toggle-chip stock-wh-filter" data-id="<?= $w['ID'] ?>"
-                            onclick="selectStockWarehouse(this)">
-                            <?= htmlspecialchars($w['name']) ?>
-                        </div>
-                    <?php endforeach; ?>
+<section class="card">
+    <div class="card-header">
+        <h2><img class="icon" src="./img/product_icon_238584.png">Kritikus készletek</h2>
+    </div>
+    
+    <div class="filter-group">
+        <div class="filter-scroll-container">
+            <div class="toggle-chip active stock-wh-filter" data-id="all" onclick="filterByWarehouse(this)">
+                Összes raktár</div>
+            <?php foreach ($warehouseStats as $w): ?>
+                <div class="toggle-chip stock-wh-filter" data-id="<?= $w['ID'] ?>" onclick="filterByWarehouse(this)">
+                    <?= htmlspecialchars($w['name']) ?>
                 </div>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="onlyCriticalCheck" onchange="updateStockChart()"> Csak kritikus készletek
-                    (hiány)
-                </label>
-            </div>
-            <div class="chart-container"><canvas id="stockChart"></canvas></div>
-        </section>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
+    <div style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
+        <table class="data-table" style="width: 100%; min-width: 500px; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left;">
+                    <th style="padding: 12px">Termék</th>
+                    <th style="padding: 12px">Raktár</th>
+                    <th style="padding: 12px">Készlet</th>
+                    <th style="padding: 12px">Minimum</th>
+                </tr>
+            </thead>
+            <tbody id="criticalTableBody">
+                </tbody>
+        </table>
+    </div>
+</section>
         <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
-            <section class="card">
-                <div class="card-header">
-                    <h2><img class="icon" src="./img/category_icon_241610.png"> Kategória megoszlás</h2>
-                </div>
-                <div class="chart-container"><canvas id="categoryChart"></canvas></div>
-                <i style="font-size: 0.8rem;">* < 3% nem jelenik meg.</i>
-            </section>
             <section class="card">
                 <div class="card-header">
                     <h2><img class="icon" src="./img/status_icon_241869.png"> Termék státuszok</h2>
@@ -398,28 +399,29 @@ $deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
     <?php include './components/footer.php'; ?>
 
 <script>
-        // Plugin regisztrálása
-        Chart.register(ChartDataLabels);
-        Chart.defaults.font.family = "system-ui, sans-serif";
+    // Plugin regisztrálása
+    Chart.register(ChartDataLabels);
+    Chart.defaults.font.family = "system-ui, sans-serif";
 
-        const warehouseData = <?= json_encode($warehouseStats) ?>;
-        const stockRaw = <?= json_encode($stockData) ?>;
-        const timelineRaw = <?= json_encode($timelineData) ?>;
-        let capChart, stockChart;
-        
-        // JAVÍTÁS: Globális változó inicializálása alapértelmezett értékkel
-        let selectedStockWarehouseId = 'all';
+    // ADATOK ÁTVÉTELE PHP-BŐL
+    const warehouseData = <?= json_encode($warehouseStats) ?>;
+    const timelineRaw = <?= json_encode($timelineData) ?>;
+    // Itt volt a hiba: a stockData már nem létezik, helyette a criticalData kell a táblázathoz
+    const criticalStockData = <?= json_encode($criticalData) ?>;
 
-        // --- TIMELINE CHART (FORGALMI IDŐVONAL) ---
-        // Ha már létezik timelineChart, megsemmisítjük és újraalkotjuk a szűrt adatokkal
-        if (window.myTimelineChart) window.myTimelineChart.destroy();
+    // Globális változók a grafikonoknak
+    let capChart;
 
-        window.myTimelineChart = new Chart(document.getElementById('timelineChart'), {
+    // --- 1. TIMELINE CHART (FORGALMI IDŐVONAL) ---
+    if (window.myTimelineChart) window.myTimelineChart.destroy();
+
+    const ctxTimeline = document.getElementById('timelineChart');
+    if (ctxTimeline) {
+        window.myTimelineChart = new Chart(ctxTimeline, {
             type: 'line',
             data: {
                 labels: timelineRaw.map(d => d.move_date),
-                datasets: [
-                    {
+                datasets: [{
                         label: 'Bevételezés',
                         data: timelineRaw.map(d => d.total_in),
                         borderColor: '#10b981',
@@ -448,195 +450,114 @@ $deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
                 }
             }
         });
+    }
 
+    // --- 2. RAKTÁR KAPACITÁS CHART ---
+    function renderCap() {
+        const chartCanvas = document.getElementById('capacityChart');
+        if (!chartCanvas) return; // Ha nincs ott az elem, ne fusson
 
-        // --- 1. Kapacitás Chart Logika (Százalékkal) ---
-        function renderCap() {
-            const activeIdx = Array.from(document.querySelectorAll('.capacity-filter.active')).map(el => parseInt(el.dataset.index));
-            const labels = activeIdx.map(i => warehouseData[i].name);
-            const current = activeIdx.map(i => warehouseData[i].current_quantity);
-            const max = activeIdx.map(i => warehouseData[i].max_quantity);
-            const colors = activeIdx.map(i => warehouseData[i].is_critical ? '#dc2626' : '#2563eb');
+        const activeIdx = Array.from(document.querySelectorAll('.capacity-filter.active')).map(el => parseInt(el.dataset.index));
+        const labels = activeIdx.map(i => warehouseData[i].name);
+        const current = activeIdx.map(i => warehouseData[i].current_quantity);
+        const max = activeIdx.map(i => warehouseData[i].max_quantity);
+        const colors = activeIdx.map(i => warehouseData[i].is_critical ? '#dc2626' : '#2563eb');
 
-            if (capChart) capChart.destroy();
-            capChart = new Chart(document.getElementById('capacityChart'), {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                            label: 'Jelenlegi készlet',
-                            data: current,
-                            backgroundColor: colors,
-                            order: 1,
-                            borderRadius: 4,
-                            datalabels: {
-                                anchor: 'end',
-                                align: 'top',
-                                color: '#475569',
-                                font: {
-                                    weight: 'bold'
-                                },
-                                formatter: (value, context) => {
-                                    const maxVal = max[context.dataIndex];
-                                    return maxVal > 0 ? Math.round((value / maxVal) * 100) + '%' : '0%';
-                                }
-                            }
-                        },
-                        {
-                            label: 'Maximális kapacitás',
-                            data: max,
-                            backgroundColor: '#e2e8f0',
-                            grouped: false,
-                            order: 2,
-                            borderRadius: 4,
-                            datalabels: {
-                                display: false
-                            }
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false
-                        },
-                        datalabels: {
-                            display: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        // --- 2. Készlet vs Minimum Chart Logika (JAVÍTVA) ---
-        function selectStockWarehouse(el) {
-            document.querySelectorAll('.stock-wh-filter').forEach(chip => chip.classList.remove('active'));
-            el.classList.add('active');
-            selectedStockWarehouseId = el.dataset.id; // Itt frissítjük a globális szűrőt
-            updateStockChart();
-        }
-
-        function updateStockChart() {
-            const onlyCrit = document.getElementById('onlyCriticalCheck').checked;
-            
-            // JAVÍTÁS: A globális selectedStockWarehouseId-t használjuk a szűréshez
-            let filtered = stockRaw.filter(i => (selectedStockWarehouseId === 'all' || i.warehouse_id == selectedStockWarehouseId));
-            
-            if (onlyCrit) {
-                filtered = filtered.filter(i => parseInt(i.quantity) <= parseInt(i.min_quantity));
-            }
-            filtered = filtered.slice(0, 15);
-
-            const labels = filtered.map(i => i.product_name);
-            const currentData = filtered.map(i => parseInt(i.quantity));
-            const minData = filtered.map(i => parseInt(i.min_quantity));
-            const barColors = filtered.map(i => (parseInt(i.quantity) <= parseInt(i.min_quantity)) ? '#dc2626' : '#16a34a');
-
-            if (stockChart) stockChart.destroy();
-            stockChart = new Chart(document.getElementById('stockChart'), {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                            label: 'Aktuális készlet',
-                            data: currentData,
-                            backgroundColor: barColors,
-                            order: 1,
-                            borderRadius: 4,
-                            datalabels: {
-                                display: false
-                            }
-                        },
-                        {
-                            label: 'Elvárt minimum',
-                            data: minData,
-                            backgroundColor: 'rgba(220, 38, 38, 0.25)',
-                            grouped: false,
-                            order: 2,
-                            borderRadius: 4,
-                            datalabels: {
-                                display: false
-                            }
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false
-                        },
-                        datalabels: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        function toggleFilter(el, type) {
-            el.classList.toggle('active');
-            if (type === 'cap') renderCap();
-        }
-
-        // --- 3. Kategória megoszlás (Százalékkal) ---
-        const totalStock = <?= $totalStockForCats ?>;
-
-        new Chart(document.getElementById('categoryChart'), {
-            type: 'doughnut',
+        if (capChart) capChart.destroy();
+        
+        capChart = new Chart(chartCanvas, {
+            type: 'bar',
             data: {
-                labels: <?= json_encode(array_column($catStats, 'category_name')) ?>,
+                labels,
                 datasets: [{
-                    data: <?= json_encode(array_column($catStats, 'q')) ?>,
-                    backgroundColor: ['#2563eb', '#16a34a', '#f59e0b', '#dc2626', '#8b5cf6']
-                }]
+                        label: 'Jelenlegi készlet',
+                        data: current,
+                        backgroundColor: colors,
+                        order: 1,
+                        borderRadius: 4,
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: '#475569',
+                            font: { weight: 'bold' },
+                            formatter: (value, context) => {
+                                const maxVal = max[context.dataIndex];
+                                return maxVal > 0 ? Math.round((value / maxVal) * 100) + '%' : '0%';
+                            }
+                        }
+                    },
+                    {
+                        label: 'Maximális kapacitás',
+                        data: max,
+                        backgroundColor: '#e2e8f0',
+                        grouped: false,
+                        order: 2,
+                        borderRadius: 4,
+                        datalabels: { display: false }
+                    }
+                ]
             },
             options: {
+                responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    datalabels: {
-                        color: '#fff',
-                        font: {
-                            weight: 'bold'
-                        },
-                        formatter: (value) => {
-                            if (totalStock <= 0) return null;
-
-                            const percentage = (value / totalStock) * 100;
-
-                            // 🔥 hide labels below X%
-                            if (percentage < 3) return null;
-
-                            return Math.round(percentage) + '%';
-                        }
-                    }
+                    tooltip: { mode: 'index', intersect: false },
+                    datalabels: { display: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
                 }
             }
         });
+    }
+
+    // A toggleFilter függvény hiányzott a kódodból, de a HTML hivatkozik rá!
+    function toggleFilter(el, type) {
+        el.classList.toggle('active');
+        if (type === 'cap') renderCap();
+    }
 
 
-        // --- 4. Termék státuszok (Százalékkal) ---
+    // --- 3. KRITIKUS KÉSZLET TÁBLÁZAT ---
+    function filterByWarehouse(element) {
+        // Chip vizuális váltása
+        document.querySelectorAll('.stock-wh-filter').forEach(c => c.classList.remove('active'));
+        element.classList.add('active');
+
+        const warehouseId = element.getAttribute('data-id');
+        const tbody = document.getElementById('criticalTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+
+        const filtered = criticalStockData.filter(item =>
+            warehouseId === 'all' || item.warehouse_id == warehouseId
+        );
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="padding: 20px; text-align: center; color: #666;">Nincs kritikus készlet ebben a nézetben.</td></tr>';
+            return;
+        }
+
+        filtered.forEach(item => {
+            const row = `
+            <tr>
+                <td style="padding: 12px;"><strong>${item.product_name}</strong></td>
+                <td style="padding: 12px;">${item.warehouse_name}</td>
+                <td style="padding: 12px; text-align: center; color: #dc2626; font-weight: bold;">${item.quantity} db</td>
+                <td style="padding: 12px; text-align: center;">${item.min_quantity} db</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+
+    // --- 4. KÖRDIAGRAM (Státusz) ---
+    // Státusz
+    const statusCanvas = document.getElementById('statusChart');
+    if (statusCanvas) {
         const totalProdCount = <?= $totalProductCount ?>;
-
-        new Chart(document.getElementById('statusChart'), {
+        new Chart(statusCanvas, {
             type: 'pie',
             data: {
                 labels: ['Inaktív', 'Aktív'],
@@ -648,33 +569,34 @@ $deadStock = $pdo->query($dead_sql)->fetchAll(PDO::FETCH_ASSOC);
             options: {
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
+                    legend: { position: 'bottom' },
                     datalabels: {
                         color: '#fff',
-                        font: {
-                            weight: 'bold'
-                        },
+                        font: { weight: 'bold' },
                         formatter: (value) => {
                             if (totalProdCount <= 0) return null;
-
                             const percentage = (value / totalProdCount) * 100;
-
-                            // hide labels below X%
                             if (percentage < 3) return null;
-
                             return Math.round(percentage) + '%';
                         }
                     }
                 }
             }
         });
+    }
 
-        // JAVÍTÁS: Automatikus indítás oldalbetöltéskor az összes adattal
+    // --- INDÍTÁS ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Kapacitás chart indítása
         renderCap();
-        updateStockChart(); 
-    </script>
+        
+        // Kritikus táblázat indítása (megkeressük az aktív chipet)
+        const activeChip = document.querySelector('.stock-wh-filter.active');
+        if (activeChip) {
+            filterByWarehouse(activeChip);
+        }
+    });
+</script>
     
 </body>
 

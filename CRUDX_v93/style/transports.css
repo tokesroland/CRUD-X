@@ -19,6 +19,7 @@
        ========================================= */
 
     @media (max-width: 900px) {
+
         /* 1. Kényszerítjük, hogy minden rács függőleges lista legyen */
         .management-grid, 
         .transport-grid, 
@@ -112,6 +113,7 @@
             word-break: break-word;
         }
 
+        
         /* 8. Gombok teljes szélessége mobilon */
         .btn, .btn-primary-blue, .actions, .button-container {
             width: 100% !important;
