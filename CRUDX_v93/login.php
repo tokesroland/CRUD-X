@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['recover'])) {
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8"><title>CRUD-X – Bejelentkezés</title>
+    <meta charset="UTF-8"><title>CRUD-X WMS - Bejelentkezés</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style/style.css">
     <style>
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['recover'])) {
 </head>
 <body>
     <div class="login-card">
-        <div style="font-size: 1.6rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">CRUD-X</div>
+        <div style="font-size: 1.6rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">CRUD-X | WMS</div>
         <h2 style="margin-bottom: 1.5rem;">Bejelentkezés</h2>
         <?php if ($error): ?><div class="login-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
         <form method="POST">
@@ -99,10 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['recover'])) {
             <button type="submit" class="btn" style="width: 100%;">Bejelentkezés</button>
         </form>
         <hr style="margin: 1.5rem 0;">
-        <h3>Segítségre van szükséged?</h3>
+        <h4>Segítségre van szükséged?</h4>
         <form method="POST">
-            <div class="login-field"><label>Felhasználónév vagy email</label><input type="text" name="recover_input" placeholder="adataid ide..."></div>
-            <button type="submit" name="recover" class="btn" style="width: 100%;">Segítség kérése</button>
+            <div class="login-field"><label>Felhasználónév vagy email</label><input type="text" name="recover_input" placeholder="adataid..."></div>
+            <button type="submit" name="recover" class="btn" style="background-color: darkgrey;">Segítség kérése</button>
         </form>
     </div>
 </body>

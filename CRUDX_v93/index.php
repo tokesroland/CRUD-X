@@ -1,48 +1,48 @@
-<?php 
-    session_start();
-    include './config.php';
-    require "./components/auth_check.php";
-    authorize(['admin','owner','user']);
+<?php
+session_start();
+include './config.php';
+require "./components/auth_check.php";
+authorize(['admin', 'owner', 'user']);
 
-    $pageTitle = "Dashboard";
-    $activePage = "index.php";
-    include './components/navbar.php'; 
+$pageTitle = "Dashboard";
+$activePage = "index.php";
+include './components/navbar.php';
 
-    /* -------------------------------------------------------------------------- */
-    /* 1. JOGOSULTSÁGOK ÉS RAKTÁRAK LEKÉRÉSE                                    */
-    
-    $userId = $_SESSION['user_id'];
-    $userRole = $_SESSION['role'] ?? 'user';
-    $isRestricted = ($userRole !== 'owner'); // Owner mindent lát, többiek csak a sajátot
+/* -------------------------------------------------------------------------- */
+/* 1. JOGOSULTSÁGOK ÉS RAKTÁRAK LEKÉRÉSE                                    */
 
-    // Lekérjük az engedélyezett raktár ID-kat a kapcsolótáblából
-    $allowedWarehouseIds = [];
-    if ($isRestricted) {
-        $stmtAccess = $pdo->prepare("SELECT warehouse_id FROM user_warehouse_access WHERE user_id = ?");
-        $stmtAccess->execute([$userId]);
-        $allowedWarehouseIds = $stmtAccess->fetchAll(PDO::FETCH_COLUMN);
-    }
+$userId = $_SESSION['user_id'];
+$userRole = $_SESSION['role'] ?? 'user';
+$isRestricted = ($userRole !== 'owner'); // Owner mindent lát, többiek csak a sajátot
 
-    /* -------------------------------------------------------------------------- */
-    /* 2. ADATLEKÉRÉSEK A STATISZTIKÁKHOZ                                         */
-    
-    // Felső kártyák adatai
-    $totalProdCount = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
-    $warehouseCount = $pdo->query("SELECT COUNT(*) FROM warehouses")->fetchColumn();
-    
-    // Alacsony készlet: Szűrés, ha van raktár jogosultság és nem owner
-    $lowStockCount = 0;
-    if ($isRestricted && !empty($allowedWarehouseIds)) {
-        // IN clause generálás
-        $inQuery = implode(',', array_map('intval', $allowedWarehouseIds));
-        $lowStockCount = $pdo->query("SELECT COUNT(*) FROM inventory WHERE quantity <= min_quantity AND warehouse_ID IN ($inQuery)")->fetchColumn();
-    } elseif (!$isRestricted) {
-        // Owner mindent lát
-        $lowStockCount = $pdo->query("SELECT COUNT(*) FROM inventory WHERE quantity <= min_quantity")->fetchColumn();
-    }
+// Lekérjük az engedélyezett raktár ID-kat a kapcsolótáblából
+$allowedWarehouseIds = [];
+if ($isRestricted) {
+    $stmtAccess = $pdo->prepare("SELECT warehouse_id FROM user_warehouse_access WHERE user_id = ?");
+    $stmtAccess->execute([$userId]);
+    $allowedWarehouseIds = $stmtAccess->fetchAll(PDO::FETCH_COLUMN);
+}
 
-    // Telítettség (Változatlan, csak megjelenítés)
-    $capacities = $pdo->query("
+/* -------------------------------------------------------------------------- */
+/* 2. ADATLEKÉRÉSEK A STATISZTIKÁKHOZ                                         */
+
+// Felső kártyák adatai
+$totalProdCount = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+$warehouseCount = $pdo->query("SELECT COUNT(*) FROM warehouses")->fetchColumn();
+
+// Alacsony készlet: Szűrés, ha van raktár jogosultság és nem owner
+$lowStockCount = 0;
+if ($isRestricted && !empty($allowedWarehouseIds)) {
+    // IN clause generálás
+    $inQuery = implode(',', array_map('intval', $allowedWarehouseIds));
+    $lowStockCount = $pdo->query("SELECT COUNT(*) FROM inventory WHERE quantity <= min_quantity AND warehouse_ID IN ($inQuery)")->fetchColumn();
+} elseif (!$isRestricted) {
+    // Owner mindent lát
+    $lowStockCount = $pdo->query("SELECT COUNT(*) FROM inventory WHERE quantity <= min_quantity")->fetchColumn();
+}
+
+// Telítettség (Változatlan, csak megjelenítés)
+$capacities = $pdo->query("
         SELECT w.name, w.max_quantity, w.type, COALESCE(SUM(i.quantity), 0) as current_qty
         FROM warehouses w
         LEFT JOIN inventory i ON w.ID = i.warehouse_ID
@@ -50,16 +50,19 @@
         ORDER BY w.name ASC
     ")->fetchAll(PDO::FETCH_ASSOC);
 
-    $warehouses_list = [];
-    $stores_list = [];
-    foreach ($capacities as $cap) {
-        if ($cap['type'] === 'store') { $stores_list[] = $cap; } 
-        else { $warehouses_list[] = $cap; }
+$warehouses_list = [];
+$stores_list = [];
+foreach ($capacities as $cap) {
+    if ($cap['type'] === 'store') {
+        $stores_list[] = $cap;
+    } else {
+        $warehouses_list[] = $cap;
     }
+}
 
-    // MAI ÉRKEZÉSEK (SZŰRTEN: Csak pending, Csak mai, Csak saját raktár)
-    // ------------------------------------------------------------------
-    $sqlArrivals = "
+// MAI ÉRKEZÉSEK (SZŰRTEN: Csak pending, Csak mai, Csak saját raktár)
+// ------------------------------------------------------------------
+$sqlArrivals = "
         SELECT t.batch_id, MAX(w.name) as w_name, MAX(t.arriveIn) as arrive_date
         FROM transports t
         JOIN warehouses w ON t.warehouse_ID = w.ID
@@ -68,22 +71,22 @@
           AND t.status = 'pending'
     ";
 
-    // Ha korlátozott nézet, csak a saját raktárak érkezéseit mutassuk
-    if ($isRestricted) {
-        if (!empty($allowedWarehouseIds)) {
-            $inQuery = implode(',', array_map('intval', $allowedWarehouseIds));
-            $sqlArrivals .= " AND t.warehouse_ID IN ($inQuery)";
-        } else {
-            $sqlArrivals .= " AND 1=0"; // Ha nincs joga semmihez, ne lásson semmit
-        }
+// Ha korlátozott nézet, csak a saját raktárak érkezéseit mutassuk
+if ($isRestricted) {
+    if (!empty($allowedWarehouseIds)) {
+        $inQuery = implode(',', array_map('intval', $allowedWarehouseIds));
+        $sqlArrivals .= " AND t.warehouse_ID IN ($inQuery)";
+    } else {
+        $sqlArrivals .= " AND 1=0"; // Ha nincs joga semmihez, ne lásson semmit
     }
+}
 
-    $sqlArrivals .= " GROUP BY t.batch_id ORDER BY t.ID DESC";
-    
-    $todayArrivals = $pdo->query($sqlArrivals)->fetchAll(PDO::FETCH_ASSOC);
+$sqlArrivals .= " GROUP BY t.batch_id ORDER BY t.ID DESC";
 
-    // Utolsó mozgások és Top movers (Marad, csak látványelem)
-    $recentActivity = $pdo->query("
+$todayArrivals = $pdo->query($sqlArrivals)->fetchAll(PDO::FETCH_ASSOC);
+
+// Utolsó mozgások és Top movers (Marad, csak látványelem)
+$recentActivity = $pdo->query("
         SELECT t.*, u.username, p.name as p_name, w.name as w_name
         FROM transports t
         JOIN users u ON t.user_ID = u.ID
@@ -92,7 +95,7 @@
         ORDER BY t.date DESC LIMIT 5
     ")->fetchAll(PDO::FETCH_ASSOC);
 
-    $topMovers = $pdo->query("
+$topMovers = $pdo->query("
         SELECT p.name, COUNT(t.ID) as move_count
         FROM transports t
         JOIN products p ON t.product_ID = p.ID
@@ -101,34 +104,36 @@
         ORDER BY move_count DESC LIMIT 5
     ")->fetchAll(PDO::FETCH_ASSOC);
 
-    // Segédfüggvény
-    function renderCapacityList($list) {
-        if (empty($list)) {
-            echo '<p style="text-align:center; color:#aaa; padding:20px;">Nincs megjeleníthető adat.</p>';
-            return;
-        }
-        foreach ($list as $cap): 
-            $percent = $cap['max_quantity'] > 0 ? round(($cap['current_qty'] / $cap['max_quantity']) * 100) : 0;
-            $isCritical = $percent >= 90;
-        ?>
-            <div style="margin-bottom: 15px; padding-right: 10px;">
-                <div style="display:flex; justify-content:space-between; font-size: 0.85rem;">
-                    <span><?= htmlspecialchars($cap['name']) ?></span>
-                    <span style="font-weight:bold;"><?= $percent ?>%</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar <?= $isCritical ? 'critical' : '' ?>" style="width: <?= min($percent, 100) ?>%"></div>
-                </div>
-                <small style="color: #666; font-size: 0.75rem;">
-                    <?= number_format($cap['current_qty'], 0, '.', ' ') ?> / <?= number_format($cap['max_quantity'], 0, '.', ' ') ?> db
-                </small>
-            </div>
-        <?php endforeach;
+// Segédfüggvény
+function renderCapacityList($list)
+{
+    if (empty($list)) {
+        echo '<p style="text-align:center; color:#aaa; padding:20px;">Nincs megjeleníthető adat.</p>';
+        return;
     }
+    foreach ($list as $cap):
+        $percent = $cap['max_quantity'] > 0 ? round(($cap['current_qty'] / $cap['max_quantity']) * 100) : 0;
+        $isCritical = $percent >= 90;
+?>
+        <div style="margin-bottom: 15px; padding-right: 10px;">
+            <div style="display:flex; justify-content:space-between; font-size: 0.85rem;">
+                <span><?= htmlspecialchars($cap['name']) ?></span>
+                <span style="font-weight:bold;"><?= $percent ?>%</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar <?= $isCritical ? 'critical' : '' ?>" style="width: <?= min($percent, 100) ?>%"></div>
+            </div>
+            <small style="color: #666; font-size: 0.75rem;">
+                <?= number_format($cap['current_qty'], 0, '.', ' ') ?> / <?= number_format($cap['max_quantity'], 0, '.', ' ') ?> db
+            </small>
+        </div>
+<?php endforeach;
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <title>CRUD-X Dashboard</title>
@@ -136,32 +141,33 @@
     <link rel="stylesheet" href="./style/style.css">
     <link rel="stylesheet" href="./style/index.css?v1.0">
 </head>
+
 <body>
 
-<main class="container">
-    <section class="stats-grid">
-        <div class="card stat-card">
-            <div class="stat-label">Összes termék</div>
-            <div class="stat-value"><?= $totalProdCount ?></div>
-            <div class="stat-sub">Regisztrált típusok</div>
-        </div>
-        <div class="card stat-card">
-            <div class="stat-label">Aktív raktárak</div>
-            <div class="stat-value"><?= $warehouseCount ?></div>
-            <div class="stat-sub">Összes logisztikai pont</div>
-        </div>
-        <div class="card stat-card <?= $lowStockCount > 0 ? 'critical' : '' ?>">
-            <div class="stat-label">Alacsony készlet</div>
-            <div class="stat-value"><?= $lowStockCount ?></div>
-            <div class="stat-sub">
-                <?= ($isRestricted) ? 'Saját egységekben' : 'Azonnali utánpótlás kell' ?>
+    <main class="container">
+        <section class="stats-grid">
+            <div class="card stat-card">
+                <div class="stat-label">Összes termék</div>
+                <div class="stat-value"><?= $totalProdCount ?></div>
+                <div class="stat-sub">Regisztrált típusok</div>
             </div>
-        </div>
-    </section>
+            <div class="card stat-card">
+                <div class="stat-label">Aktív raktárak</div>
+                <div class="stat-value"><?= $warehouseCount ?></div>
+                <div class="stat-sub">Összes logisztikai pont</div>
+            </div>
+            <div class="card stat-card <?= $lowStockCount > 0 ? 'critical' : '' ?>">
+                <div class="stat-label">Alacsony készlet</div>
+                <div class="stat-value"><?= $lowStockCount ?></div>
+                <div class="stat-sub">
+                    <?= ($isRestricted) ? 'Saját egységekben' : 'Azonnali utánpótlás kell' ?>
+                </div>
+            </div>
+        </section>
 
-    <div class="dashboard-layout">
-        
-        <?php if (in_array($userRole, ['admin','owner'])): ?>
+        <div class="dashboard-layout">
+
+            <?php if (in_array($userRole, ['admin', 'owner'])): ?>
                 <section class="card">
                     <div class="card-header">
                         <h2><img class="icon" src="./img/1485477213-statistics_78572.png"> Telítettség</h2>
@@ -179,7 +185,9 @@
                 </section>
 
                 <section class="card">
-                    <div class="card-header"><h2><img class="icon" src="./img/lightning_icon_187922.png"> Gyorsműveletek</h2></div>
+                    <div class="card-header">
+                        <h2><img class="icon" src="./img/lightning_icon_187922.png"> Gyorsműveletek</h2>
+                    </div>
                     <div class="action-grid">
                         <a href="admin.php" class="action-btn"><span><img class="icon" src="./img/create_new_plus_add_icon_232794.png"></span> Új termék</a>
                         <a href="transports.php" class="action-btn"><span><img class="icon" src="./img/truck_23929.png"></span> Átszállítás</a>
@@ -189,88 +197,97 @@
                         <a href="owner.php" class="action-btn"><span><img class="icon" src="./img/create-group-button_icon-icons.com_72792.png"></span> Rendszer</a>
                     </div>
                 </section>
-        <?php endif; ?>
-
-        <section class="card full-width">
-            <div class="card-header">
-                <h2>
-                    <img class="icon" src="./img/1485477075-calendar_78587.png"> 
-                    Ma érkező áruk 
-                    <?php if($isRestricted): ?>
-                        <small style="font-weight:normal; font-size:0.7em; color:#666;">(Csak saját, átvételre vár)</small>
-                    <?php endif; ?>
-                </h2>
-            </div>
-            <?php if (empty($todayArrivals)): ?>
-                <p style="text-align:center; padding: 20px; color: #94a3b8;">Mára nincs függő beérkezés.</p>
-            <?php else: ?>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 40%;">Batch ID</th>
-                            <th>Érkezés dátuma</th>
-                            <th>Célállomás</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach($todayArrivals as $arr): ?>
-                            <tr>
-                                <td class="batch-id-cell" onclick="location.href='transport.php?batch=<?= $arr['batch_id'] ?>'">
-                                    <a href="transport.php?batch=<?= $arr['batch_id'] ?>"><?= htmlspecialchars($arr['batch_id']) ?></a>
-                                </td>
-                                <td><?= htmlspecialchars($arr['arrive_date']) ?></td>
-                                <td><?= htmlspecialchars($arr['w_name']) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
             <?php endif; ?>
-        </section>
 
-        <section class="card">
-            <div class="card-header"><h2><img class="icon" src="./img/clock_80424.png"> Utolsó mozgások</h2></div>
-            <div style="margin-top: 10px;">
-                <?php foreach($recentActivity as $act): ?>
-                    <div class="timeline-item">
-                        <div style="font-size: 0.75rem; color: #64748b;"><?= date('H:i', strtotime($act['date'])) ?> - <?= date('Y.m.d', strtotime($act['date'])) ?></div>
-                        <div style="font-size: 0.9rem;">
-                            <strong><?= htmlspecialchars($act['username']) ?></strong> 
-                            <span style="color: <?= $act['type']=='import' ? '#16a34a' : '#dc2626' ?>;">
-                                <?= $act['type'] == 'import' ? 'bevételezett' : 'kiadott' ?>
-                            </span> 
-                            <strong><?= htmlspecialchars($act['p_name']) ?></strong> 
-                            (<?= htmlspecialchars($act['w_name']) ?>)
+            <section class="card full-width">
+                <div class="card-body">
+                    <h2>
+                        <img class="icon" src="./img/1485477075-calendar_78587.png">Ma érkező áruk
+                        <?php if ($isRestricted): ?>
+                            <small style="font-weight:normal; font-size:0.7em; color:#666;">(Csak saját, átvételre vár)</small>
+                        <?php endif; ?>
+                    </h2>
+                    <br>
+                </div>
+
+                <?php if (empty($todayArrivals)): ?>
+                    <p style="text-align:center; padding: 20px; color: #94a3b8;">Mára nincs függő beérkezés.</p>
+                <?php else: ?>
+
+                    <div class="table-scroll-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;">Batch ID</th>
+                                    <th>Érkezés dátuma</th>
+                                    <th>Célállomás</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($todayArrivals as $arr): ?>
+                                    <tr>
+                                        <td class="batch-id-cell" onclick="location.href='transport.php?batch=<?= $arr['batch_id'] ?>'">
+                                            <a href="transport.php?batch=<?= $arr['batch_id'] ?>"><?= htmlspecialchars($arr['batch_id']) ?></a>
+                                        </td>
+                                        <td><?= htmlspecialchars($arr['arrive_date']) ?></td>
+                                        <td><?= htmlspecialchars($arr['w_name']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2><img class="icon" src="./img/clock_80424.png"> Utolsó mozgások</h2>
+                </div>
+                <div style="margin-top: 10px;">
+                    <?php foreach ($recentActivity as $act): ?>
+                        <div class="timeline-item">
+                            <div style="font-size: 0.75rem; color: #64748b;"><?= date('H:i', strtotime($act['date'])) ?> - <?= date('Y.m.d', strtotime($act['date'])) ?></div>
+                            <div style="font-size: 0.9rem;">
+                                <strong><?= htmlspecialchars($act['username']) ?></strong>
+                                <span style="color: <?= $act['type'] == 'import' ? '#16a34a' : '#dc2626' ?>;">
+                                    <?= $act['type'] == 'import' ? 'bevételezett' : 'kiadott' ?>
+                                </span>
+                                <strong><?= htmlspecialchars($act['p_name']) ?></strong>
+                                (<?= htmlspecialchars($act['w_name']) ?>)
+                            </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </section>
+                    <?php endforeach; ?>
+                </div>
+            </section>
 
-        <section class="card">
-            <div class="card-header"><h2><img class="icon" src="./img/document_23966.png"> Legaktívabb (30 nap)</h2></div>
-            <div style="margin-top: 10px;">
-                <?php foreach($topMovers as $mover): ?>
-                    <div style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
-                        <span style="font-size: 0.9rem;"><?= htmlspecialchars($mover['name']) ?></span>
-                        <span class="badge badge-success" style="font-size: 0.75rem;"><?= $mover['move_count'] ?> esemény</span>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </section>
+            <section class="card">
+                <div class="card-header">
+                    <h2><img class="icon" src="./img/document_23966.png"> Legaktívabb (30 nap)</h2>
+                </div>
+                <div style="margin-top: 10px;">
+                    <?php foreach ($topMovers as $mover): ?>
+                        <div style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                            <span style="font-size: 0.9rem;"><?= htmlspecialchars($mover['name']) ?></span>
+                            <span class="badge badge-success" style="font-size: 0.75rem;"><?= $mover['move_count'] ?> esemény</span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
 
-    </div>
-</main>
+        </div>
+    </main>
 
-<?php include './components/footer.php'; ?>
+    <?php include './components/footer.php'; ?>
 
-<script>
-    function showTab(tabId, btn) {
-        document.getElementById('warehouses-tab').style.display = 'none';
-        document.getElementById('stores-tab').style.display = 'none';
-        document.getElementById(tabId + '-tab').style.display = 'block';
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-</script>
+    <script>
+        function showTab(tabId, btn) {
+            document.getElementById('warehouses-tab').style.display = 'none';
+            document.getElementById('stores-tab').style.display = 'none';
+            document.getElementById(tabId + '-tab').style.display = 'block';
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
 </body>
+
 </html>

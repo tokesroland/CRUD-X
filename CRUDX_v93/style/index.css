@@ -159,25 +159,44 @@
                 grid-column: span 1;
             }
         }
-/* Mobil nézet optimalizálás */
-@media (max-width: 900px) {
-    .dashboard-layout {
-        /* 2 oszlop helyett 1 oszlop legyen */
-        grid-template-columns: 1fr; 
-    }
 
-    .full-width {
-        /* A teljes szélességű elemek mostantól csak 1 (az egyetlen) oszlopot foglaljanak */
-        grid-column: span 1; 
-    }
-    
-    /* A statisztikai kártyák (fent) is törjenek új sorba */
-    .dashboard-stats {
-        flex-wrap: wrap;
-    }
-    
-    .stat-card {
-        flex: 1 1 100%; /* Teljes szélesség */
-        margin-bottom: 10px;
-    }
-}
+        /* Mobil nézet optimalizálás */
+        @media (max-width: 900px) {
+            .dashboard-layout {
+                /* 2 oszlop helyett 1 oszlop legyen */
+                grid-template-columns: 1fr;
+            }
+
+            /* --- index.css JAVÍTÁS --- */
+
+            /* 1. Ez a legfontosabb: Engedjük, hogy a grid elemek összemanjanak */
+            .dashboard-layout>.card,
+            .dashboard-layout>section {
+                min-width: 0;
+                /* Ez oldja meg a hibát! Alapból 'auto', ami nem enged zsugorodni. */
+            }
+
+            /* 2. Biztosítjuk, hogy a scroll konténer tényleg működjön */
+            .table-scroll-container {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .full-width {
+                /* A teljes szélességű elemek mostantól csak 1 (az egyetlen) oszlopot foglaljanak */
+                grid-column: span 1;
+            }
+
+            /* A statisztikai kártyák (fent) is törjenek új sorba */
+            .dashboard-stats {
+                flex-wrap: wrap;
+            }
+
+            .stat-card {
+                flex: 1 1 100%;
+                /* Teljes szélesség */
+                margin-bottom: 10px;
+            }
+        }

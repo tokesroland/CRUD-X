@@ -168,7 +168,7 @@ if ($hasPendingImport) {
     <?php if ($hasPendingImport && $canAccept): ?>
         <section class="accept-section">
             <div>
-                <h3 style="margin:0; color:#c2410c;">⚠️ Átvételre váró szállítmány</h3>
+                <h3 style="margin:0; color:#c2410c;"><img class="icon" src="./img/danger_icon_243248.png"> Átvételre váró szállítmány</h3>
                 <p style="margin:5px 0 0 0; font-size:0.9rem; color:#9a3412;">
                     Ez a szállítmány megérkezett a <strong><?= htmlspecialchars($items[0]['warehouse_name']) ?></strong> célállomásra (vagy te vagy a felelőse). 
                     A készlet jóváírásához kattints az átvételre.

@@ -102,7 +102,7 @@ require './components/navbar.php';
                 </div>
 
                 <div class="col-12" style="opacity:.75;font-size:12px;">
-                    Tipp: ha kiválasztasz egy raktárat, a lista és a mennyiségek csak arra a raktárra vonatkoznak.
+                    Tipp: ha a minimum mennyiséget 1-re állítod, akkor csak a készleten lévő termékeket fogja mutatni.
                 </div>
             </form>
 

@@ -35,8 +35,6 @@ Ami kész:
   - transports.php -> ne lehessen a mainál régebbi dátumot megadni
   - login --> ha nincs email, felhasználó egyezés, akkor ne rögzítsen semmit
   - A jelentéseknél csak az aktív raktárakat számolja bele: KIVÉVE a készletmozgás jelentés, mert az a múltbeli mozgásokat mutatja, így ott maradhatnak az inactive raktárak is
-
-To do:
-  - iconok beállítása
-  - elfekvő készletek - szűrhető legyen
   - Ha egy raktár inactive akkor a hozzá tartozó készletek is legyenek inaktívak 
+  - iconok beállítása
+

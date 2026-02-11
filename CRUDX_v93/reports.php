@@ -92,7 +92,7 @@ require './components/stats_query.php';
 
         <section class="card">
             <div class="card-header">
-                <h2>⚠️ Elfekvő készletek (Inaktív > 30 nap)</h2>
+                <h2><img class="icon" src="./img/danger_icon_243248.png"> Elfekvő készletek (Inaktív > 30 nap)</h2>
             </div>
             <div class="table-wrapper">
                 <table class="data-table">

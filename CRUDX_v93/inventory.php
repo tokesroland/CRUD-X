@@ -46,7 +46,7 @@ $sqlLow = "
     FROM inventory i
     JOIN products p ON p.ID = i.product_ID
     LEFT JOIN categories c ON c.ID = p.category_ID
-    JOIN warehouses w ON w.ID = i.warehouse_ID
+    JOIN warehouses w ON w.ID = i.warehouse_ID AND w.active = 1
 ";
 
 if ($low_wh > 0) {

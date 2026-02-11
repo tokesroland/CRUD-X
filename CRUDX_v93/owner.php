@@ -233,7 +233,8 @@ if (!empty($f_status)) {
     $logParams[] = $f_status;
 }
 
-$logQuery .= " GROUP BY t.batch_id ORDER BY t.date DESC LIMIT 50";
+$logQuery .= " GROUP BY t.batch_id ORDER BY t.date DESC LIMIT 20";
+
 $stmtLog = $pdo->prepare($logQuery);
 $stmtLog->execute($logParams);
 $logs = $stmtLog->fetchAll(PDO::FETCH_ASSOC);
