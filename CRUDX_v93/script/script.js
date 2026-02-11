@@ -60,3 +60,15 @@ function updateMaxQty() {
     if (max) { qtyInp.max = max; qtyInp.value = 1; hint.textContent = "Max: " + max + " db"; }
 }
 
+        function toggleStockPopup(productId, event) {
+            event.stopPropagation();
+            const popup = document.getElementById('stock-popup-' + productId);
+            document.querySelectorAll('.popup-card').forEach(el => {
+                if (el !== popup) el.style.display = 'none';
+            });
+            popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+        }
+
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.popup-card').forEach(el => el.style.display = 'none');
+        });

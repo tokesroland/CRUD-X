@@ -66,3 +66,17 @@ html, body {
     margin: 0;
     padding: 0;
 }
+/* Skeleton loading animation*/
+.skeleton {
+    border-radius: 4px;
+    color: transparent;
+    position: relative;
+    overflow: hidden;
+}
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+#contentArea { display: none; } /* Elrejtjük, amíg nincs adat */
+#loadingArea { text-align: center; padding: 50px; }

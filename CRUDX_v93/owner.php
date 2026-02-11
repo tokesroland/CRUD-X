@@ -13,9 +13,10 @@ $message = "";
 // Raktárak betöltése a legördülő listákhoz (Csak aktívak)
 $warehouses_for_select = $pdo->query("SELECT * FROM warehouses WHERE active = 1 ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-/* |--------------------------------------------------------------------------
-| 1. LOGIKA: ÚJ FELHASZNÁLÓ LÉTREHOZÁSA (Több raktárral + Owner logika)
-|-------------------------------------------------------------------------- */
+/*
+--------------------------------------------------------------------------
+    1. LOGIKA: ÚJ FELHASZNÁLÓ LÉTREHOZÁSA (Több raktárral + Owner logika)
+*/
 if (isset($_POST['add_user'])) {
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -63,10 +64,9 @@ if (isset($_POST['add_user'])) {
     }
 }
 
-/* |--------------------------------------------------------------------------
-| 2. LOGIKA: FELHASZNÁLÓ MÓDOSÍTÁSA (Több raktárral + Owner logika)
-|-------------------------------------------------------------------------- */
-
+/*--------------------------------------------------------------------------
+    2. LOGIKA: FELHASZNÁLÓ MÓDOSÍTÁSA (Több raktárral + Owner logika)
+*/
 
 if (isset($_POST['update_user'])) {
 
@@ -118,9 +118,10 @@ if (isset($_POST['update_user'])) {
     }
 }
 
-/* |--------------------------------------------------------------------------
-| 3. LOGIKA: ÚJ RAKTÁR
-|-------------------------------------------------------------------------- */
+/*--------------------------------------------------------------------------
+    3. LOGIKA: ÚJ RAKTÁR
+*/
+
 if (isset($_POST['add_warehouse'])) {
     $name = trim($_POST['w_name'] ?? '');
     $type = $_POST['w_type'] ?? 'warehouse';
@@ -138,9 +139,9 @@ if (isset($_POST['add_warehouse'])) {
     }
 }
 
-/* |--------------------------------------------------------------------------
-| 4. LOGIKA: RAKTÁR MÓDOSÍTÁSA
-|-------------------------------------------------------------------------- */
+/*--------------------------------------------------------------------------
+    4. LOGIKA: RAKTÁR MÓDOSÍTÁSA
+*/
 if (isset($_POST['update_warehouse'])) {
     $id = $_POST['w_id'];
     $name = trim($_POST['w_name']);
@@ -158,9 +159,10 @@ if (isset($_POST['update_warehouse'])) {
     }
 }
 
-/* |--------------------------------------------------------------------------
-| 5. LOGIKA: HIBAJEGY LEZÁRÁSA
-|-------------------------------------------------------------------------- */
+/*--------------------------------------------------------------------------
+     5. LOGIKA: HIBAJEGY LEZÁRÁSA
+*/
+
 if (isset($_POST['resolve_error'])) {
     $errID = (int)$_POST['error_id'];
     try {

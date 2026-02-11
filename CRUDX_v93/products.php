@@ -128,9 +128,8 @@ require './components/navbar.php';
                             ?>
                             <tr class="<?= (int)$prod['active'] === 1 ? '' : 'inactive-row' ?>">
                                 <td><?= $id ?></td>
-                                <td class="prod-name-cell"> <a class="product-link" href="product.php?id=<?= $id ?>"> <?= htmlspecialchars($prod['name']) ?></a></td>
+                                <td class="prod-name-cell"> <a class="product-link" href="<?= $BASE_URL ?>product/<?= $id ?>"> <?= htmlspecialchars($prod['name']) ?></a></td> <!-- API -->
                                 <td><?= htmlspecialchars($prod['category_name'] ?? 'Nincs kategória') ?></td>
-
                                 <td>
                                     <?php if ($displayQty > 0): ?>
                                         <div class="stock-wrapper">
@@ -224,19 +223,7 @@ require './components/navbar.php';
 
     <?php require './components/footer.php'; ?>
 
-    <script>
-        function toggleStockPopup(productId, event) {
-            event.stopPropagation();
-            const popup = document.getElementById('stock-popup-' + productId);
-            document.querySelectorAll('.popup-card').forEach(el => {
-                if (el !== popup) el.style.display = 'none';
-            });
-            popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
-        }
-
-        document.addEventListener('click', function() {
-            document.querySelectorAll('.popup-card').forEach(el => el.style.display = 'none');
-        });
+    <script src="./script/script.js"></script>
     </script>
 
 </body>

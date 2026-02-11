@@ -10,34 +10,26 @@ $activePage = "inventory.php";
 include './components/navbar.php';
 
 /**
- * ---------------------------------------------
  * Dropdown: raktárak
- * ---------------------------------------------
  */
 $stmtWh = $pdo->query("SELECT ID, name FROM warehouses ORDER BY name ASC");
 $warehouses = $stmtWh->fetchAll(PDO::FETCH_ASSOC);
 
 /**
- * ---------------------------------------------
  * 1. kártya szűrők: alacsony készlet
- * ---------------------------------------------
  */
 $low_wh = isset($_GET['low_wh']) ? (int)$_GET['low_wh'] : 0; // 0 = összes
 $low_mode = isset($_GET['low_mode']) ? $_GET['low_mode'] : 'both'; // out|min|both
 if (!in_array($low_mode, ['out', 'min', 'both'], true)) $low_mode = 'both';
 
 /**
- * ---------------------------------------------
  * 2. kártya szűrők: kiszállítás/beérkezés alatt
- * ---------------------------------------------
  */
 $ship_wh = isset($_GET['ship_wh']) ? (int)$_GET['ship_wh'] : 0; // 0 = összes
 $ship_q  = isset($_GET['ship_q']) ? trim($_GET['ship_q']) : '';
 
 /**
- * ---------------------------------------------
  * 1. kártya: alacsony készlet lekérdezés
- * ---------------------------------------------
  */
 $paramsLow = [];
 $whereLow = [];
@@ -81,10 +73,8 @@ $stmtLow->execute($paramsLow);
 $lowStockRows = $stmtLow->fetchAll(PDO::FETCH_ASSOC);
 
 /**
- * ---------------------------------------------
  * 2. kártya: várható beérkezések (transports)
  * Feltétel: type='import' és arriveIn nem null és >= ma ÉS STATUS PENDING
- * ---------------------------------------------
  */
 $paramsShip = [];
 $whereShip = [];

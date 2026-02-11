@@ -10,7 +10,6 @@
 
     /* -------------------------------------------------------------------------- */
     /* 1. JOGOSULTSÁGOK ÉS RAKTÁRAK LEKÉRÉSE                                    */
-    /* -------------------------------------------------------------------------- */
     
     $userId = $_SESSION['user_id'];
     $userRole = $_SESSION['role'] ?? 'user';
@@ -26,7 +25,6 @@
 
     /* -------------------------------------------------------------------------- */
     /* 2. ADATLEKÉRÉSEK A STATISZTIKÁKHOZ                                         */
-    /* -------------------------------------------------------------------------- */
     
     // Felső kártyák adatai
     $totalProdCount = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
@@ -136,31 +134,7 @@
     <title>CRUD-X Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style/style.css">
-    <style>
-        .dashboard-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        .full-width { grid-column: span 2; }
-        .progress-container { background: #e2e8f0; border-radius: 8px; height: 10px; width: 100%; margin: 5px 0; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--primary); transition: width 0.3s; }
-        .progress-bar.critical { background: var(--danger); }
-        .tab-buttons { display: flex; gap: 5px; }
-        .tab-btn { padding: 5px 12px; border: 1px solid var(--border); background: #f1f5f9; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .scrollable-stats { max-height: 300px; overflow-y: auto; padding-top: 10px; scrollbar-width: thin; }
-        .scrollable-stats::-webkit-scrollbar { width: 6px; }
-        .scrollable-stats::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: var(--text); transition: 0.2s; text-align: center; }
-        .action-btn:hover { background: var(--primary-soft); border-color: var(--primary); transform: translateY(-2px); }
-        .action-btn span { font-size: 1.5rem; margin-bottom: 5px; }
-        .timeline-item { padding: 10px 0; border-left: 2px solid var(--border); padding-left: 15px; position: relative; margin-left: 10px; }
-        .timeline-item::before { content: ""; position: absolute; left: -7px; top: 15px; width: 12px; height: 12px; background: white; border: 2px solid var(--primary); border-radius: 50%; }
-        .batch-id-cell { position: relative; cursor: pointer; transition: background 0.2s; }
-        .batch-id-cell:hover { background: #f1f5f9 !important; }
-        .batch-id-cell a { text-decoration: none; color: #2563eb; font-family: monospace; font-weight: bold; }
-        .batch-id-cell::after { content: '→'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0; transition: all 0.2s; color: #2563eb; }
-        .batch-id-cell:hover::after { opacity: 1; right: 8px; }
-        @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
-    </style>
+    <link rel="stylesheet" href="./style/index.css">
 </head>
 <body>
 

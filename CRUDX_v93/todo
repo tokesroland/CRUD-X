@@ -30,9 +30,10 @@ Ami kész:
   - adminisztrációs felület átszervezése
   - reszponzív dizájn javítása
   - hibakezelés javítása (pl. 404 oldal, form validáció)
+  - API valamilyen szinten -> Product részletek lekérése API-n keresztül (pl. JSON formátumban)
+
 
 To do:
-  - API valamilyen szinten *
   - transports.php  transport cancel opció (rákérdezés mikor hasznos)
   - iconok beállítása
   - gyorsműveletek -> arányos legyen
@@ -40,6 +41,7 @@ To do:
   - elfekvő készletek - szűrhető legyen
   - belső css-ek átszervezése
   - Ha egy raktár inactive akkor a hozzá tartozó készletek is legyenek inaktívak
+  - transports.php -> ne lehessen a mainál régebbi dátumot megadni
 
   Plus:
     - Owner funkció --> fiók megtekintése és hozzátartozó információ
