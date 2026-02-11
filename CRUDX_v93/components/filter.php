@@ -21,19 +21,23 @@ $offset = ($page - 1) * $limit;
  * ----------------------------
  * Dropdown adatok
  * ----------------------------
+ * JAVÍTÁS 1: Csak az aktív raktárakat töltjük be a listába
  */
 $categories = $pdo->query("SELECT ID, category_name FROM categories ORDER BY category_name ASC")->fetchAll(PDO::FETCH_ASSOC);
-$warehouses = $pdo->query("SELECT ID, name FROM warehouses ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+$warehouses = $pdo->query("SELECT ID, name FROM warehouses WHERE active = 1 ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 /**
  * ----------------------------
  * Mennyiségi mező meghatározása a szűréshez
  * ----------------------------
+ * JAVÍTÁS 2: A SUM() függvényben ellenőrizzük, hogy a raktár aktív-e (w.active = 1)
  */
 if ($warehouse_ID > 0) {
-    $qtySqlSnippet = "SUM(CASE WHEN i.warehouse_ID = :warehouse_ID THEN i.quantity ELSE 0 END)";
+    // Ha konkrét raktárra szűrünk
+    $qtySqlSnippet = "SUM(CASE WHEN i.warehouse_ID = :warehouse_ID AND w.active = 1 THEN i.quantity ELSE 0 END)";
 } else {
-    $qtySqlSnippet = "COALESCE(SUM(i.quantity), 0)";
+    // Globális nézet (Összes raktár)
+    $qtySqlSnippet = "COALESCE(SUM(CASE WHEN w.active = 1 THEN i.quantity ELSE 0 END), 0)";
 }
 
 /**
@@ -47,6 +51,7 @@ if ($warehouse_ID > 0) {
 }
 
 // Alap SELECT
+// JAVÍTÁS 3: Hozzáadjuk a JOIN warehouses w sort, hogy elérjük az 'active' mezőt
 $sqlBase = "
     SELECT
         p.ID,
@@ -55,11 +60,13 @@ $sqlBase = "
         p.description,
         p.active,
         c.category_name,
-        COALESCE(SUM(i.quantity), 0) AS global_total_qty,
+        /* Globális készlet is csak az aktív raktárakból */
+        COALESCE(SUM(CASE WHEN w.active = 1 THEN i.quantity ELSE 0 END), 0) AS global_total_qty,
         $qtySqlSnippet AS display_qty
     FROM products p
     LEFT JOIN categories c ON c.ID = p.category_ID
     LEFT JOIN inventory i ON i.product_ID = p.ID
+    LEFT JOIN warehouses w ON i.warehouse_ID = w.ID 
 ";
 
 // WHERE építése
@@ -115,7 +122,6 @@ if (!empty($having)) {
  * ----------------------------
  * 1. TALÁLATOK MEGSZÁMLÁLÁSA (PAGINATIONHOZ)
  * ----------------------------
- * Mivel GROUP BY és HAVING van, be kell csomagolni egy subquery-be a számláláshoz
  */
 $countSql = "SELECT COUNT(*) FROM ($sqlBase) AS subquery";
 $stmtCount = $pdo->prepare($countSql);
@@ -138,6 +144,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
  * ----------------------------
  * Készlet részletek (Popuphoz) - Csak a lekérdezett 100 termékre
  * ----------------------------
+ * JAVÍTÁS 4: Itt is szűrjük az aktív raktárakat
  */
 $warehousesByProduct = [];
 if (!empty($products)) {
@@ -149,6 +156,7 @@ if (!empty($products)) {
         FROM inventory i
         JOIN warehouses w ON w.ID = i.warehouse_ID
         WHERE i.product_ID IN ($placeholders)
+        AND w.active = 1  -- <--- CSAK AKTÍV RAKTÁRAK
         ORDER BY w.name ASC
     ";
     $stmtInv = $pdo->prepare($sqlInv);

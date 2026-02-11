@@ -199,7 +199,13 @@ $logQuery = "
     SELECT 
         t.batch_id, 
         t.date, 
-        t.status,
+        /* --- JAVÍTOTT STATUS LOGIKA --- */
+        (CASE 
+            WHEN SUM(CASE WHEN t.status = 'pending' THEN 1 ELSE 0 END) > 0 THEN 'pending'
+            WHEN SUM(CASE WHEN t.status IN ('canceled') THEN 1 ELSE 0 END) > 0 THEN 'canceled'
+            ELSE 'completed'
+        END) as status,
+        /* ------------------------------ */
         u.username,
         MAX(CASE WHEN t.type = 'export' THEN w.name END) as source_wh,
         MAX(CASE WHEN t.type = 'import' THEN w.name END) as target_wh
@@ -555,12 +561,14 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                                             </td>
                                             <td style="font-family: monospace; font-size: 0.8rem;"><?= $log['date'] ?></td>
                                             <td>
-                                                <?php if ($log['status'] === 'pending'): ?>
+                                                <?php
+                                                $st = strtolower(trim($log['status'] ?? ''));
+                                                if ($st === 'pending'): ?>
                                                     <span class="pill-pending">Függő</span>
-                                                <?php elseif ($log['status'] === 'completed'): ?>
+                                                <?php elseif ($st === 'completed'): ?>
                                                     <span class="pill-completed">Kész</span>
-                                                <?php else: ?>
-                                                    <span class="pill-completed" style="background:#eee; color:#666; border-color:#ccc;">Egyéb</span>
+                                                <?php elseif ($st === 'canceled'): ?>
+                                                    <span class="pill-completed" style="background:rgba(248, 115, 115, 0.42); color:rgba(202, 32, 32); border-color:#ccc;">Törölve</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td><strong><?= htmlspecialchars($log['username'] ?? 'Rendszer') ?></strong></td>

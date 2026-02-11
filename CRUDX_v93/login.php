@@ -6,18 +6,24 @@ $error = "";
 // Segítségkérés feldolgozása
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['recover'])) {
     $input = trim($_POST['recover_input'] ?? '');
-    if ($input !== "") {
+    if ($input !== '') {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :val OR email = :val LIMIT 1");
         $stmt->execute(['val' => $input]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $user_ID = $user['ID'] ?? null;
-        $username_to_save = $user['username'] ?? ($user ? null : $input);
-        $email_to_save = $user['email'] ?? (filter_var($input, FILTER_VALIDATE_EMAIL) ? $input : null);
+        if ($user) {
+            $user_ID = $user['ID'];
+            $username_to_save = $user['username'];
+            $email_to_save = $user['email'];
 
-        $pdo->prepare("INSERT INTO user_error (user_ID, username, email, status) VALUES (?, ?, ?, 'incomplete')")
-            ->execute([$user_ID, $username_to_save, $email_to_save]);
-        $error = "Kérésedet rögzítettük. Az adminisztrátor hamarosan felveszi veled a kapcsolatot.";
+            $pdo->prepare("INSERT INTO user_error (user_ID, username, email, status) VALUES (?, ?, ?, 'incomplete')")
+                ->execute([$user_ID, $username_to_save, $email_to_save]);
+            $error = "Kérésedet rögzítettük. Az adminisztrátor hamarosan felveszi veled a kapcsolatot.";
+        } else {
+            $error = "Nincs ilyen felhasználónév vagy email az adatbázisban.";
+        }
+    } else {
+        $error = "Add meg a felhasználónevet vagy email címet.";
     }
 }
 

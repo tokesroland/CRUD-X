@@ -51,6 +51,7 @@ try {
         FROM inventory i
         JOIN warehouses w ON w.ID = i.warehouse_ID
         WHERE i.product_ID = :id
+        AND w.active = 1
     ");
     $stmtInv->execute(['id' => $id]);
     $inventory = $stmtInv->fetchAll(PDO::FETCH_ASSOC);

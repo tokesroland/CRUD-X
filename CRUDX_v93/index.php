@@ -134,7 +134,7 @@
     <title>CRUD-X Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style/style.css">
-    <link rel="stylesheet" href="./style/index.css">
+    <link rel="stylesheet" href="./style/index.css?v1.0">
 </head>
 <body>
 
@@ -185,6 +185,8 @@
                         <a href="transports.php" class="action-btn"><span><img class="icon" src="./img/truck_23929.png"></span> Átszállítás</a>
                         <a href="inventory.php" class="action-btn"><span><img class="icon" src="./img/products_box.png"></span> Készlet</a>
                         <a href="reports.php" class="action-btn"><span><img class="icon" src="./img/1485477213-statistics_78572.png"></span> Riportok</a>
+                        <a href="products.php" class="action-btn"><span><img class="icon" src="./img/category_icon_241610.png"></span> Termékek</a>
+                        <a href="owner.php" class="action-btn"><span><img class="icon" src="./img/create-group-button_icon-icons.com_72792.png"></span> Rendszer</a>
                     </div>
                 </section>
         <?php endif; ?>

@@ -159,3 +159,25 @@
                 grid-column: span 1;
             }
         }
+/* Mobil nézet optimalizálás */
+@media (max-width: 900px) {
+    .dashboard-layout {
+        /* 2 oszlop helyett 1 oszlop legyen */
+        grid-template-columns: 1fr; 
+    }
+
+    .full-width {
+        /* A teljes szélességű elemek mostantól csak 1 (az egyetlen) oszlopot foglaljanak */
+        grid-column: span 1; 
+    }
+    
+    /* A statisztikai kártyák (fent) is törjenek új sorba */
+    .dashboard-stats {
+        flex-wrap: wrap;
+    }
+    
+    .stat-card {
+        flex: 1 1 100%; /* Teljes szélesség */
+        margin-bottom: 10px;
+    }
+}

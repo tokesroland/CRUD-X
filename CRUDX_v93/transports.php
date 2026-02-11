@@ -13,7 +13,6 @@ $msgType = "";
 
 // --------------------------------------------------------
 // SEGÉDFÜGGVÉNYEK ÉS JOGOSULTSÁGOK
-// --------------------------------------------------------
 
 // Batch ID generálás
 function generateBatchId() {
@@ -27,7 +26,7 @@ $allowedWarehouses = [];
 
 if ($userRole === 'owner') {
     // Owner mindent lát
-    $stmtWh = $pdo->query("SELECT ID, name, type FROM warehouses ORDER BY name ASC");
+    $stmtWh = $pdo->query("SELECT ID, name, type FROM warehouses WHERE active = 1 ORDER BY name ASC");
     $allowedWarehouses = $stmtWh->fetchAll(PDO::FETCH_ASSOC);
 } else {
     // Admin/User: Csak a hozzárendelteket látja a kapcsolótáblából
@@ -35,7 +34,7 @@ if ($userRole === 'owner') {
         SELECT w.ID, w.name, w.type 
         FROM warehouses w
         JOIN user_warehouse_access uwa ON w.ID = uwa.warehouse_id
-        WHERE uwa.user_id = ?
+        WHERE uwa.user_id = ? AND w.active = 1
         ORDER BY w.name ASC
     ");
     $stmtWh->execute([$userId]);
@@ -46,7 +45,6 @@ $allowedWarehouseIds = array_column($allowedWarehouses, 'ID');
 
 // --------------------------------------------------------
 // 1. KOSÁR MŰVELETEK (SESSION KEZELÉS)
-// --------------------------------------------------------
 
 if (!isset($_SESSION['transport_cart'])) {
     $_SESSION['transport_cart'] = [
@@ -116,8 +114,8 @@ if (isset($_POST['clear_cart'])) {
 }
 
 // --------------------------------------------------------
-// 2. TRANZAKCIÓ INDÍTÁSA (FÜGGŐ ÁLLAPOT) - JAVÍTOTT
-// --------------------------------------------------------
+// 2. TRANZAKCIÓ INDÍTÁSA (FÜGGŐ ÁLLAPOT) - ADATBÁZIS MŰVELETEK
+
 if (isset($_POST['finalize_transport'])) {
     if (empty($_SESSION['transport_cart']['items'])) {
         $message = "A lista üres!";
@@ -184,21 +182,83 @@ if (isset($_POST['finalize_transport'])) {
     }
 }
 
+
+// --------------------------------------------------------
+// 2.B - SAJÁT SZÁLLÍTÁS VISSZAVONÁSA (CANCEL)
+
+if (isset($_POST['cancel_batch'])) {
+    $cancelBatchId = $_POST['cancel_batch_id'];
+
+    try {
+        $pdo->beginTransaction();
+
+        // 1. Ellenőrzés: Létezik-e, az enyém-e, és még pending-e?
+        // Az 'import' sort nézzük, mert az hordozza a pending státuszt
+        $stmtCheck = $pdo->prepare("
+            SELECT ID FROM transports 
+            WHERE batch_id = ? AND user_ID = ? AND type = 'import' AND status = 'pending'
+        ");
+        $stmtCheck->execute([$cancelBatchId, $userId]);
+        
+        if (!$stmtCheck->fetch()) {
+            throw new Exception("A szállítmány nem található, nem te indítottad, vagy már átvették/törölték.");
+        }
+
+        // 2. Visszavételezés: Megkeressük az EXPORT sorokat, hogy tudjuk mit és hova kell visszarakni
+        // Ezek voltak azok, amiket levontunk a forrásraktárból (status: completed)
+        $stmtExports = $pdo->prepare("
+            SELECT product_ID, warehouse_ID, quantity 
+            FROM transports 
+            WHERE batch_id = ? AND type = 'export'
+        ");
+        $stmtExports->execute([$cancelBatchId]);
+        $itemsToRestore = $stmtExports->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($itemsToRestore as $item) {
+            // Visszaadjuk a készletet a forrásraktárhoz
+            $stmtRestock = $pdo->prepare("
+                UPDATE inventory 
+                SET quantity = quantity + ?, updated_at = NOW() 
+                WHERE product_ID = ? AND warehouse_ID = ?
+            ");
+            $stmtRestock->execute([$item['quantity'], $item['product_ID'], $item['warehouse_ID']]);
+            
+            // Ha esetleg időközben törölték volna a sort az inventoryból (ritka), újra létre kéne hozni,
+            // de a rendszer logikája szerint a 0-ás sorok megmaradnak, így az UPDATE elég.
+        }
+
+        // 3. Státusz frissítése CANCELED-re (minden sort a batch-ben)
+        $stmtCancel = $pdo->prepare("UPDATE transports SET status = 'canceled' WHERE batch_id = ?");
+        $stmtCancel->execute([$cancelBatchId]);
+
+        $pdo->commit();
+        $message = "A szállítás sikeresen visszavonva! A termékek visszakerültek a forrásraktárba.";
+        $msgType = "success";
+
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $message = "Hiba a visszavonáskor: " . $e->getMessage();
+        $msgType = "danger";
+    }
+}
+
+
 // --------------------------------------------------------
 // 3. MEGJELENÍTÉSHEZ SZÜKSÉGES ADATOK
-// --------------------------------------------------------
 
-$allWarehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+// Csak aktív raktárak legyenek a célállomás listában
+$allWarehouses = $pdo->query("SELECT * FROM warehouses WHERE active = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 
 $sourceInventory = [];
 if ($_SESSION['transport_cart']['source_wh']) {
-    $stmtSrc = $pdo->prepare("
-        SELECT p.ID, p.name, p.item_number, i.quantity 
-        FROM inventory i 
-        JOIN products p ON i.product_ID = p.ID 
-        WHERE i.warehouse_ID = ? AND i.quantity > 0
-        ORDER BY p.name
-    ");
+        $stmtSrc = $pdo->prepare("
+            SELECT p.ID, p.name, p.item_number, i.quantity 
+            FROM inventory i 
+            JOIN products p ON i.product_ID = p.ID 
+            JOIN warehouses w ON i.warehouse_ID = w.ID
+            WHERE i.warehouse_ID = ? AND i.quantity > 0 AND w.active = 1
+            ORDER BY p.name
+        ");
     $stmtSrc->execute([$_SESSION['transport_cart']['source_wh']]);
     $sourceInventory = $stmtSrc->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -222,6 +282,22 @@ if ($userRole !== 'owner') {
 
 $pendingQuery .= " GROUP BY t.batch_id ORDER BY t.date DESC";
 $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
+
+
+// SAJÁT INDÍTOTT, FÜGGŐBEN LÉVŐ SZÁLLÍTMÁNYOK (Visszavonható)
+$myOutgoingQuery = "
+    SELECT t.batch_id, t.date, t.arriveIn, w.name as target_wh_name, COUNT(t.ID) as item_count
+    FROM transports t
+    JOIN warehouses w ON t.warehouse_ID = w.ID
+    WHERE t.user_ID = ? 
+      AND t.type = 'import' 
+      AND t.status = 'pending'
+    GROUP BY t.batch_id 
+    ORDER BY t.date DESC
+";
+$stmtMyOutgoing = $pdo->prepare($myOutgoingQuery);
+$stmtMyOutgoing->execute([$userId]);
+$myOutgoingTransports = $stmtMyOutgoing->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -308,6 +384,55 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
         </section>
         <hr style="margin: 30px 0; border: 0; border-top: 1px solid #dde1e7;">
 
+        <?php if (!empty($myOutgoingTransports)): ?>
+        <section class="card" style="margin-bottom: 30px; border-left: 5px solid #f59e0b;">
+            <div class="card-header">
+                <h2><img class="icon" src="./img/delivery_truck.png"> Általam indított, függő szállítások</h2>
+            </div>
+            
+            <p style="padding: 0 15px; color: #666; font-size: 0.9em;">
+                Ezeket a szállításokat még nem vette át a címzett. Szükség esetén visszavonhatod őket, ekkor a készlet azonnal visszakerül a te raktáradba.
+            </p>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Batch ID</th>
+                            <th>Célraktár</th>
+                            <th>Indítva</th>
+                            <th>Tételek</th>
+                            <th style="text-align: right;">Művelet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($myOutgoingTransports as $mo): ?>
+                            <tr>
+                                <td>
+                                    <a href="transport.php?batch=<?= $mo['batch_id'] ?>" class="batch-link">
+                                        <?= htmlspecialchars($mo['batch_id']) ?>
+                                    </a>
+                                </td>
+                                <td><?= htmlspecialchars($mo['target_wh_name']) ?></td>
+                                <td><?= date('Y.m.d H:i', strtotime($mo['date'])) ?></td>
+                                <td><?= $mo['item_count'] ?> db</td>
+                                <td style="text-align: right;">
+                                    <form method="POST" onsubmit="return confirm('BIZTOSAN visszavonod? A termékek visszakerülnek az indító raktár készletébe!');">
+                                        <input type="hidden" name="cancel_batch_id" value="<?= $mo['batch_id'] ?>">
+                                        <button type="submit" name="cancel_batch" class="btn btn-small btn-outline danger">
+                                            ✖ Visszavonás
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <?php endif; ?>
+        
+        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #dde1e7;">
 
     <div class="card-header">
         <h2><img class="icon" src="./img/truck_23929.png">  Új Szállítás Indítása</h2>
@@ -412,7 +537,7 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="field">
                         <label>Várható érkezés:</label>
-                        <input type="date" name="arrive_date" id="arriveDate"
+                        <input type="date" min="<?= date('Y-m-d') ?>" name="arrive_date" id="arriveDate"
                                onkeydown="return false" onpaste="return false" ondrop="return false">
                     </div>
                     <div class="field col-12" style="grid-column: span 2;">
@@ -430,7 +555,6 @@ $pendingTransports = $pdo->query($pendingQuery)->fetchAll(PDO::FETCH_ASSOC);
 </main>
 
 <?php include './components/footer.php'; ?>
-
 <script src="./script/script.js"></script>
 <script>
     function updateMaxQty() {

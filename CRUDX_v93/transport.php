@@ -201,11 +201,15 @@ if ($hasPendingImport) {
                 <p><strong>Leírás:</strong> <?= htmlspecialchars($baseInfo['description']) ?></p>
                 <p>
                     <strong>Státusz:</strong> 
-                    <?php if($hasPendingImport): ?>
-                        <span class="status-badge status-pending">Függőben (Szállítás alatt)</span>
-                    <?php else: ?>
-                        <span class="status-badge status-completed">Teljesítve</span>
-                    <?php endif; ?>
+                        <?php if ($baseInfo['status'] === 'canceled'): ?>
+                            <span class="status-badge" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding: 4px 8px; border-radius: 4px;">
+                                ❌ Visszavonva / Törölve
+                            </span>
+                        <?php elseif($hasPendingImport): ?>
+                            <span class="status-badge status-pending">Függőben (Szállítás alatt)</span>
+                        <?php else: ?>
+                            <span class="status-badge status-completed">Teljesítve</span>
+                        <?php endif; ?>                
                 </p>
             </div>
         </div>
@@ -235,10 +239,16 @@ if ($hasPendingImport) {
                     <td>
                         <?php if($item['status'] == 'pending'): ?>
                             <span style="color:#d97706; font-size:0.8rem;">⏳ Függő</span>
+                            
+                        <?php elseif($item['status'] == 'canceled'): ?>
+                            <span style="color:#dc2626; font-size:0.8rem; font-weight:bold;">
+                                ❌ Visszavonva
+                            </span>
+                            
                         <?php else: ?>
                             <span style="color:#16a34a; font-size:0.8rem;">✔ Kész</span>
                         <?php endif; ?>
-                    </td>
+                    </td>                    
                     <td><?= htmlspecialchars($item['warehouse_name']) ?></td>
                 </tr>
                 <?php endforeach; ?>
