@@ -170,13 +170,13 @@ if ($hasPendingImport) {
             <div>
                 <h3 style="margin:0; color:#c2410c;"><img class="icon" src="./img/danger_icon_243248.png"> Átvételre váró szállítmány</h3>
                 <p style="margin:5px 0 0 0; font-size:0.9rem; color:#9a3412;">
-                    Ez a szállítmány megérkezett a <strong><?= htmlspecialchars($items[0]['warehouse_name']) ?></strong> célállomásra (vagy te vagy a felelőse). 
+                    Ez a szállítmány már úton van a(z) <strong><?= htmlspecialchars($items[0]['warehouse_name']) ?></strong> állomástól a célállomásra. 
                     A készlet jóváírásához kattints az átvételre.
                 </p>
             </div>
             <form method="POST">
                 <div style="text-align: center; margin-top: 15px;">
-                    <button type="submit" name="accept_transport" class="btn" style="background:#ea580c; border:none;"> 
+                    <button type="submit" name="accept_transport" class="btn" style="background:#ea580c; border:none; margin-left: 10px;"> 
                         Átvétel & Készlet növelése
                     </button>
                 </div>

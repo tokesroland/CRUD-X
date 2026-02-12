@@ -29,6 +29,10 @@ if (isset($_POST['add_user'])) {
     $now = date('Y-m-d H:i:s');
 
     if (!empty($username) && !empty($password_raw) && !empty($email)) {
+        // Jelszó hossz ellenőrzése (legalább 8 karakter)
+        if (strlen($password_raw) < 8) {
+            $message = "Hiba: A jelszó legalább 8 karakter hosszú kell, hogy legyen!";
+        } else
         try {
             $pdo->beginTransaction();
 
@@ -295,7 +299,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                             <input type="email" max="255" name="email" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
 
                             <label style="display:block; margin-bottom:5px; font-weight:600;">Jelszó</label>
-                            <input type="password" max="30" name="password" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                            <input type="password" min="8" max="30" name="password" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
 
                             <label style="display:block; margin-bottom:5px; font-weight:600;">Szerepkör</label>
                             <select name="role" id="new_user_role" onchange="toggleWarehouseSelect('new_user_role', 'new_user_whs')" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">

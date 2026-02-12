@@ -23,7 +23,6 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
     </style>
 </head>
 <body>
-    <?php include './components/navbar.php'; ?>
 
     <main class="container">
         
