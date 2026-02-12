@@ -231,8 +231,7 @@ require 'components/admin_backend.php';
                                                 </select>
                                             </td>
                                             <td style="text-align: center;">
-                                                <input type="checkbox" name="products[<?= $p['ID'] ?>][active]" 
-                                                       <?= $p['active'] ? 'checked' : '' ?>>
+                                                <input type="checkbox" name="products[<?= $p['ID'] ?>][active]" <?= $p['active'] ? 'checked' : '' ?>>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -314,5 +313,6 @@ require 'components/admin_backend.php';
             }
         }
     </script>
+    <?php include './components/footer.php'; ?>
 </body>
 </html>
