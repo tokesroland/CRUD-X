@@ -94,8 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['recover'])) {
         <h2 style="margin-bottom: 1.5rem;">Bejelentkezés</h2>
         <?php if ($error): ?><div class="login-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
         <form method="POST">
-            <div class="login-field"><label>Felhasználónév</label><input type="text" name="username" placeholder="felhasználónév"></div>
-            <div class="login-field"><label>Jelszó</label><input type="password" name="password" placeholder="••••••••"></div>
+            <div class="login-field"><label>Felhasználónév</label><input type="text" name="username"></div>
+            <div class="login-field"><label>Jelszó</label><input type="password" name="password"></div>
             <button type="submit" class="btn" style="width: 100%;">Bejelentkezés</button>
         </form>
         <hr style="margin: 1.5rem 0;">

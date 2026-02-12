@@ -75,45 +75,51 @@ if (isset($_POST['update_user'])) {
         $message = "Hiba: Saját magadat nem módosíthatod!";
     } else {
         $id = $_POST['user_id'];
-        $username = trim($_POST['username']);
+        $raw_username = $_POST['username'] ?? '';
+        $username = trim($raw_username);
         $email = trim($_POST['email']);
         $role = $_POST['role'];
         $active = isset($_POST['active']) ? 1 : 0;
 
-        // A kiválasztott raktárak tömbje
-        $selected_whs = $_POST['warehouse_ids'] ?? [];
+        // Tiltjuk, hogy a felhasználónév csak whitespace legyen (space, tab, új sor, NBSP, stb.)
+        if ($username === '' || !preg_match('/\S/u', $username)) {
+            $message = "Hiba: A felhasználónév nem lehet üres vagy csak szóközök/tároló karakterek.";
+        } else {
+            // A kiválasztott raktárak tömbje
+            $selected_whs = $_POST['warehouse_ids'] ?? [];
 
-        try {
-            $pdo->beginTransaction();
+            try {
+                $pdo->beginTransaction();
 
-            // 1. Alapadatok frissítése
-            if (!empty($_POST['new_password'])) {
-                $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, password = ?, active = ? WHERE ID = ?");
-                $stmt->execute([$username, $email, $role, $password, $active, $id]);
-            } else {
-                $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, active = ? WHERE ID = ?");
-                $stmt->execute([$username, $email, $role, $active, $id]);
-            }
-
-            // 2. Jogosultságok szinkronizálása
-            // Először töröljük a felhasználó összes eddigi jogosultságát
-            $delStmt = $pdo->prepare("DELETE FROM user_warehouse_access WHERE user_id = ?");
-            $delStmt->execute([$id]);
-
-            // Majd beszúrjuk az újakat (HA NEM OWNER)
-            if ($role !== 'owner' && !empty($selected_whs)) {
-                $insStmt = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
-                foreach ($selected_whs as $wh_id) {
-                    $insStmt->execute([$id, $wh_id]);
+                // 1. Alapadatok frissítése
+                if (!empty($_POST['new_password'])) {
+                    $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+                    $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, password = ?, active = ? WHERE ID = ?");
+                    $stmt->execute([$username, $email, $role, $password, $active, $id]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ?, active = ? WHERE ID = ?");
+                    $stmt->execute([$username, $email, $role, $active, $id]);
                 }
-            }
 
-            $pdo->commit();
-            $message = "Adatok és jogosultságok frissítve!";
-        } catch (PDOException $e) {
-            $pdo->rollBack();
-            $message = "Hiba: " . $e->getMessage();
+                // 2. Jogosultságok szinkronizálása
+                // Először töröljük a felhasználó összes eddigi jogosultságát
+                $delStmt = $pdo->prepare("DELETE FROM user_warehouse_access WHERE user_id = ?");
+                $delStmt->execute([$id]);
+
+                // Majd beszúrjuk az újakat (HA NEM OWNER)
+                if ($role !== 'owner' && !empty($selected_whs)) {
+                    $insStmt = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
+                    foreach ($selected_whs as $wh_id) {
+                        $insStmt->execute([$id, $wh_id]);
+                    }
+                }
+
+                $pdo->commit();
+                $message = "Adatok és jogosultságok frissítve!";
+            } catch (PDOException $e) {
+                $pdo->rollBack();
+                $message = "Hiba: " . $e->getMessage();
+            }
         }
     }
 }
