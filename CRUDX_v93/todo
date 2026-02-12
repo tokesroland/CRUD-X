@@ -38,3 +38,8 @@ Ami kész:
   - Ha egy raktár inactive akkor a hozzá tartozó készletek is legyenek inaktívak 
   - iconok beállítása
 
+
+
+Kell:
+ - Dashboard -> "Legaktívabb (30 nap)" helyett valami más a user (bolti elado) szamara, mert nem fontos info
+
