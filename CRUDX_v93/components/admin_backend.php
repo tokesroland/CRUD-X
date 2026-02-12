@@ -79,8 +79,9 @@ if (isset($_POST['create_product'])) {
             }
         }
 
-        $stmt = $pdo->prepare("INSERT INTO products (name, item_number, description, category_ID, active) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $itemNumber, $desc, $categoryID, isset($_POST['active']) ? 1 : 0]);
+    $stmt = $pdo->prepare("INSERT INTO products (name, item_number, description, category_ID, active) VALUES (?, ?, ?, ?, ?)");
+    // Default newly created products to active = 1
+    $stmt->execute([$name, $itemNumber, $desc, $categoryID, 1]);
 
         $message = "Termék sikeresen létrehozva!";
         $msgType = "success";
@@ -167,6 +168,21 @@ if (isset($_POST['create_inventory'])) {
             throw new Exception("Hiba: A maximális bevihető mennyiség 9999 db!");
         }
 
+        // Ellenőrizzük, hogy van-e elég hely a cél raktárban (ha a raktárhoz tartozik max_quantity)
+        $stmtWhCap = $pdo->prepare("SELECT max_quantity FROM warehouses WHERE ID = ? LIMIT 1");
+        $stmtWhCap->execute([$warehouseId]);
+        $maxQty = (int)$stmtWhCap->fetchColumn();
+        if ($maxQty > 0) {
+            $stmtTot = $pdo->prepare("SELECT COALESCE(SUM(quantity),0) FROM inventory WHERE warehouse_ID = ?");
+            $stmtTot->execute([$warehouseId]);
+            $currentTotal = (int)$stmtTot->fetchColumn();
+
+            if (($currentTotal + $quantity) > $maxQty) {
+                $available = $maxQty - $currentTotal;
+                throw new Exception("Hiba: Nincs elég hely a raktárban. Szabad hely: $available db.");
+            }
+        }
+
         $stmt = $pdo->prepare("SELECT ID FROM inventory WHERE product_ID = ? AND warehouse_ID = ?");
         $stmt->execute([$productId, $warehouseId]);
         if ($stmt->fetch()) {
@@ -206,7 +222,23 @@ if (isset($_POST['bulk_update_inventory']) && isset($_POST['inventory'])) {
                 continue;
             }
 
-            $updateStmt->execute([(int)$data['quantity'], (int)$data['min_quantity'], $invID]);
+            $qty = (int)$data['quantity'];
+            $minQty = (int)$data['min_quantity'];
+
+            // Ne engedjünk negatív értékeket a készletnél
+            if ($qty < 0) {
+                throw new Exception("Hiba: A mennyiség nem lehet negatív (inventory ID: $invID)");
+            }
+            if ($minQty < 0) {
+                throw new Exception("Hiba: A minimális mennyiség nem lehet negatív (inventory ID: $invID)");
+            }
+
+            // Konzisztencia: ugyanaz a felső korlát, mint az egyedi beszúrásnál
+            if ($qty > 9999) {
+                throw new Exception("Hiba: A mennyiség túl nagy (inventory ID: $invID). Max: 9999");
+            }
+
+            $updateStmt->execute([$qty, $minQty, $invID]);
             $count++;
         }
 
