@@ -49,6 +49,11 @@ if (isset($_POST['add_user'])) {
             if ($role !== 'owner' && !empty($selected_whs)) {
                 $stmtAccess = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
                 foreach ($selected_whs as $wh_id) {
+                    $wh_id = (int)$wh_id;
+                    if ($wh_id <= 0) {
+                        // skip invalid warehouse ids
+                        continue;
+                    }
                     $stmtAccess->execute([$new_user_id, $wh_id]);
                 }
             }
@@ -60,7 +65,7 @@ if (isset($_POST['add_user'])) {
             if ($e->getCode() == 23000) {
                 $message = "Hiba: A felhasználónév vagy az email cím már foglalt!";
             } else {
-                $message = "Hiba: " . $e->getMessage();
+                $message = "Hibás adatokat adtál meg";
             }
         }
     } else {
@@ -74,11 +79,16 @@ if (isset($_POST['add_user'])) {
 
 if (isset($_POST['update_user'])) {
 
+    // Felhasználó azonosító backend ellenőrzése
+    $posted_user_id = isset($_POST['user_id']) ? (int)$_POST['user_id'] : 0;
+
     // Megakadályozzuk, hogy a bejelentkezett user saját magát módosítsa
-    if ($_SESSION['user_id'] == $_POST['user_id']) {
+    if ((int)($_SESSION['user_id'] ?? 0) === $posted_user_id) {
         $message = "Hiba: Saját magadat nem módosíthatod!";
+    } elseif ($posted_user_id <= 0) {
+        $message = "Hiba: Érvénytelen felhasználó azonosító.";
     } else {
-        $id = $_POST['user_id'];
+        $id = $posted_user_id;
         $raw_username = $_POST['username'] ?? '';
         $username = trim($raw_username);
         $email = trim($_POST['email']);
@@ -114,6 +124,10 @@ if (isset($_POST['update_user'])) {
                 if ($role !== 'owner' && !empty($selected_whs)) {
                     $insStmt = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
                     foreach ($selected_whs as $wh_id) {
+                        $wh_id = (int)$wh_id;
+                        if ($wh_id <= 0) {
+                            continue;
+                        }
                         $insStmt->execute([$id, $wh_id]);
                     }
                 }
@@ -122,7 +136,7 @@ if (isset($_POST['update_user'])) {
                 $message = "Adatok és jogosultságok frissítve!";
             } catch (PDOException $e) {
                 $pdo->rollBack();
-                $message = "Hiba: " . $e->getMessage();
+                $message = "Hiba: Hibás adatokat adtál meg.";
             }
         }
     }
@@ -138,13 +152,18 @@ if (isset($_POST['add_warehouse'])) {
     $address = trim($_POST['w_address'] ?? '');
     $max_q = (int)($_POST['w_max_q'] ?? 0);
 
+    // Backend validation: max quantity must not be negative
+    if ($max_q < 0) {
+        $message = "Hiba: A maximális kapacitás nem lehet negatív.";
+    } else
+
     if (!empty($name) && !empty($address)) {
         try {
             $stmt = $pdo->prepare("INSERT INTO warehouses (name, type, address, max_quantity, active) VALUES (?, ?, ?, ?, 1)");
             $stmt->execute([$name, $type, $address, $max_q]);
             $message = "Sikeresen létrehozva: $name";
         } catch (PDOException $e) {
-            $message = "Hiba: " . $e->getMessage();
+            $message = "Hiba: Hibás adatokat adtál meg.";
         }
     }
 }
@@ -153,19 +172,26 @@ if (isset($_POST['add_warehouse'])) {
     4. LOGIKA: RAKTÁR MÓDOSÍTÁSA
 */
 if (isset($_POST['update_warehouse'])) {
-    $id = $_POST['w_id'];
+    // Backend validation: ensure id and max quantity are valid
+    $id = isset($_POST['w_id']) ? (int)$_POST['w_id'] : 0;
     $name = trim($_POST['w_name']);
     $type = $_POST['w_type'];
     $address = trim($_POST['w_address']);
-    $max_q = (int)$_POST['w_max_q'];
+    $max_q = (int)($_POST['w_max_q'] ?? 0);
     $active = isset($_POST['w_active']) ? 1 : 0;
 
-    try {
-        $stmt = $pdo->prepare("UPDATE warehouses SET name = ?, type = ?, address = ?, max_quantity = ?, active = ? WHERE ID = ?");
-        $stmt->execute([$name, $type, $address, $max_q, $active, $id]);
-        $message = "Raktár adatai frissítve!";
-    } catch (PDOException $e) {
-        $message = "Hiba: " . $e->getMessage();
+    if ($id <= 0) {
+        $message = "Hiba: Érvénytelen raktár azonosító.";
+    } elseif ($max_q < 0) {
+        $message = "Hiba: A maximális kapacitás nem lehet negatív.";
+    } else {
+        try {
+            $stmt = $pdo->prepare("UPDATE warehouses SET name = ?, type = ?, address = ?, max_quantity = ?, active = ? WHERE ID = ?");
+            $stmt->execute([$name, $type, $address, $max_q, $active, $id]);
+            $message = "Raktár adatai frissítve!";
+        } catch (PDOException $e) {
+            $message = "Hiba: Hibás adatokat adtál meg.";
+        }
     }
 }
 
@@ -174,13 +200,17 @@ if (isset($_POST['update_warehouse'])) {
 */
 
 if (isset($_POST['resolve_error'])) {
-    $errID = (int)$_POST['error_id'];
-    try {
-        $stmt = $pdo->prepare("UPDATE user_error SET status = 'complete', completed_at = NOW() WHERE errID = ?");
-        $stmt->execute([$errID]);
-        $message = "Hibajegy (#$errID) lezárva.";
-    } catch (PDOException $e) {
-        $message = "Hiba: " . $e->getMessage();
+    $errID = isset($_POST['error_id']) ? (int)$_POST['error_id'] : 0;
+    if ($errID <= 0) {
+        $message = "Hiba: Érvénytelen hibajegy azonosító.";
+    } else {
+        try {
+            $stmt = $pdo->prepare("UPDATE user_error SET status = 'complete', completed_at = NOW() WHERE errID = ?");
+            $stmt->execute([$errID]);
+            $message = "Hibajegy (#$errID) lezárva.";
+        } catch (PDOException $e) {
+            $message = "Hiba: Hibás adatokat adtál meg.";
+        }
     }
 }
 
