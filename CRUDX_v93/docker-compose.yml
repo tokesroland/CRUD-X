@@ -7,7 +7,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./:/var/www/html  # A te mappádat tükrözi a konténerbe
+      - .:/var/www/html  # A te mappádat tükrözi a konténerbe
     environment:
       - DB_HOST=db
       - DB_NAME=crudx
@@ -54,4 +54,5 @@ networks:
     driver: bridge
 
 volumes:
+
   db_data:
