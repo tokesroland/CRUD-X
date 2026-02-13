@@ -60,7 +60,7 @@ require 'components/admin_backend.php';
                 <div class="card-header">
                     <h2><img src="./img/create_new_add_plus_icon_219839.png" alt="" class="icon"> Új Készlet Hozzárendelés</h2>
                 </div>
-<div class="card-body" id="newInvBody"> 
+                <div class="card-body" id="newInvBody"> 
                     <form method="POST">
                         
                         <div class="field" style="margin-bottom:10px;">
@@ -315,4 +315,5 @@ require 'components/admin_backend.php';
     </script>
     <?php include './components/footer.php'; ?>
 </body>
+
 </html>
