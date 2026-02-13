@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # 1. Webszerver (PHP + Apache)
+  web:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html  # A te mappádat tükrözi a konténerbe
+    environment:
+      - DB_HOST=db
+      - DB_NAME=crudx
+      - DB_USER=root
+      - DB_PASSWORD=root_password
+      - BASE_URL=/
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  # 2. Adatbázis (MariaDB)
+  db:
+    image: mariadb:10.4
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: crudx
+    volumes:
+      - db_data:/var/lib/mysql
+      # Automatikus importálás az első indításkor:
+      - ./crudx.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  # 3. phpMyAdmin (Adatbázis kezelés)
+  pma:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+# Hálózat és tároló definíciók
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
