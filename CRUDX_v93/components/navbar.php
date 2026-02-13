@@ -132,11 +132,11 @@ $wh_count = count($wh_list);
                             <?= htmlspecialchars($name_)?>
                         </li>
                         <?php
-    endforeach; ?>
+                        endforeach; ?>
                     </ul>
                 </div>
                 <?php
-endif; ?>
+                endif; ?>
             </div>
             <div class="user-info">
                 <span class="user-name" style="font-weight: bold;">
@@ -159,4 +159,5 @@ endif; ?>
         nav.classList.toggle('open');
         userBox.classList.toggle('open');
     }
+
 </script>
