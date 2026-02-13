@@ -58,8 +58,12 @@ if (isset($_POST['add_item'])) {
 // 1.C - Tétel törlése
 if (isset($_GET['remove_item'])) {
     $remId = (int)$_GET['remove_item'];
-    unset($_SESSION['transport_cart']['items'][$remId]);
-    header("Location: transports.php"); 
+
+    if (isset($_SESSION['transport_cart']['items'][$remId])) {
+        unset($_SESSION['transport_cart']['items'][$remId]);
+    }
+
+    header("Location: transports.php");
     exit;
 }
 

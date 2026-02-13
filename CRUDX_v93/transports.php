@@ -6,8 +6,8 @@ authorize(['admin', 'owner']); // Csak admin és tulajdonos indíthat szállít�
 
 $pageTitle = "Szállítás";
 $activePage = "transports.php";
-require './components/navbar.php'; 
 
+// initialize message variables early so backend can set them before any output
 $message = "";
 $msgType = "";
 
@@ -44,7 +44,11 @@ if ($userRole === 'owner') {
 $allowedWarehouseIds = array_column($allowedWarehouses, 'ID');
 
 // transports.php-hoz kapcsolódó kosár logika és műveletek
+// Include backend BEFORE any HTML output (navbar) so header redirects work
 require './components/transports_backend.php'; 
+
+// Now include the navbar (outputs HTML)
+require './components/navbar.php'; 
 
 ?>
 
@@ -129,7 +133,6 @@ require './components/transports_backend.php';
                 </table>
             </div>
         </section>
-        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #dde1e7;">
 
         <?php if (!empty($myOutgoingTransports)): ?>
         <section class="card" style="margin-bottom: 30px; border-left: 5px solid #f59e0b;">

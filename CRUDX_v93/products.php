@@ -37,13 +37,15 @@ require './components/navbar.php';
                             <option value="<?= (int)$c['ID'] ?>" <?= $category_ID === (int)$c['ID'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($c['category_name']) ?>
                             </option>
-                        <?php endforeach; ?>
+                        <?php
+                        endforeach; ?>
                     </select>
                 </div>
 
                 <div class="field col-2">
                     <label>Cikkszám</label>
-                    <input type="text" name="item_number" value="<?= htmlspecialchars($item_number) ?>" placeholder="pl. ABC-123">
+                    <input type="text" name="item_number" value="<?= htmlspecialchars($item_number) ?>"
+                        placeholder="pl. ABC-123">
                 </div>
 
                 <div class="field col-3">
@@ -53,7 +55,8 @@ require './components/navbar.php';
 
                 <div class="field col-4">
                     <label>Leírás</label>
-                    <input type="text" name="description" value="<?= htmlspecialchars($description) ?>" placeholder="keresés leírásban">
+                    <input type="text" name="description" value="<?= htmlspecialchars($description) ?>"
+                        placeholder="keresés leírásban">
                 </div>
 
                 <div class="field col-2">
@@ -82,18 +85,21 @@ require './components/navbar.php';
                             <option value="<?= (int)$w['ID'] ?>" <?= $warehouse_ID === (int)$w['ID'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($w['name']) ?>
                             </option>
-                        <?php endforeach; ?>
+                        <?php
+                        endforeach; ?>
                     </select>
                 </div>
 
                 <div class="field col-2">
                     <label>Mennyiség min</label>
-                    <input type="number" name="qty_min" value="<?= $qty_min !== null ? (int)$qty_min : '' ?>" placeholder="0">
+                    <input type="number" name="qty_min" value="<?= $qty_min !== null ? (int)$qty_min : '' ?>"
+                        placeholder="0">
                 </div>
 
                 <div class="field col-2">
                     <label>Mennyiség max</label>
-                    <input type="number" name="qty_max" value="<?= $qty_max !== null ? (int)$qty_max : '' ?>" placeholder="9999">
+                    <input type="number" name="qty_max" value="<?= $qty_max !== null ? (int)$qty_max : '' ?>"
+                        placeholder="9999">
                 </div>
 
                 <div class="actions col-3">
@@ -127,48 +133,54 @@ require './components/navbar.php';
                             $warehousesForProd = $warehousesByProduct[$id] ?? [];
                             ?>
                             <tr class="<?= (int)$prod['active'] === 1 ? '' : 'inactive-row' ?>">
-                                <td><?= $id ?></td>
-                                <td class="prod-name-cell"> <a class="product-link" href="<?= $BASE_URL ?>product/<?= $id ?>"> <?= htmlspecialchars($prod['name']) ?></a></td> <!-- API -->
-                                <td><?= htmlspecialchars($prod['category_name'] ?? 'Nincs kategória') ?></td>
+                                <td>
+                                    <?= $id ?>
+                                </td>
+                                <td class="prod-name-cell"> <a class="product-link"
+                                        href="<?= $BASE_URL ?>products/<?= $id ?>">
+                                        <?= htmlspecialchars($prod['name']) ?>
+                                    </a></td> <!-- API -->
+                                <td>
+                                    <?= htmlspecialchars($prod['category_name'] ?? 'Nincs kategória') ?>
+                                </td>
                                 <td>
                                     <?php if ($displayQty > 0): ?>
                                         <div class="stock-wrapper">
                                             <?php if ((int)$prod['active'] === 1): ?>
-                                                <button type="button" class="badge badge-success stock-btn" onclick="toggleStockPopup(<?= $id ?>, event)">
+                                                <button type="button" class="badge badge-success stock-btn"
+                                                    onclick="showStockDetails(<?= $id ?>, event)">
                                                     Készleten (<?= $displayQty ?> db)
                                                 </button>
-
-                                                <div id="stock-popup-<?= $id ?>" class="popup-card">
-                                                    <h3>Raktárkészlet (Részletes)</h3>
-                                                    <?php foreach ($warehousesForProd as $wh): ?>
-                                                        <div class="row">
-                                                            <strong><?= htmlspecialchars($wh['warehouse']) ?></strong>
-                                                            <span><?= (int)$wh['quantity'] ?> db</span>
-                                                        </div>
-                                                    <?php endforeach; ?>
-                                                    <div class="muted">Összesen (minden raktárban): <?= $globalTotal ?> db</div>
-                                                </div>
-                                            <?php else: ?>
-                                                <span style="color: #dc2626; font-weight: bold; font-size: 0.7rem;user-select: none;">
+                                            <?php
+                                            else: ?>
+                                                <span
+                                                    style="color: #dc2626; font-weight: bold; font-size: 0.7rem;user-select: none;">
                                                     Készleten (<?= $displayQty ?> db)
                                                 </span>
-                                            <?php endif; ?>
+                                            <?php
+                                            endif; ?>
                                         </div>
-                                    <?php elseif ($warehouse_ID > 0 && $displayQty == 0): ?>
+                                    <?php
+                                    elseif ($warehouse_ID > 0 && $displayQty == 0): ?>
                                         <span class="badge badge-muted">Ebben a raktárban nincs</span>
-                                    <?php else: ?>
+                                    <?php
+                                    else: ?>
                                         <span class="badge badge-muted">Nincs készleten</span>
-                                    <?php endif; ?>
+                                    <?php
+                                    endif; ?>
                                 </td>
                                 <td>
                                     <?php if ((int)$prod['active'] === 1): ?>
                                         <span class="badge badge-success">Aktív</span>
-                                    <?php else: ?>
+                                    <?php
+                                    else: ?>
                                         <span class="badge badge-muted">Inaktív</span>
-                                    <?php endif; ?>
+                                    <?php
+                                    endif; ?>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php
+                        endforeach; ?>
 
                         <?php if (empty($products)): ?>
                             <tr>
@@ -176,7 +188,8 @@ require './components/navbar.php';
                                     Nincs találat a megadott szűrőkre.
                                 </td>
                             </tr>
-                        <?php endif; ?>
+                        <?php
+                        endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -195,7 +208,8 @@ require './components/navbar.php';
 
                     <?php if ($page > 1): ?>
                         <a href="<?= getPageUrl($page - 1) ?>" class="btn btn-small btn-outline">&laquo; Előző</a>
-                    <?php endif; ?>
+                    <?php
+                    endif; ?>
 
                     <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                         <?php if ($i == 1 || $i == $totalPages || ($i >= $page - 2 && $i <= $page + 2)): ?>
@@ -203,28 +217,48 @@ require './components/navbar.php';
                                 style="<?= $i === $page ? 'background: var(--primary); color: white; border-color: var(--primary);' : '' ?>">
                                 <?= $i ?>
                             </a>
-                        <?php elseif ($i == $page - 3 || $i == $page + 3): ?>
+                        <?php
+                        elseif ($i == $page - 3 || $i == $page + 3): ?>
                             <span style="padding: 5px;">...</span>
-                        <?php endif; ?>
-                    <?php endfor; ?>
+                        <?php
+                        endif; ?>
+                    <?php
+                    endfor; ?>
 
                     <?php if ($page < $totalPages): ?>
                         <a href="<?= getPageUrl($page + 1) ?>" class="btn btn-small btn-outline">Következő &raquo;</a>
-                    <?php endif; ?>
+                    <?php
+                    endif; ?>
                 </div>
                 <div style="text-align: center; margin-bottom: 20px; font-size: 0.8rem; color: #666;">
-                    Összes találat: <?= $totalRows ?> db (<?= $totalPages ?> oldal)
+                    Összes találat:
+                    <?= (string)$totalRows ?> db (
+                    <?= (string)$totalPages ?> oldal)
                 </div>
-            <?php endif; ?>
+            <?php
+            endif; ?>
 
         </section>
 
     </main>
 
+    <!-- Közös popup konténer a dinamikus készletadatokhoz -->
+    <div id="common-stock-popup" class="popup-card"
+        style="display: none; position: absolute; z-index: 1000; min-width: 250px;">
+        <div class="popup-content">
+            <h3>Raktárkészlet (Részletes)</h3>
+            <div id="popup-body">
+                <p class="muted">Betöltés...</p>
+            </div>
+        </div>
+    </div>
+
     <?php require './components/footer.php'; ?>
 
-    <script src="./script/script.js"></script>
+    <script>
+        const BASE_URL = "<?= $BASE_URL ?>";
     </script>
+    <script src="./script/script.js"></script>
 
 </body>
 
