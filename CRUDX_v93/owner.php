@@ -36,27 +36,27 @@ if (isset($_POST['add_user'])) {
             try {
                 $pdo->beginTransaction();
 
-            $password_hash = password_hash($password_raw, PASSWORD_DEFAULT);
+                $password_hash = password_hash($password_raw, PASSWORD_DEFAULT);
 
-            // 1. Felhasználó beszúrása
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, active, created_at, login_at) VALUES (?, ?, ?, ?, 1, ?, ?)");
-            $stmt->execute([$username, $email, $password_hash, $role, $now, $now]);
+                // 1. Felhasználó beszúrása
+                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, active, created_at, login_at) VALUES (?, ?, ?, ?, 1, ?, ?)");
+                $stmt->execute([$username, $email, $password_hash, $role, $now, $now]);
 
-            $new_user_id = $pdo->lastInsertId();
+                $new_user_id = $pdo->lastInsertId();
 
-            // 2. Kapcsolótábla feltöltése (CSAK HA NEM OWNER)
-            // Az Ownernek programozottan van joga mindenhez, nem kell DB bejegyzés
-            if ($role !== 'owner' && !empty($selected_whs)) {
-                $stmtAccess = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
-                foreach ($selected_whs as $wh_id) {
-                    $wh_id = (int)$wh_id;
-                    if ($wh_id <= 0) {
-                        // skip invalid warehouse ids
-                        continue;
+                // 2. Kapcsolótábla feltöltése (CSAK HA NEM OWNER)
+                // Az Ownernek programozottan van joga mindenhez, nem kell DB bejegyzés
+                if ($role !== 'owner' && !empty($selected_whs)) {
+                    $stmtAccess = $pdo->prepare("INSERT INTO user_warehouse_access (user_id, warehouse_id) VALUES (?, ?)");
+                    foreach ($selected_whs as $wh_id) {
+                        $wh_id = (int)$wh_id;
+                        if ($wh_id <= 0) {
+                            // skip invalid warehouse ids
+                            continue;
+                        }
+                        $stmtAccess->execute([$new_user_id, $wh_id]);
                     }
-                    $stmtAccess->execute([$new_user_id, $wh_id]);
                 }
-            }
 
                 $pdo->commit();
                 $message = "Sikeresen létrehozva: $username";
@@ -217,7 +217,7 @@ if (isset($_POST['resolve_error'])) {
 
 // Aktív hibajegyek
 $errorReports = $pdo->query("
-    SELECT e.*, u.username as registered_username 
+    SELECT e.*, u.username as registered_username, u.login_at 
     FROM user_error e 
     LEFT JOIN users u ON e.user_ID = u.ID 
     WHERE e.status = 'incomplete' 
@@ -399,6 +399,7 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                                         <tr>
                                             <th>Dátum</th>
                                             <th>Azonosított User</th>
+                                            <th>Utolsó belépés</th>
                                             <th>Megadott Név</th>
                                             <th>Megadott Email</th>
                                             <th>Művelet</th>
@@ -408,7 +409,16 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
                                         <?php foreach ($errorReports as $err): ?>
                                             <tr>
                                                 <td><?= $err['created_at'] ?></td>
-                                                <td><?= $err['registered_username'] ? '<strong>' . htmlspecialchars($err['registered_username']) . '</strong>' : '<span style="color:#aaa;">-</span>' ?></td>
+                                                <td>
+                                                    <?= $err['registered_username'] ? '<strong>' . htmlspecialchars($err['registered_username']) . '</strong>' : '<span style="color:#aaa;">-</span>' ?>
+                                                </td>
+                                                <td style="font-size: 0.85rem; color: #555;">
+                                                    <?php if ($err['login_at']): ?>
+                                                        <?= $err['login_at'] ?>
+                                                    <?php else: ?>
+                                                        <span>N/A</span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td><?= htmlspecialchars($err['username'] ?? '-') ?></td>
                                                 <td><?= htmlspecialchars($err['email'] ?? '-') ?></td>
                                                 <td>
