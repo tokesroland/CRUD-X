@@ -1,15 +1,16 @@
+Options +FollowSymLinks -MultiViews
 RewriteEngine On
+
+# Ha a címed: localhost/CRUDX_v93/product/1 -> Akkor a RewriteBase /CRUDX_v93/
 RewriteBase /CRUDX_v93/
 
 # 1. API ÚTVONAL (Adatforrás)
-# Ha a kérés: /api/products/123 -> Futtasd: api/v1/product_details.php?id=123
 RewriteRule ^api/products/([0-9]+)$ api/v1/product_details.php?id=$1 [L,QSA]
 
 # 2. FRONTEND ÚTVONAL (Megjelenítés)
-# Ha a kérés: /product/123 -> Futtasd: product.php?id=123
 RewriteRule ^product/([0-9]+)$ product.php?id=$1 [L,QSA]
 
-# Fájlkiterjesztések elrejtése (opcionális, de ajánlott)
+# Kiterjesztés elrejtése
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^([^\.]+)$ $1.php [NC,L]
