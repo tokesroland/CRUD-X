@@ -1,4 +1,8 @@
 <?php
+// Általános konfigurációk és adatbázis kapcsolat létrehozása
+
+// Időzóna beállítása a helyes időkezeléshez az adatbázisban. (NOW(), CURRENT_TIMESTAMP() függvények a DB-ben, date() a PHP-ben)
+date_default_timezone_set('Europe/Budapest');
 // Ne jelenjenek meg hibák a felhasználónak, de naplózzuk őket
 ini_set('display_errors', '0');
 ini_set('display_startup_errors', '0');
@@ -24,6 +28,8 @@ $password = getenv('DB_PASSWORD') ?: ''; // XAMPP-ban üres
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // Ezzel kényszerítjük az adatbázist, hogy a PHP-val azonos időt használja.
+    $pdo->exec("SET time_zone = '" . date('P') . "'");
 } catch (PDOException $e) {
     // Részletes hiba naplózása, felhasználónak csak általános üzenet
     error_log("Adatbázis hiba: " . $e->getMessage());

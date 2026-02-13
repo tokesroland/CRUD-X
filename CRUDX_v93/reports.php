@@ -25,8 +25,8 @@ require './components/stats_query.php';
     <meta charset="UTF-8">
     <title>Jelentések | CRUD-X</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style/style.css">
-    <link rel="stylesheet" href="./style/reports.css">
+    <link rel="stylesheet" href="./style/style.css?v=1.0">
+    <link rel="stylesheet" href="./style/reports.css?v=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 </head>

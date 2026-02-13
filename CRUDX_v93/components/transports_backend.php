@@ -118,7 +118,7 @@ if (isset($_POST['finalize_transport'])) {
                     INSERT INTO transports (batch_id, product_ID, warehouse_ID, type, quantity, date, user_ID, description, arriveIn, status) 
                     VALUES (?, ?, ?, 'export', ?, NOW(), ?, ?, ?, 'completed')
                 ");
-                $descExport = "Kiszállítás cél: Raktár #$targetWh. ($description)";
+                $descExport = "$description";
                 $logExport->execute([$batchId, $pId, $sourceWh, $qty, $userId, $descExport, $arriveDate]);
 
                 // 4. Naplózás (IMPORT) -> Status: PENDING
@@ -126,7 +126,7 @@ if (isset($_POST['finalize_transport'])) {
                     INSERT INTO transports (batch_id, product_ID, warehouse_ID, type, quantity, date, user_ID, description, arriveIn, status) 
                     VALUES (?, ?, ?, 'import', ?, NOW(), ?, ?, ?, 'pending')
                 ");
-                $descImport = "Beérkezés forrás: Raktár #$sourceWh. ($description)";
+                $descImport = "$description";
                 $logImport->execute([$batchId, $pId, $targetWh, $qty, $userId, $descImport, $arriveDate]);
             }
 

@@ -66,7 +66,7 @@ if ($whereLow) {
     $sqlLow .= " WHERE " . implode(" AND ", $whereLow);
 }
 
-$sqlLow .= " ORDER BY i.quantity ASC, p.name ASC LIMIT 20";
+$sqlLow .= " ORDER BY i.quantity ASC, p.name ASC LIMIT 10";
 
 $stmtLow = $pdo->prepare($sqlLow);
 $stmtLow->execute($paramsLow);
@@ -95,6 +95,7 @@ $sqlShip = "
       AND t.status = 'pending'
       AND t.arriveIn IS NOT NULL
       AND t.arriveIn >= CURDATE()
+
 ";
 
 if ($ship_wh > 0) {
@@ -109,7 +110,7 @@ if ($ship_q !== '') {
     $paramsShip[':ship_item'] = (int)$ship_q;
 }
 
-$sqlShip .= " ORDER BY t.arriveIn ASC, t.ID DESC LIMIT 20";
+$sqlShip .= " ORDER BY t.arriveIn ASC, t.ID DESC LIMIT 10";
 
 $shipRows = [];
 try {
@@ -128,8 +129,8 @@ try {
     <meta charset="UTF-8">
     <title>CRUD-X – Készlet áttekintés</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style/style.css?v=<?= time() ?>">
-    <link rel="stylesheet" href="./style/inventory.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="./style/style.css?v=1.0">
+    <link rel="stylesheet" href="./style/inventory.css?v=1.0">
 </head>
 
 <body>

@@ -68,8 +68,6 @@ $criticalData = $stmtCrit->fetchAll(PDO::FETCH_ASSOC);
     5. STÁTUSZ STATISZTIKÁK
     --------------------------------------------------------------------------
     Számítás: csak azok a termékek kerülnek ide, amelyek aktív raktárban vannak.
-    (Ha szeretnéd, hogy a státusz statisztika teljesen globális legyen
-    függetlenül a raktáraktól, jelezd és visszaállítom az eredeti lekérdezést.)
     -------------------------------------------------------------------------- */
 $statusStats = $pdo->query("
      SELECT p.active, COUNT(DISTINCT p.ID) as count

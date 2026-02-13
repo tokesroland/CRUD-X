@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['recover'])) {
 <head>
     <meta charset="UTF-8"><title>CRUD-X WMS - Bejelentkezés</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./style/style.css?v=1.0">
     <style>
         body { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--bg); }
         .login-card { width: 100%; max-width: 420px; background: var(--bg-card); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow-soft); border: 1px solid var(--border); text-align: center; }

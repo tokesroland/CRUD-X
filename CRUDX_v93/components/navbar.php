@@ -121,29 +121,29 @@ $wh_count = count($wh_list);
         <div class="nav-user-container">
             <div class="wh-tooltip-box">
                 <span class="wh-badge">
-                    <?= $wh_count > 0 ? $wh_count . ' helyszín' : 'Minden egység'?>
+                    <?= $wh_count > 0 ? $wh_count . ' helyszín' : 'Minden egység' ?>
                 </span>
                 <?php if ($wh_count > 0): ?>
-                <div class="wh-tooltip">
-                    <strong style="color:var(--primary); font-size:0.8rem;">Hozzárendelt raktárak:</strong>
-                    <ul>
-                        <?php foreach ($wh_list as $name_): ?>
-                        <li>
-                            <?= htmlspecialchars($name_)?>
-                        </li>
-                        <?php
-                        endforeach; ?>
-                    </ul>
-                </div>
+                    <div class="wh-tooltip">
+                        <strong style="color:var(--primary); font-size:0.8rem;">Hozzárendelt raktárak:</strong>
+                        <ul>
+                            <?php foreach ($wh_list as $name_): ?>
+                                <li>
+                                    <?= htmlspecialchars($name_) ?>
+                                </li>
+                            <?php
+                            endforeach; ?>
+                        </ul>
+                    </div>
                 <?php
                 endif; ?>
             </div>
             <div class="user-info">
                 <span class="user-name" style="font-weight: bold;">
-                    <?= htmlspecialchars($_SESSION['username'])?>
+                    <?= htmlspecialchars($_SESSION['username']) ?>
                 </span>
                 <span class="user-role" style="font-size: 0.65rem; opacity: 0.7; text-transform: uppercase;">
-                    <?= htmlspecialchars($_SESSION['role'])?>
+                    <?= htmlspecialchars($_SESSION['role']) ?>
                 </span>
             </div>
         </div>
@@ -159,5 +159,4 @@ $wh_count = count($wh_list);
         nav.classList.toggle('open');
         userBox.classList.toggle('open');
     }
-
 </script>

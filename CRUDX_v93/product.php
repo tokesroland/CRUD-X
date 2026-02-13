@@ -15,8 +15,8 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Termék betöltése...</title>
-    <link rel="stylesheet" href="<?= $BASE_URL?>style/style.css">
-    <link rel="stylesheet" href="<?= $BASE_URL?>style/product.css">
+    <link rel="stylesheet" href="<?= $BASE_URL ?>style/style.css?v=1.0">
+    <link rel="stylesheet" href="<?= $BASE_URL ?>style/product.css?v=1.0">
     <style>
         /* Skeleton loading stílus */
         .skeleton {
@@ -53,22 +53,30 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         <div id="error-container" class="hidden" style="text-align:center; padding: 40px; color: #ef4444;">
             <h2 id="error-message">Hiba történt</h2>
-            <a href="<?= $BASE_URL?>products" class="btn btn-outline">Vissza a listához</a>
+            <a href="<?= $BASE_URL ?>products" class="btn btn-outline">Vissza a listához</a>
         </div>
 
         <section class="card" id="main-content">
             <div class="card-header">
                 <h2>
-                    <img class="icon" src="<?= $BASE_URL?>img/products_box.png">
+                    <img class="icon" src="<?= $BASE_URL ?>img/products_box.png">
                     <span id="p-name" class="skeleton">Termék Neve...</span>
                 </h2>
-                <a href="<?= $BASE_URL?>products" class="btn btn-outline btn-small">Vissza a listához</a>
+                <a href="<?= $BASE_URL ?>products" class="btn btn-outline btn-small">Vissza a listához</a>
             </div>
 
             <div style="display:flex; gap:32px; flex-wrap:wrap; margin-bottom: 20px;">
                 <div style="flex: 0 0 280px;">
-                    <img id="p-image" src="<?= $BASE_URL?>images/products/no-image.png"
-                        style="width:100%; border-radius:12px; border: 1px solid var(--border);" alt="Termék kép">
+                    <div class="product-image">
+                        <div class="image-container">
+                            <div id="image-loader" style="text-align:center;">
+                                <div class="spinner"></div>
+                                <p style="color:#64748b; font-size:0.9rem;">Kép keresése...</p>
+                            </div>
+
+                            <img id="p-image" onload="this.style.display='block'; document.getElementById('image-loader').style.display='none';">
+                        </div>
+                    </div>
                 </div>
 
                 <div style="flex: 1; min-width: 300px;">
@@ -88,14 +96,14 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
             <hr>
 
-            <h3><img class="icon" src="<?= $BASE_URL?>img/document_23966.png"> Leírás</h3>
+            <h3><img class="icon" src="<?= $BASE_URL ?>img/document_23966.png"> Leírás</h3>
             <div id="p-description" style="padding: 10px 0; line-height: 1.6;">
                 <span class="skeleton">Ez itt a leírás helye, ami éppen töltődik...</span>
             </div>
 
             <hr>
 
-            <h3><img class="icon" src="<?= $BASE_URL?>img/products_box.png"> Jelenlegi készletek</h3>
+            <h3><img class="icon" src="<?= $BASE_URL ?>img/products_box.png"> Jelenlegi készletek</h3>
             <div id="inventory-list">
                 <p class="skeleton">Készletek betöltése...</p>
             </div>
@@ -107,7 +115,7 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
     <script>
         const PRODUCT_ID = <?= $productId ?>;
-        const BASE_URL = "<?= $BASE_URL?>";
+        const BASE_URL = "<?= $BASE_URL ?>";
 
         document.addEventListener("DOMContentLoaded", () => {
             // Ellenőrizzük a konzolon a generált URL-t (Debug célból)
@@ -141,13 +149,13 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
                 descEl.innerHTML = data.description ? data.description.replace(/\n/g, '<br>') : '<em class="muted">Nincs leírás.</em>';
 
                 const statusEl = document.getElementById('p-status');
-                statusEl.innerHTML = data.active == 1
-                    ? '<span class="badge badge-success">Aktív</span>'
-                    : '<span class="badge badge-muted">Inaktív</span>';
+                statusEl.innerHTML = data.active == 1 ?
+                    '<span class="badge badge-success">Aktív</span>' :
+                    '<span class="badge badge-muted">Inaktív</span>';
                 statusEl.classList.remove('skeleton');
 
                 renderInventory(inventory);
-                loadImage(data.name);
+                loadImage(data.name, data.category_name);
 
             } catch (error) {
                 console.error("Fetch hiba:", error);
@@ -175,16 +183,22 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
             container.innerHTML = html;
         }
 
-        async function loadImage(query) {
+        async function loadImage(name, category) {
             try {
-                // Kép API hívás (szintén BASE_URL-lel)
-                const res = await fetch(`${BASE_URL}api/api.php?query=${encodeURIComponent(query)}`);
+                // Elküldjük a nevet ÉS a kategóriát is
+                const params = new URLSearchParams({
+                    query: name,
+                    category: category || ''
+                });
+
+                const res = await fetch(`${BASE_URL}api/api.php?${params.toString()}`);
                 const data = await res.json();
+
                 if (data.image_url) {
                     document.getElementById('p-image').src = data.image_url;
                 }
             } catch (e) {
-                console.warn("Kép betöltési hiba", e);
+                console.warn("Kép hiba:", e);
             }
         }
 

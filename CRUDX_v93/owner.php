@@ -32,9 +32,9 @@ if (isset($_POST['add_user'])) {
         // Jelszó hossz ellenőrzése (legalább 8 karakter)
         if (strlen($password_raw) < 8) {
             $message = "Hiba: A jelszó legalább 8 karakter hosszú kell, hogy legyen!";
-        } else
-        try {
-            $pdo->beginTransaction();
+        } else {
+            try {
+                $pdo->beginTransaction();
 
             $password_hash = password_hash($password_raw, PASSWORD_DEFAULT);
 
@@ -58,14 +58,15 @@ if (isset($_POST['add_user'])) {
                 }
             }
 
-            $pdo->commit();
-            $message = "Sikeresen létrehozva: $username";
-        } catch (PDOException $e) {
-            $pdo->rollBack();
-            if ($e->getCode() == 23000) {
-                $message = "Hiba: A felhasználónév vagy az email cím már foglalt!";
-            } else {
-                $message = "Hibás adatokat adtál meg";
+                $pdo->commit();
+                $message = "Sikeresen létrehozva: $username";
+            } catch (PDOException $e) {
+                $pdo->rollBack();
+                if ($e->getCode() == 23000) {
+                    $message = "Hiba: A felhasználónév vagy az email cím már foglalt!";
+                } else {
+                    $message = "Hibás adatokat adtál meg";
+                }
             }
         }
     } else {
@@ -155,9 +156,7 @@ if (isset($_POST['add_warehouse'])) {
     // Backend validation: max quantity must not be negative
     if ($max_q < 0) {
         $message = "Hiba: A maximális kapacitás nem lehet negatív.";
-    } else
-
-    if (!empty($name) && !empty($address)) {
+    } elseif (!empty($name) && !empty($address)) {
         try {
             $stmt = $pdo->prepare("INSERT INTO warehouses (name, type, address, max_quantity, active) VALUES (?, ?, ?, ?, 1)");
             $stmt->execute([$name, $type, $address, $max_q]);
@@ -299,8 +298,9 @@ $warehouses = $pdo->query("SELECT * FROM warehouses ORDER BY name ASC")->fetchAl
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tulajdonosi Panel | CRUD-X</title>
-    <link rel="stylesheet" href="./style/owner.css">
-    <link rel="stylesheet" href="./style/style.css">
+
+    <link rel="stylesheet" href="./style/owner.css?v=1.0">
+    <link rel="stylesheet" href="./style/style.css?v=1.0">
 
 </head>
 

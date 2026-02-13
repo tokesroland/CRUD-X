@@ -85,7 +85,7 @@ $sqlArrivals .= " GROUP BY t.batch_id ORDER BY t.ID DESC";
 
 $todayArrivals = $pdo->query($sqlArrivals)->fetchAll(PDO::FETCH_ASSOC);
 
-// Utolsó mozgások és Top movers (Marad, csak látványelem)
+// Utolsó mozgások és Késésben lévő szállítások.
 $recentActivity = $pdo->query("
         SELECT t.*, u.username, p.name as p_name, w.name as w_name
         FROM transports t
@@ -95,15 +95,40 @@ $recentActivity = $pdo->query("
         ORDER BY t.date DESC LIMIT 5
     ")->fetchAll(PDO::FETCH_ASSOC);
 
-$topMovers = $pdo->query("
-        SELECT p.name, COUNT(t.ID) as move_count
-        FROM transports t
-        JOIN products p ON t.product_ID = p.ID
-        WHERE t.date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-        GROUP BY t.product_ID
-        ORDER BY move_count DESC LIMIT 5
-    ")->fetchAll(PDO::FETCH_ASSOC);
+// KÉSÉSBEN LÉVŐ SZÁLLÍTMÁNYOK (Overdue)
+// ------------------------------------------------------------------
 
+$sqlOverdue = "
+        SELECT 
+            t.batch_id, 
+            t.arriveIn, 
+            t.date,
+            w_source.name as source_wh_name,
+            COUNT(t.ID) as item_count
+        FROM transports t
+        -- Megkeressük a szállítmány párját (export), hogy tudjuk honnan jön
+        LEFT JOIN transports t_export ON t.batch_id = t_export.batch_id AND t_export.type = 'export'
+        LEFT JOIN warehouses w_source ON t_export.warehouse_ID = w_source.ID
+        WHERE t.type = 'import' 
+        AND t.status = 'pending'
+        AND t.arriveIn < CURDATE()
+    ";
+
+// Jogosultság szűrés: Csak azokat látom, amik az ÉN raktáraimba (target) érkeznek
+if ($isRestricted) {
+    if (!empty($allowedWarehouseIds)) {
+        $inQuery = implode(',', array_map('intval', $allowedWarehouseIds));
+        // Importnál a warehouse_ID a CÉL raktár
+        $sqlOverdue .= " AND t.warehouse_ID IN ($inQuery)";
+    } else {
+        // Ha nincs raktára, ne lásson semmit
+        $sqlOverdue .= " AND 1=0";
+    }
+}
+
+$sqlOverdue .= " GROUP BY t.batch_id ORDER BY t.arriveIn ASC LIMIT 5";
+
+$overdueTransports = $pdo->query($sqlOverdue)->fetchAll(PDO::FETCH_ASSOC);
 // Segédfüggvény
 function renderCapacityList($list)
 {
@@ -138,8 +163,8 @@ function renderCapacityList($list)
     <meta charset="UTF-8">
     <title>CRUD-X Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style/style.css">
-    <link rel="stylesheet" href="./style/index.css?v1.0">
+    <link rel="stylesheet" href="./style/style.css?v=1.0">
+    <link rel="stylesheet" href="./style/index.css?v=1.0">
 </head>
 
 <body>
@@ -260,20 +285,56 @@ function renderCapacityList($list)
                 </div>
             </section>
 
-            <section class="card">
+            <section class="card" style="border-left: 5px solid #ef4444;">
                 <div class="card-header">
-                    <h2><img class="icon" src="./img/document_23966.png"> Legaktívabb (30 nap)</h2>
+                    <h2>
+                        <img class="icon" src="./img/danger_icon_243248.png" onerror="this.src='./img/document_23966.png'">
+                        Késésben lévő érkezések
+                    </h2>
                 </div>
-                <div style="margin-top: 10px;">
-                    <?php foreach ($topMovers as $mover): ?>
-                        <div style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
-                            <span style="font-size: 0.9rem;"><?= htmlspecialchars($mover['name']) ?></span>
-                            <span class="badge badge-success" style="font-size: 0.75rem;"><?= $mover['move_count'] ?> esemény</span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </section>
 
+                <?php if (empty($overdueTransports)): ?>
+                    <div style="text-align:center; padding: 30px; color: #16a34a;">
+                        <span style="font-size: 1.5rem; display:block; margin-bottom:5px;">✓</span>
+                        Minden szállítmány időben!
+                    </div>
+                <?php else: ?>
+                    <div style="margin-top: 10px;">
+                        <?php foreach ($overdueTransports as $ot): ?>
+                            <?php
+                            // Késés kiszámítása napokban
+                            $targetDate = !empty($ot['arriveIn']) ? $ot['arriveIn'] : date('Y-m-d', strtotime($ot['date']));
+                            // Időbélyegek különbsége másodpercben, osztva egy nap hosszával
+                            $diffSeconds = time() - strtotime($targetDate);
+                            $daysLate = floor($diffSeconds / (60 * 60 * 24));
+
+                            // Ha valamiért negatív lenne (pl. ma van), akkor legalább 1-et írjunk, ha már bekerült a listába
+                            if ($daysLate < 1) $daysLate = 1;
+                            ?>
+                            <div style="padding: 12px 0; border-bottom: 1px solid #fee2e2;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                    <a href="transport.php?batch=<?= htmlspecialchars($ot['batch_id']) ?>"
+                                        style="font-weight:bold; color:#b91c1c; text-decoration:none;">
+                                        <?= htmlspecialchars($ot['batch_id']) ?>
+                                    </a>
+                                    <span class="badge" style="background:#fecaca; color:#991b1b; font-size:0.75rem;">
+                                        -<?= $daysLate ?> nap
+                                    </span>
+                                </div>
+
+                                <div style="display:flex; justify-content: space-between; font-size: 0.8rem; color: #64748b;">
+                                    <span>Honnan: <strong><?= htmlspecialchars($ot['source_wh_name'] ?? 'Külső forrás') ?></strong></span>
+                                    <span><?= $ot['item_count'] ?> tétel</span>
+                                </div>
+
+                                <div style="font-size: 0.75rem; color: #ef4444; margin-top:2px;">
+                                    Várt érkezés: <?= date('Y.m.d', strtotime($targetDate)) ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </section>
         </div>
     </main>
 
