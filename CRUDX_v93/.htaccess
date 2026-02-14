@@ -8,7 +8,7 @@ RewriteBase /CRUDX_v93/
 RewriteRule ^api/products/([0-9]+)$ api/v1/product_details.php?id=$1 [L,QSA]
 
 # 2. FRONTEND ÚTVONAL (Megjelenítés)
-RewriteRule ^product/([0-9]+)$ product.php?id=$1 [L,QSA]
+RewriteRule ^products/([0-9]+)$ product.php?id=$1 [L,QSA]
 
 # Kiterjesztés elrejtése
 RewriteCond %{REQUEST_FILENAME} !-d
