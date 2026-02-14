@@ -1,16 +1,28 @@
 Options +FollowSymLinks -MultiViews
 RewriteEngine On
 
-# Ha a címed: localhost/CRUDX_v93/product/1 -> Akkor a RewriteBase /CRUDX_v93/
-RewriteBase /CRUDX_v93/
+# Töröltük a RewriteBase-t a hordozhatóság miatt.
+# Így automatikusan működik /CRUDX_v93/ mappában és gyökérben is.
 
-# 1. API ÚTVONAL (Adatforrás)
-RewriteRule ^api/products/([0-9]+)$ api/v1/product_details.php?id=$1 [L,QSA]
+# 1. Ha létező fájl (pl. style.css, képek), azonnal szolgálja ki
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
-# 2. FRONTEND ÚTVONAL (Megjelenítés)
+# 2. API Routing (Singular és Plural is jó legyen)
+# api/products/123 -> api/v1/product_details.php?id=123
+RewriteRule ^api/products?/([0-9]+)$ api/v1/product_details.php?id=$1 [L,QSA]
+
+# 3. FRONTEND Routing (A TE HIBÁD JAVÍTÁSA)
+# Fontos: A 'products/szám' szabálynak előbb kell lennie, mint a sima .php elrejtésnek!
+
+# Kezeljük a többesszámot (amit a products.php generál): products/498 -> product.php
 RewriteRule ^products/([0-9]+)$ product.php?id=$1 [L,QSA]
 
-# Kiterjesztés elrejtése
+# Kezeljük az egyes számot is (biztonság kedvéért): product/498 -> product.php
+RewriteRule ^product/([0-9]+)$ product.php?id=$1 [L,QSA]
+
+# 4. .php kiterjesztés elrejtése (szép URL-ek a többi fájlhoz)
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^([^\.]+)$ $1.php [NC,L]
