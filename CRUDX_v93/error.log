@@ -1,0 +1,89 @@
+[13-Feb-2026 22:46:53 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 67
+[13-Feb-2026 22:46:53 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 67
+[13-Feb-2026 22:46:53 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 71
+[13-Feb-2026 22:46:53 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 71
+[13-Feb-2026 22:47:27 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 67
+[13-Feb-2026 22:47:27 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 67
+[13-Feb-2026 22:47:27 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 71
+[13-Feb-2026 22:47:27 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 71
+[13-Feb-2026 22:50:54 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 135
+[13-Feb-2026 22:50:54 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 135
+[13-Feb-2026 22:50:54 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 139
+[13-Feb-2026 22:50:54 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 139
+[13-Feb-2026 22:50:54 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 153
+[13-Feb-2026 22:50:54 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 153
+[13-Feb-2026 22:52:08 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:52:08 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:42 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:42 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:43 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:43 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:43 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:43 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Warning:  Undefined variable $html in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 22:53:48 Europe/Budapest] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 119
+[13-Feb-2026 23:02:47 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'created_at' in 'field list' in C:\xampp\htdocs\CRUDX_v93\test_backend.php:113
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(113): PDO->query('SELECT MAX(crea...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 113
+[13-Feb-2026 23:02:50 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'created_at' in 'field list' in C:\xampp\htdocs\CRUDX_v93\test_backend.php:113
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(113): PDO->query('SELECT MAX(crea...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 113
+[13-Feb-2026 23:06:30 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'hour' in 'field list' in C:\xampp\htdocs\CRUDX_v93\test_backend.php:113
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(113): PDO->query('SELECT MAX(date...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 113
+[13-Feb-2026 23:07:46 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1305 FUNCTION crudx.HOURMINSEC does not exist in C:\xampp\htdocs\CRUDX_v93\test_backend.php:113
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(113): PDO->query('SELECT MAX(HOUR...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 113
+[13-Feb-2026 23:09:21 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AS last_product FROM products' at line 1 in C:\xampp\htdocs\CRUDX_v93\test_backend.php:117
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(117): PDO->query('SELECT MAX(TIME...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 117
+[13-Feb-2026 23:09:38 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AS last_product FROM products' at line 1 in C:\xampp\htdocs\CRUDX_v93\test_backend.php:117
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(117): PDO->query('SELECT MAX(crea...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 117
+[13-Feb-2026 23:09:39 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AS last_product FROM products' at line 1 in C:\xampp\htdocs\CRUDX_v93\test_backend.php:117
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(117): PDO->query('SELECT MAX(crea...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 117
+[13-Feb-2026 23:09:39 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AS last_product FROM products' at line 1 in C:\xampp\htdocs\CRUDX_v93\test_backend.php:117
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(117): PDO->query('SELECT MAX(crea...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 117
+[13-Feb-2026 23:09:39 Europe/Budapest] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AS last_product FROM products' at line 1 in C:\xampp\htdocs\CRUDX_v93\test_backend.php:117
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\test_backend.php(117): PDO->query('SELECT MAX(crea...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\test_backend.php on line 117
+[13-Feb-2026 23:22:45 Europe/Budapest] PHP Fatal error:  Uncaught TypeError: date(): Argument #2 ($timestamp) must be of type ?int, string given in C:\xampp\htdocs\CRUDX_v93\owner.php:417
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\owner.php(417): date('Y-m-d H:i', '2026-02-13 22:3...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\owner.php on line 417
+[13-Feb-2026 23:22:46 Europe/Budapest] PHP Fatal error:  Uncaught TypeError: date(): Argument #2 ($timestamp) must be of type ?int, string given in C:\xampp\htdocs\CRUDX_v93\owner.php:417
+Stack trace:
+#0 C:\xampp\htdocs\CRUDX_v93\owner.php(417): date('Y-m-d H:i', '2026-02-13 22:3...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CRUDX_v93\owner.php on line 417
+[14-Feb-2026 09:40:36 Europe/Budapest] PHP Warning:  Undefined variable $id in /var/www/html/products.php on line 15
+[14-Feb-2026 09:40:51 Europe/Budapest] PHP Warning:  Undefined variable $id in /var/www/html/products.php on line 15

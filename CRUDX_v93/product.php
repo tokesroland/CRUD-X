@@ -15,8 +15,8 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Termék betöltése...</title>
-    <link rel="stylesheet" href="<?= $BASE_URL ?>style/style.css?v=1.0">
-    <link rel="stylesheet" href="<?= $BASE_URL ?>style/product.css?v=1.0">
+    <link rel="stylesheet" href="<?= $BASE_URL ?>style/style.css">
+    <link rel="stylesheet" href="<?= $BASE_URL ?>style/product.css">
     <style>
         /* Skeleton loading stílus */
         .skeleton {
@@ -67,16 +67,8 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
             <div style="display:flex; gap:32px; flex-wrap:wrap; margin-bottom: 20px;">
                 <div style="flex: 0 0 280px;">
-                    <div class="product-image">
-                        <div class="image-container">
-                            <div id="image-loader" style="text-align:center;">
-                                <div class="spinner"></div>
-                                <p style="color:#64748b; font-size:0.9rem;">Kép keresése...</p>
-                            </div>
-
-                            <img id="p-image" onload="this.style.display='block'; document.getElementById('image-loader').style.display='none';">
-                        </div>
-                    </div>
+                    <img id="p-image" src="<?= $BASE_URL ?>images/products/no-image.png"
+                        style="width:100%; border-radius:12px; border: 1px solid var(--border);" alt="Termék kép">
                 </div>
 
                 <div style="flex: 1; min-width: 300px;">
@@ -155,7 +147,7 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
                 statusEl.classList.remove('skeleton');
 
                 renderInventory(inventory);
-                loadImage(data.name, data.category_name);
+                loadImage(data.name);
 
             } catch (error) {
                 console.error("Fetch hiba:", error);
@@ -183,22 +175,16 @@ $productId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
             container.innerHTML = html;
         }
 
-        async function loadImage(name, category) {
+        async function loadImage(query) {
             try {
-                // Elküldjük a nevet ÉS a kategóriát is
-                const params = new URLSearchParams({
-                    query: name,
-                    category: category || ''
-                });
-
-                const res = await fetch(`${BASE_URL}api/api.php?${params.toString()}`);
+                // Kép API hívás (szintén BASE_URL-lel)
+                const res = await fetch(`${BASE_URL}api/api.php?query=${encodeURIComponent(query)}`);
                 const data = await res.json();
-
                 if (data.image_url) {
                     document.getElementById('p-image').src = data.image_url;
                 }
             } catch (e) {
-                console.warn("Kép hiba:", e);
+                console.warn("Kép betöltési hiba", e);
             }
         }
 

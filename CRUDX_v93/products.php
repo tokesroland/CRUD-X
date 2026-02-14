@@ -16,7 +16,7 @@ require './components/navbar.php';
     <meta charset="UTF-8">
     <title>CRUD-X – Termékek</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style/style.css?v=1.0">
+    <link rel="stylesheet" href="./style/style.css?v=2.0">
 </head>
 
 <body>
