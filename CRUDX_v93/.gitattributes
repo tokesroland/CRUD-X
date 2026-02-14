@@ -1,0 +1,10 @@
+# .gitattributes
+# Ez megmondja a Gitnek, hogy a Docker fájlokat és a scripteket MINDIG Linuxosan kezelje
+*.php text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.sql text eol=lf
+.htaccess text eol=lf
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
