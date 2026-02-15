@@ -12,7 +12,7 @@
 
 ---
 
-## 🛠️ Technológiai stukk
+## 🛠️ Technológia
 
 * **Backend:** PHP 8.x (PDO)
 * **Adatbázis:** MySQL / MariaDB
@@ -86,3 +86,4 @@ Ha hibát találtál, vagy új funkciót javasolnál:
 ---
 
 *Licenc: A projekt szabadon felhasználható és módosítható.*
+
