@@ -39,7 +39,7 @@ Futtasd az alábbi parancsot a projekt gyökerében:
     mysql -u root -p crudx < crudx.sql
 ```
 4. Szükség esetén módosítsd a config.php fájlban az adatbázis hozzáféréseket.
-5. Nyisd meg a böngészőben: http://localhost/[mappaneved]/
+5. Nyisd meg a böngészőben: http://localhost/CRUDX_v93/
 
 ---
 
@@ -84,4 +84,5 @@ Ha hibát találtál, vagy új funkciót javasolnál:
 * @tokesroland
 
 ---
+
 *Licenc: A projekt szabadon felhasználható és módosítható.*
